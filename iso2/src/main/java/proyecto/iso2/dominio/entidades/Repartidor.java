@@ -11,11 +11,11 @@ public class Repartidor extends Usuario {
     @Column
     private String nif;
     @Column
-    private Double eficiencia;
+    private int eficiencia;
 
     public Repartidor() {}
 
-    public Repartidor(String email, String  pass, String nombre, String apellidos, String nif, Double eficiencia) {
+    public Repartidor(String email, String  pass, String nombre, String apellidos, String nif, int eficiencia) {
         super(email, pass);
         this.nombre = nombre;
         this.apellidos = apellidos;
@@ -48,11 +48,11 @@ public class Repartidor extends Usuario {
         this.nif = nif;
     }
 
-    public Double getEficiencia() {
+    public int getEficiencia() {
         return eficiencia;
     }
 
-    public void setEficiencia(Double eficiencia) {
+    public void setEficiencia(int eficiencia) {
         this.eficiencia = eficiencia;
     }
 
