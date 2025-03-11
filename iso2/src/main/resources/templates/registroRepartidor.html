@@ -5,18 +5,14 @@
     <title>Registro Repartidor</title>
 </head>
 <body>
-<h1>Registro de Repartidor</h1>
-<form action="/registro/registroRepartidor" method="POST">
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" required><br>
-    <label for="apellidos">Apellidos:</label>
-    <input type="text" id="apellidos" name="apellidos" required><br>
-    <label for="nif">NIF:</label>
-    <input type="text" id="nif" name="nif" required><br>
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
-    <label for="pass">Contraseña:</label>
-    <input type="password" id="pass" name="pass" required><br>
+<h1>Registro Repartidor</h1>
+<form action="/registro/repartidor" method="post">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="pass" placeholder="Contraseña" required>
+    <input type="text" name="nombre" placeholder="Nombre" required>
+    <input type="text" name="apellidos" placeholder="Apellidos" required>
+    <input type="text" name="nif" placeholder="NIF" required>
+    <input type="number" step="0.1" name="eficiencia" placeholder="Eficiencia (0-10)" required>
     <button type="submit">Registrarse</button>
 </form>
 </body>

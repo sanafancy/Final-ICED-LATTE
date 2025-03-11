@@ -24,42 +24,49 @@ public class RegistroController {
 
     @GetMapping
     public String showRegistroPage() {
-        return "registro"; // Nombre de la vista (registro.html)
+        return "registro";
     }
 
-    @GetMapping("/registroCliente")
+    @GetMapping("/cliente")
     public String showRegistroClientePage() {
-        return "registroCliente"; // Nombre de la vista (registroCliente.html)
+        return "registroCliente";
     }
 
-    @GetMapping("/registroRestaurante")
-    public String showRegistroRestaurantePage() {
-        return "registroRestaurante"; // Nombre de la vista (registroRestaurante.html)
-    }
-
-    @GetMapping("/registroRepartidor")
-    public String showRegistroRepartidorPage() {
-        return "registroRepartidor"; // Nombre de la vista (registroRepartidor.html)
-    }
-
-    @PostMapping("/registroCliente")
-    public String registrarCliente(@RequestParam String nombre, @RequestParam String apellidos, @RequestParam String dni, @RequestParam String email, @RequestParam String pass) {
+    @PostMapping("/cliente")
+    public String registrarCliente(@RequestParam String email, @RequestParam String pass,
+                                   @RequestParam String nombre, @RequestParam String apellidos,
+                                   @RequestParam String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
         clienteDAO.save(cliente);
-        return "redirect:/login";
+        return "redirect:/inicio";
     }
 
-    @PostMapping("/registroRestaurante")
-    public String registrarRestaurante(@RequestParam String nombre, @RequestParam String cif, @RequestParam String email, @RequestParam String pass) {
+    @GetMapping("/restaurante")
+    public String showRegistroRestaurantePage() {
+        return "registroRestaurante";
+    }
+
+    @PostMapping("/restaurante")
+    public String registrarRestaurante(@RequestParam String email, @RequestParam String pass,
+                                       @RequestParam String nombre, @RequestParam String cif) {
         Restaurante restaurante = new Restaurante(email, pass, nombre, cif);
         restauranteDAO.save(restaurante);
-        return "redirect:/login";
+        return "redirect:/inicio";
     }
 
-    @PostMapping("/registroRepartidor")
-    public String registrarRepartidor(@RequestParam String nombre, @RequestParam String apellidos, @RequestParam String nif, @RequestParam String email, @RequestParam String pass) {
-        Repartidor repartidor = new Repartidor(email, pass, nombre, apellidos, nif, 0.0);
+    @GetMapping("/repartidor")
+    public String showRegistroRepartidorPage() {
+        return "registroRepartidor";
+    }
+
+    @PostMapping("/repartidor")
+    public String registrarRepartidor(@RequestParam String email, @RequestParam String pass,
+                                      @RequestParam String nombre, @RequestParam String apellidos,
+                                      @RequestParam String nif, @RequestParam Double eficiencia) {
+
+        Repartidor repartidor = new Repartidor(email, pass, nombre, apellidos, nif, eficiencia);
         repartidorDAO.save(repartidor);
-        return "redirect:/login";
+
+        return "redirect:/inicio";
     }
 }

@@ -5,16 +5,12 @@
   <title>Registro Restaurante</title>
 </head>
 <body>
-<h1>Registro de Restaurante</h1>
-<form action="/registro/registroRestaurante" method="POST">
-  <label for="nombre">Nombre:</label>
-  <input type="text" id="nombre" name="nombre" required><br>
-  <label for="cif">CIF:</label>
-  <input type="text" id="cif" name="cif" required><br>
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required><br>
-  <label for="pass">Contraseña:</label>
-  <input type="password" id="pass" name="pass" required><br>
+<h1>Registro Restaurante</h1>
+<form action="/registro/restaurante" method="post">
+  <input type="email" name="email" placeholder="Email" required>
+  <input type="password" name="pass" placeholder="Contraseña" required>
+  <input type="text" name="nombre" placeholder="Nombre del Restaurante" required>
+  <input type="text" name="cif" placeholder="CIF" required>
   <button type="submit">Registrarse</button>
 </form>
 </body>
