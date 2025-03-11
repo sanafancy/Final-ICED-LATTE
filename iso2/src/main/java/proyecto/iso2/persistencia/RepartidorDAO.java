@@ -1,4 +1,4 @@
-package proyecto.iso2.resistencia;
+package proyecto.iso2.persistencia;
 
 import proyecto.iso2.dominio.entidades.Repartidor;
 import org.springframework.data.jpa.repository.JpaRepository;

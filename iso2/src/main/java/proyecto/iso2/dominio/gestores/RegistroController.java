@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import proyecto.iso2.dominio.entidades.*;
-import proyecto.iso2.resistencia.*;
+import proyecto.iso2.persistencia.*;
 
 @Controller
 @RequestMapping("/registro")
