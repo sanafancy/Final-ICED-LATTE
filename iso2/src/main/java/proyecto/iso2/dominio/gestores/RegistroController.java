@@ -62,7 +62,7 @@ public class RegistroController {
     @PostMapping("/repartidor")
     public String registrarRepartidor(@RequestParam String email, @RequestParam String pass,
                                       @RequestParam String nombre, @RequestParam String apellidos,
-                                      @RequestParam String nif, @RequestParam Double eficiencia) {
+                                      @RequestParam String nif, @RequestParam int eficiencia) {
 
         Repartidor repartidor = new Repartidor(email, pass, nombre, apellidos, nif, eficiencia);
         repartidorDAO.save(repartidor);
