@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inicio</title>
+</head>
+<body>
+    <h1>¿Tienes hambre?</h1>
+    <button onclick="location.href='/registroOpciones'">Registrarse</button>
+    <button onclick="location.href='/login'">Iniciar Sesión</button>
+    <form action="/" method="get">
+        <input type="text" name="busqueda" placeholder="Nombre, Dirección, Código Postal o Municipio">
+        <button type="submit">Buscar</button>
+    </form>
+
+    <h2>Restaurantes Registrados:</h2>
+    <ul>
+        <li th:each="restaurante : ${restaurantes}">
+            <!--span th:text="${restaurante.nombre}">Nombre del Restaurante</span-->
+            <a th:href="@{${session.cliente != null ? '/restaurante/' + restaurante.idUsuario : '/clientes/login'}}"
+               th:text="${restaurante.nombre}">Nombre del Restaurante</a>
+            <ul>
+                <li>
+                    <span th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</span>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</body>
+</html>

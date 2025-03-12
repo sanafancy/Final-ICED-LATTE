@@ -26,7 +26,7 @@ public class LoginController {
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get(); //sistema consulta que tipo de usuario es en base a su email y pass
             if (usuario instanceof Cliente) {
-                return "ListadoRestaurantes";
+                return "inicio";
             } else if (usuario instanceof Restaurante) {
                 return "InicioRestaurante";
             } else if (usuario instanceof Repartidor) {
