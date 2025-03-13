@@ -38,4 +38,8 @@ public class RestauranteController {
         model.addAttribute("restaurantes", restaurantes);
         return "inicio";
     }
+    /*@GetMapping("/login")
+    public String login() {
+        return "login";
+    }*/
 }
