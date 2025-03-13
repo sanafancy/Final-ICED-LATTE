@@ -7,8 +7,14 @@
 </head>
 <body>
     <h1>¿Tienes hambre?</h1>
-    <button onclick="location.href='/registroOpciones'">Registrarse</button>
-    <button onclick="location.href='/login'">Iniciar Sesión</button>
+    <th:block th:if="${cliente == null}">
+        <button onclick="location.href='/registroOpciones'">Registrarse</button>
+        <button onclick="location.href='/login'">Iniciar Sesión</button>
+    </th:block>
+    <th:block th:if="${cliente != null}">
+        <p>Bienvenido, <span th:text="${cliente.nombre}"></span></p>
+        <button onclick="location.href='/logout'">Cerrar Sesión</button>
+    </th:block>
     <form action="/buscarRestaurante" method="get">
         <input type="text" name="busqueda" placeholder="Nombre, Dirección, Código Postal o Municipio">
         <button type="submit">Buscar</button>

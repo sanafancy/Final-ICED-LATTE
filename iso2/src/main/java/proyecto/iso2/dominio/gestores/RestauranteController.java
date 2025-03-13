@@ -1,9 +1,11 @@
 package proyecto.iso2.dominio.gestores;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import proyecto.iso2.dominio.entidades.Cliente;
 import proyecto.iso2.persistencia.RestauranteDAO;
 import proyecto.iso2.dominio.entidades.Restaurante;
 import java.util.List;
@@ -14,10 +16,15 @@ public class RestauranteController {
     private RestauranteDAO restauranteDAO;
 
     @GetMapping("/")
-    public String home(Model model) {
+    public String home(HttpSession session, Model model) {
         List<Restaurante> restaurantes = restauranteDAO.findAll();
         model.addAttribute("restaurantes", restaurantes);
-        return "inicio";  // Asegúrate de que la vista "inicio.html" esté en src/main/resources/templates/
+
+        Cliente cliente = (Cliente) session.getAttribute("cliente"); //recuperar cliente de la sesion
+        if (cliente != null) {
+            model.addAttribute("cliente", cliente);
+        }
+        return "inicio";
     }
     @GetMapping("/buscarRestaurante")
     public String buscarRestaurante(@RequestParam(required = false) String busqueda, Model model) {
