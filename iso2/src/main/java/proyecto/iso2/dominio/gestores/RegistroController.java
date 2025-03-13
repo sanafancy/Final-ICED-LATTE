@@ -49,7 +49,7 @@ public class RegistroController {
     @PostMapping("/restaurante")
     public String registrarRestaurante(@RequestParam String email, @RequestParam String pass,
                                        @RequestParam String nombre, @RequestParam String cif) {
-        Restaurante restaurante = new Restaurante(email, pass, nombre, cif, new Direccion());
+        Restaurante restaurante = new Restaurante(email, pass, nombre, cif);
         restauranteDAO.save(restaurante);
         return "redirect:/inicio";
     }
