@@ -2,10 +2,7 @@ version = 1
 
 [[analyzers]]
 name = "python"
-enabled = true
+enabled = false
 [[analyzers]]
 name = "java"
 enabled = true
-[[analyzers]]
-name = "go"
-enabled = false
