@@ -8,7 +8,7 @@
 <body>
     <h1>¿Tienes hambre?</h1>
     <th:block th:if="${cliente == null}">
-        <button onclick="location.href='/registroOpciones'">Registrarse</button>
+        <button onclick="location.href='/registro'">Registrarse</button>
         <button onclick="location.href='/login'">Iniciar Sesión</button>
     </th:block>
     <th:block th:if="${cliente != null}">
