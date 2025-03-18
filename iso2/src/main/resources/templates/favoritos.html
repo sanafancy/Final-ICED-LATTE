@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Favoritos</title>
+</head>
+<body>
+<h1>Mis Restaurantes Favoritos</h1>
+<ul>
+    <li th:each="restaurante : ${favoritos}">
+        <a th:href="@{'/restaurante/' + restaurante.idUsuario}" th:text="${restaurante.nombre}">Nombre del Restaurante</a>
+    </li>
+</ul>
+<a href="/">Volver al inicio</a>
+</body>
+</html>

@@ -9,6 +9,8 @@ import proyecto.iso2.dominio.entidades.Cliente;
 import proyecto.iso2.persistencia.ClienteDAO;
 import proyecto.iso2.persistencia.RestauranteDAO;
 import proyecto.iso2.dominio.entidades.Restaurante;
+
+import java.util.HashSet;
 import java.util.List;
 
 @Controller
@@ -21,6 +23,9 @@ public class RestauranteController {
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
+        List<Restaurante> restaurantes = restauranteDAO.findAll();
+        model.addAttribute("restaurantes", restaurantes);
+
         Cliente cliente = (Cliente) session.getAttribute("cliente");
 
         if (cliente != null) {
@@ -29,9 +34,6 @@ public class RestauranteController {
         } else {
             System.out.println("No hay sesión iniciada");
         }
-
-        List<Restaurante> restaurantes = restauranteDAO.findAll();
-        model.addAttribute("restaurantes", restaurantes);
 
         return "inicio";
     }
@@ -58,4 +60,29 @@ public class RestauranteController {
     public String login() {
         return "login";
     }*/
+    @PostMapping("/favorito/{id}")
+    public String toggleFavorito(@PathVariable Long id, HttpSession session) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente != null) {
+            Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
+            if (restaurante != null) {
+                if (cliente.getFavoritos().contains(restaurante)) {
+                    cliente.getFavoritos().remove(restaurante);
+                } else {
+                    cliente.getFavoritos().add(restaurante);
+                }
+                clienteDAO.save(cliente);  // Guardamos los cambios en la BD
+                session.setAttribute("cliente", cliente); // Actualizamos la sesión
+            }
+        }
+        return "redirect:/";
+    }
+    @GetMapping("/favoritos")
+    public String verFavoritos(HttpSession session, Model model) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente != null) {
+            model.addAttribute("favoritos", cliente.getFavoritos());
+        }
+        return "favoritos";
+    }
 }
