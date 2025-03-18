@@ -27,17 +27,22 @@ public class LoginController {
         Optional<Usuario> usuarioOpt = usuarioDAO.findByEmailAndPass(email, pass);
         if (usuarioOpt.isPresent()) {
             Usuario usuario = usuarioOpt.get(); //consulta tipo de usuario segun email y pass
+            sesion.setAttribute("usuario", usuario);
             if (usuario instanceof Cliente) {
                 sesion.setAttribute("cliente", usuario); //guardar sesion como cliente
+                System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
                 return "redirect:/";
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);
+                System.out.println("Sesión iniciada para Restaurante: " + usuario.getEmail());
                 return "InicioRestaurante";
             } else if (usuario instanceof Repartidor) {
                 sesion.setAttribute("repartidor", usuario);
+                System.out.println("Sesión iniciada para Repartidor: " + usuario.getEmail());
                 return "InicioRepartidor";
             }
         }
+        System.out.println("Error: Usuario no encontrado o credenciales incorrectas");
         return "redirect:/login?error=true";
     }
 
