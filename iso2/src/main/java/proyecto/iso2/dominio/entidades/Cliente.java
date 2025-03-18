@@ -1,6 +1,8 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -11,6 +13,13 @@ public class Cliente extends Usuario{
     private String apellidos;
     @Column
     private String dni;
+    @ManyToMany
+    @JoinTable( //creamos una tabla diferente
+            name = "cliente_favoritos",
+            joinColumns = @JoinColumn(name = "cliente_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurante_id")
+    )
+    private List<Restaurante> favoritos = new ArrayList<>();
 
     public Cliente() {}
 
@@ -45,6 +54,14 @@ public class Cliente extends Usuario{
 
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public List<Restaurante> getFavoritos() {
+        return favoritos;
+    }
+
+    public void setFavoritos(List<Restaurante> favoritos) {
+        this.favoritos = favoritos;
     }
 
     @Override
