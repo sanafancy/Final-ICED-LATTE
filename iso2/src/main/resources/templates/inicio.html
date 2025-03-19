@@ -32,10 +32,10 @@
             </ul>
 
             <!-- Boton para marcar favorito -->
-            <form th:action="@{'/restaurantes/favorito/' + restaurante.idUsuario}" method="post">
+            <form th:action="@{/restaurantes/favorito/{id}(id=${restaurante.idUsuario})}" method="post">
                 <button type="submit">
-                    <span th:if="${cliente != null and cliente.favoritos != null and #lists.contains(cliente.favoritos, restaurante)}" th:text="'★'"></span>
-                    <span th:if="${cliente != null and cliente.favoritos != null and !#lists.contains(cliente.favoritos, restaurante)}" th:text="'☆'"></span>
+                    <span th:if="${cliente != null and cliente.favoritos != null and #lists.contains(cliente.favoritos, restaurante)}" th:text="'Favorito'"></span>
+                    <span th:if="${cliente != null and cliente.favoritos != null and !#lists.contains(cliente.favoritos, restaurante)}" th:text="'Marcar favorito'"></span>
                 </button>
             </form>
         </li>

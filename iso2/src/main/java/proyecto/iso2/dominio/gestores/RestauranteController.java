@@ -9,9 +9,11 @@ import proyecto.iso2.dominio.entidades.Cliente;
 import proyecto.iso2.persistencia.ClienteDAO;
 import proyecto.iso2.persistencia.RestauranteDAO;
 import proyecto.iso2.dominio.entidades.Restaurante;
+import proyecto.iso2.persistencia.UsuarioDAO;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RestauranteController {
@@ -19,7 +21,7 @@ public class RestauranteController {
     private RestauranteDAO restauranteDAO;
 
     @Autowired
-    private ClienteDAO clienteDAO;
+    private UsuarioDAO usuarioDAO;
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
@@ -64,15 +66,16 @@ public class RestauranteController {
     public String toggleFavorito(@PathVariable Long id, HttpSession session) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente != null) {
-            Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
-            if (restaurante != null) {
+            //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
+            Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
+            if (restauranteOpt.isPresent()) {
+                Restaurante restaurante = restauranteOpt.get();
                 if (cliente.getFavoritos().contains(restaurante)) {
                     cliente.getFavoritos().remove(restaurante);
                 } else {
                     cliente.getFavoritos().add(restaurante);
                 }
-                clienteDAO.save(cliente);  // Guardamos los cambios en la BD
-                session.setAttribute("cliente", cliente); // Actualizamos la sesión
+                usuarioDAO.save(cliente);
             }
         }
         return "redirect:/";
