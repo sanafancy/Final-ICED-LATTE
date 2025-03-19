@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Direcciones</title>
+</head>
+<body>
+<h1>Direcciones del Restaurante</h1>
+<button onclick="location.href='/añadirDireccion'">Añadir Dirección</button>
+<button onclick="location.href='/eliminarDireccion'">Eliminar Dirección</button>
+<h2>Direcciones:</h2>
+<ul>
+    <!-- Listar direcciones -->
+    <li th:each="direccion : ${direcciones}">
+        <span th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}">Dirección</span>
+    </li>
+</ul>
+</body>
+</html>

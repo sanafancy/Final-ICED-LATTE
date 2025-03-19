@@ -17,16 +17,26 @@ public class Direccion {
     private int codigoPostal;
     @Column
     private String municipio;
+    @ManyToOne
+    @JoinColumn(name = "restaurante_id")
+    private Restaurante restaurante;
 
     public Direccion() {    }
-    public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio) {
+    public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio, Restaurante restaurante) {
         this.calle = calle;
         this.numero = numero;
         this.complemento = complemento;
         this.codigoPostal = codigoPostal;
         this.municipio = municipio;
+        this.restaurante = restaurante;
     }
 
+    public Restaurante getRestaurante() {
+        return restaurante;
+    }
+    public void setRestaurante(Restaurante restaurante) {
+        this.restaurante = restaurante;
+    }
     public Long getId() {
         return id;
     }

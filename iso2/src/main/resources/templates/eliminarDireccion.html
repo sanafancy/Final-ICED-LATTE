@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Eliminar Dirección</title>
+</head>
+<body>
+<h1>Eliminar Dirección</h1>
+<form action="/eliminarDireccion" method="POST">
+    <label for="direccion">Dirección:</label>
+    <select id="direccion" name="direccion">
+        <!-- lista direccion -->
+        <option th:each="direccion : ${direcciones}" th:value="${direccion.id}" th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></option>
+    </select>
+    <button type="submit">Eliminar</button>
+</form>
+</body>
+</html>
