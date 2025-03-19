@@ -8,5 +8,4 @@ import java.util.List;
 
 @Repository
 public interface DireccionDAO extends JpaRepository<Direccion, Long> {
-    List<Direccion> findByRestaurante(Restaurante restaurante);
 }
