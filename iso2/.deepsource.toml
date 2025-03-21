@@ -1,8 +1,5 @@
 version = 1
 
 [[analyzers]]
-name = "python"
-enabled = false
-[[analyzers]]
 name = "java"
 enabled = true
