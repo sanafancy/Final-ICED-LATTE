@@ -1,7 +1,7 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
-import java.util.List;
+
 @Entity
 public class Direccion {
     @Id
