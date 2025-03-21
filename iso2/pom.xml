@@ -32,7 +32,7 @@
 		<sonar.organization>sanafancy</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.projectKey>sanafancy_Final-ICED-LATTE</sonar.projectKey>
-		<sonar.login>d7324deb67819bcde21d2016a9890f65f7c81906</sonar.login>
+
 	</properties>
 	<dependencies>
 		<dependency>
