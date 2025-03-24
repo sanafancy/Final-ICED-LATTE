@@ -80,12 +80,16 @@ public class RestauranteController {
         }
         return "redirect:/";
     }
-    @GetMapping("/favoritos")
+    @GetMapping("/restaurantes/favoritos")
     public String verFavoritos(HttpSession session, Model model) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
-        if (cliente != null) {
-            model.addAttribute("favoritos", cliente.getFavoritos());
+
+        if (cliente == null) {
+            return "redirect:/login"; // Si no hay sesión, redirigir a login
         }
-        return "favoritos";
+
+        model.addAttribute("favoritos", cliente.getFavoritos());
+        return "favoritos"; // Página donde mostraremos la lista de favoritos
     }
+
 }
