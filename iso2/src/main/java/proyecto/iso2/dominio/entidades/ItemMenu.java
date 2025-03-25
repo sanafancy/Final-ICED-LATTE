@@ -14,12 +14,16 @@ public class ItemMenu {
     private double precio;
     @Column
     private String tipo;
+    @ManyToOne
+    @JoinColumn(name = "carta_menu_id")
+    private CartaMenu cartaMenu;
     //Constructor
     public ItemMenu(){}
-    public ItemMenu(String nombre, double precio,String tipo) {
+    public ItemMenu(String nombre, double precio,String tipo, CartaMenu cartaMenu) {
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
+        this.cartaMenu = cartaMenu;
     }
 
     //Getters y Setters
@@ -48,9 +52,15 @@ public class ItemMenu {
     public String getTipo() {
         return tipo;
     }
-
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public CartaMenu getCartaMenu() {
+        return cartaMenu;
+    }
+    public void setCartaMenu(CartaMenu cartaMenu) {
+        this.cartaMenu = cartaMenu;
     }
 
     @Override

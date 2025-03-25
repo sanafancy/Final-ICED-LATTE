@@ -9,4 +9,5 @@ import java.util.List;
 
 @Repository
 public interface CartaMenuDAO extends JpaRepository<CartaMenu, Long> {
+    List<CartaMenu> findByRestaurante(Restaurante restaurante);
 }
