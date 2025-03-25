@@ -97,6 +97,6 @@ public class CartaMenuController {
     @PostMapping("/editar/{cartaId}/eliminarItem/{itemId}")
     public String eliminarItem(@PathVariable Long cartaId, @PathVariable Long itemId) {
         itemMenuDAO.deleteById(itemId);
-        return "redirect:/cartas/editar/" + cartaId;
+        return "redirect:/InicioRestaurante/" + cartaId;
     }
 }

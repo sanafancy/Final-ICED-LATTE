@@ -60,6 +60,23 @@ public class RestauranteController {
     }
 
     //anadir menu, item y dirección
+    @GetMapping("/inicioRestaurante")
+    public String inicioRestaurante(HttpSession session, Model model) {
+        Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
 
+        if (restaurante != null) {
+            System.out.println("Restaurante autenticado: " + restaurante.getEmail());
+            model.addAttribute("restaurante", restaurante);
+
+            // listar cartas existentes
+            List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+            model.addAttribute("cartas", cartas);
+        } else {
+            System.out.println("No hay sesión iniciada para restaurante");
+            return "redirect:/login";
+        }
+
+        return "inicioRestaurante";
+    }
 
 }
