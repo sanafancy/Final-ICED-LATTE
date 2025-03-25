@@ -8,10 +8,10 @@ public class CartaMenu {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
+    @Column(nullable = false)
     private String nombre;
     @ManyToOne
-    @JoinColumn(name = "restaurante_id")
+    @JoinColumn(name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
     @OneToMany(mappedBy = "cartaMenu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemMenu> items;
@@ -23,6 +23,10 @@ public class CartaMenu {
         this.restaurante = restaurante;
     }
     // los getters y setters
+    public Long getId() {
+        return id;
+    }
+
     public String getNombre() {
         return nombre;
     }

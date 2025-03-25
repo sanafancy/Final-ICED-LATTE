@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Cartas</title>
+</head>
+<body>
+    <h1>Cartas disponibles</h1>
+    <ul>
+        <li th:each="carta : ${cartas}">
+            <span th:text="${carta.nombre}"></span>
+            <a th:href="@{/cartas/editar/{id}(id=${carta.id})}">Editar</a>
+        </li>
+    </ul>
+
+    <a href="/cartas/crear">Crear Nueva Carta</a>
+    <a href="/">Volver a Inicio</a>
+</body>
+</html>
