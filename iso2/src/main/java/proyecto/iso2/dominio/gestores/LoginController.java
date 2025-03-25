@@ -10,6 +10,8 @@ import proyecto.iso2.dominio.entidades.Cliente;
 import proyecto.iso2.dominio.entidades.Restaurante;
 import proyecto.iso2.dominio.entidades.Repartidor;
 import proyecto.iso2.persistencia.UsuarioDAO;
+
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -28,8 +30,16 @@ public class LoginController {
             Usuario usuario = usuarioOpt.get(); //consulta tipo de usuario segun email y pass
             sesion.setAttribute("usuario", usuario);
             if (usuario instanceof Cliente) {
+                Cliente cliente = (Cliente) usuario;
+                System.out.println("Cliente autenticado: " + cliente.getEmail());
+                if (cliente.getFavoritos() == null) {
+                    System.out.println("Favoritos es NULL. Inicializando...");
+                    cliente.setFavoritos(new ArrayList<>());
+                }
+                System.out.println("Favoritos del cliente: " + cliente.getFavoritos());
+
                 sesion.setAttribute("cliente", usuario); //guardar sesion como cliente
-                System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
+                //System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
                 return "redirect:/";
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);

@@ -3,6 +3,10 @@ package proyecto.iso2.dominio.entidades;
 import jakarta.persistence.*;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 @Entity
 public class Cliente extends Usuario{
     @Column
@@ -11,6 +15,13 @@ public class Cliente extends Usuario{
     private String apellidos;
     @Column
     private String dni;
+    @ManyToMany(fetch = FetchType.EAGER) //Cargar la relación inmediatamente
+    @JoinTable(
+            name = "cliente_favoritos",
+            joinColumns = @JoinColumn(name = "cliente_id"),
+            inverseJoinColumns = @JoinColumn(name = "restaurante_id")
+    )
+    private List<Restaurante> favoritos = new ArrayList<>(); //creamos una nueva tabla lista usuario - favorito
 
     public Cliente() {}
 
@@ -45,6 +56,17 @@ public class Cliente extends Usuario{
 
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public List<Restaurante> getFavoritos() {
+        if (favoritos == null) {
+            favoritos = new ArrayList<>();
+        }
+        return favoritos;
+    }
+
+    public void setFavoritos(List<Restaurante> favoritos) {
+        this.favoritos = favoritos != null ? favoritos : new ArrayList<>();
     }
 
     @Override

@@ -19,18 +19,27 @@
         <input type="text" name="busqueda" placeholder="Nombre, Dirección, Código Postal o Municipio">
         <button type="submit">Buscar</button>
     </form>
-
+    <div th:if="${cliente != null}">
+        <a th:href="@{/restaurantes/favoritos}" class="btn btn-primary">Ver Favoritos</a>
+    </div>
     <h2>Restaurantes Registrados:</h2>
     <ul>
         <li th:each="restaurante : ${restaurantes}">
-            <!--span th:text="${restaurante.nombre}">Nombre del Restaurante</span-->
-            <a th:href="@{${session.cliente != null ? '/restaurante/' + restaurante.idUsuario : '/login'}}"
+            <a th:href="${session.cliente != null} ? '/restaurante/' + ${restaurante.idUsuario} : '/login'"
                th:text="${restaurante.nombre}">Nombre del Restaurante</a>
             <ul>
                 <li>
-                    <span th:text="${restaurante.direccion.calle + ', '+ restaurante.direccion.numero + ', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</span>
+                    <span th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</span>
                 </li>
             </ul>
+
+            <!-- Boton para marcar favorito -->
+            <form th:action="@{/restaurantes/favorito/{id}(id=${restaurante.idUsuario})}" method="post">
+                <button type="submit">
+                    <span th:if="${cliente != null and cliente.favoritos != null and #lists.contains(cliente.favoritos, restaurante)}" th:text="'Favorito'"></span>
+                    <span th:if="${cliente != null and cliente.favoritos != null and !#lists.contains(cliente.favoritos, restaurante)}" th:text="'Marcar favorito'"></span>
+                </button>
+            </form>
         </li>
     </ul>
 </body>

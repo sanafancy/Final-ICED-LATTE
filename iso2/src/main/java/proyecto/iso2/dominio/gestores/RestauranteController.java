@@ -5,9 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
+
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 public class RestauranteController {
@@ -21,10 +24,13 @@ public class RestauranteController {
     private DireccionDAO direccionDAO;
 
     @Autowired
-    private ClienteDAO clienteDAO;
+    private UsuarioDAO usuarioDAO;
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
+        List<Restaurante> restaurantes = restauranteDAO.findAll();
+        model.addAttribute("restaurantes", restaurantes);
+
         Cliente cliente = (Cliente) session.getAttribute("cliente");
 
         if (cliente != null) {
@@ -33,9 +39,6 @@ public class RestauranteController {
         } else {
             System.out.println("No hay sesión iniciada");
         }
-
-        List<Restaurante> restaurantes = restauranteDAO.findAll();
-        model.addAttribute("restaurantes", restaurantes);
 
         return "inicio";
     }
@@ -79,4 +82,38 @@ public class RestauranteController {
         return "inicioRestaurante";
     }
 
+    /*@GetMapping("/login")
+    public String login() {
+        return "login";
+    }*/
+        @PostMapping("/favorito/{id}")
+        public String toggleFavorito (@PathVariable Long id, HttpSession session){
+            Cliente cliente = (Cliente) session.getAttribute("cliente");
+            if (cliente != null) {
+                //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
+                Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
+                if (restauranteOpt.isPresent()) {
+                    Restaurante restaurante = restauranteOpt.get();
+                    if (cliente.getFavoritos().contains(restaurante)) {
+                        cliente.getFavoritos().remove(restaurante);
+                    } else {
+                        cliente.getFavoritos().add(restaurante);
+                    }
+                    usuarioDAO.save(cliente);
+                }
+            }
+            return "redirect:/";
+        }
+        @GetMapping("/restaurantes/favoritos")
+        public String verFavoritos (HttpSession session, Model model){
+            Cliente cliente = (Cliente) session.getAttribute("cliente");
+
+            if (cliente == null) {
+                return "redirect:/login"; // Si no hay sesión, redirigir a login
+            }
+
+            model.addAttribute("favoritos", cliente.getFavoritos());
+            return "favoritos"; // Página donde mostraremos la lista de favoritos
+
+        }
 }
