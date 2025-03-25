@@ -5,16 +5,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-import proyecto.iso2.dominio.entidades.Cliente;
-import proyecto.iso2.persistencia.ClienteDAO;
-import proyecto.iso2.persistencia.RestauranteDAO;
-import proyecto.iso2.dominio.entidades.Restaurante;
+import proyecto.iso2.dominio.entidades.*;
+import proyecto.iso2.persistencia.*;
 import java.util.List;
 
 @Controller
 public class RestauranteController {
     @Autowired
     private RestauranteDAO restauranteDAO;
+    @Autowired
+    private CartaMenuDAO cartaMenuDAO;
+    @Autowired
+    private ItemMenuDAO itemMenuDAO;
+    @Autowired
+    private DireccionDAO direccionDAO;
 
     @Autowired
     private ClienteDAO clienteDAO;
@@ -54,8 +58,25 @@ public class RestauranteController {
         model.addAttribute("restaurantes", restaurantes);
         return "inicio";
     }
-    /*@GetMapping("/login")
-    public String login() {
-        return "login";
-    }*/
+
+    //anadir menu, item y dirección
+    @GetMapping("/inicioRestaurante")
+    public String inicioRestaurante(HttpSession session, Model model) {
+        Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
+
+        if (restaurante != null) {
+            System.out.println("Restaurante autenticado: " + restaurante.getEmail());
+            model.addAttribute("restaurante", restaurante);
+
+            // listar cartas existentes
+            List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+            model.addAttribute("cartas", cartas);
+        } else {
+            System.out.println("No hay sesión iniciada para restaurante");
+            return "redirect:/login";
+        }
+
+        return "inicioRestaurante";
+    }
+
 }

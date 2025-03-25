@@ -5,6 +5,28 @@
     <title>Inicio Restaurante</title>
 </head>
 <body>
-<h1>Bienvenido al Inicio del Restaurante</h1>
+    <h1>Bienvenido al Inicio del Restaurante</h1>
+
+    <button onclick="location.href='/cartas/crear'">Crear Carta</button>
+    <button onclick="location.href='/direcciones'">Editar Dirección</button>
+    <button onclick="location.href='/eliminarRestaurante'">Eliminar Restaurante</button>
+
+    <h2>Cartas Existentes</h2>
+    <ul>
+        <li th:each="carta : ${cartas}">
+            <span th:text="${carta.nombre}"></span>
+            <!--a th:href="@{/cartas/editar/{id}(id=${carta.id})}">Ver y Editar</a>
+            <a th:href="@{/eliminarCarta/{id}(id=${carta.id})}" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</a-->
+            <form th:action="@{/cartas/editar/{id}(id=${carta.id})}" method="get" style="display:inline;">
+                <button type="submit">Ver y Editar</button>
+            </form>
+            <form th:action="@{/cartas/eliminar/{id}(id=${carta.id})}" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</button>
+            </form>
+        </li>
+    </ul>
+    <th:block th:if="${restaurante != null}">
+        <button onclick="location.href='/logout'">Cerrar Sesión</button>
+    </th:block>
 </body>
 </html>

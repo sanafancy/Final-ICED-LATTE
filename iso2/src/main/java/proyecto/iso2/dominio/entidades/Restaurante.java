@@ -9,7 +9,7 @@ public class Restaurante extends Usuario{
     private String nombre;
     @Column
     private String cif;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Direccion direccion;
 
     public Restaurante() {}
