@@ -31,3 +31,8 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Ignorar archivos de la base de datos ###
+/data/mybbdd.mv.db
+/data/mybbdd.trace.db
+/data/
