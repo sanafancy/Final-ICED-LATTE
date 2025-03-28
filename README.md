@@ -31,7 +31,7 @@ Usamos Notion para la gestión del flujo de trabajo en el tablero Kanban con las
 
 ## 📌 Contacto
 📧 Correos:
-Tingting.Xu@alu.uclm.es
-DacilNaomi.Jara@alu.uclm.es
-Ingrid.Niveiro@alu.uclm.es
-Zineb.Elouaazizi@alu.uclm.es
+- Tingting.Xu@alu.uclm.es
+- DacilNaomi.Jara@alu.uclm.es
+- Ingrid.Niveiro@alu.uclm.es
+- Zineb.Elouaazizi@alu.uclm.es
