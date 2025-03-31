@@ -22,6 +22,8 @@ public class Cliente extends Usuario{
             inverseJoinColumns = @JoinColumn(name = "restaurante_id")
     )
     private List<Restaurante> favoritos = new ArrayList<>(); //creamos una nueva tabla lista usuario - favorito
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos;
 
     public Cliente() {}
 
@@ -64,9 +66,15 @@ public class Cliente extends Usuario{
         }
         return favoritos;
     }
-
     public void setFavoritos(List<Restaurante> favoritos) {
         this.favoritos = favoritos != null ? favoritos : new ArrayList<>();
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
     }
 
     @Override

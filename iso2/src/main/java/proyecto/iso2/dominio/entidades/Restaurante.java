@@ -2,6 +2,8 @@ package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 
 @Entity
 public class Restaurante extends Usuario{
@@ -11,6 +13,8 @@ public class Restaurante extends Usuario{
     private String cif;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Direccion direccion;
+    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos;
 
     public Restaurante() {}
     // Constructor
@@ -38,6 +42,13 @@ public class Restaurante extends Usuario{
 
     public Direccion getDireccion() {return direccion;}
     public void setDireccion(Direccion direccion) {this.direccion = direccion;}
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
 
     @Override
     public String toString() {
