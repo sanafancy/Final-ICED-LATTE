@@ -38,7 +38,7 @@ public class RegistroController {
                                    @RequestParam String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
         clienteDAO.save(cliente);
-        return "redirect:/inicio";
+        return "redirect:/";
     }
 
     @GetMapping("/restaurante")
@@ -51,7 +51,7 @@ public class RegistroController {
                                        @RequestParam String nombre, @RequestParam String cif) {
         Restaurante restaurante = new Restaurante(email, pass, nombre, cif, new Direccion());
         restauranteDAO.save(restaurante);
-        return "redirect:/inicio";
+        return "redirect:/";
     }
 
     @GetMapping("/repartidor")
@@ -67,6 +67,6 @@ public class RegistroController {
         Repartidor repartidor = new Repartidor(email, pass, nombre, apellidos, nif, eficiencia);
         repartidorDAO.save(repartidor);
 
-        return "redirect:/inicio";
+        return "redirect:/";
     }
 }
