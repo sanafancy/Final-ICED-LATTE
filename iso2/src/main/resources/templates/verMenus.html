@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>¡Realiza tu pedido!</title>
+</head>
+<body>
+<h1>¡Realiza tu pedido!</h1>
+
+    <form action="/pedidos/confirmar" method="post">
+        <input type="hidden" th:if="${cliente != null}" th:value="${cliente.idUsuario}">
+        <input type="hidden" name="restauranteId" th:value="${restaurante.idUsuario}" />
+
+        <h2>Menús de <span th:text="${restaurante.nombre}"></span></h2>
+
+        <div th:if="${cartas != null and not #lists.isEmpty(cartas)}">
+            <ul>
+                <li th:each="carta : ${cartas}">
+                    <h3 th:text="${carta.nombre}">Nombre de la Carta</h3>
+                    <ul th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
+                        <li th:each="item : ${carta.items}">
+                            <span th:text="${item.nombre}"></span> -
+                            <span th:text="'€' + ${item.precio}"></span>
+                            <button th:attr="onclick='añadirAlCarrito(' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ')'">
+                                Añadir al carrito
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <p th:if="${cartas == null or #lists.isEmpty(cartas)}">No hay menús disponibles.</p>
+    </form>
+</body>
+</html>

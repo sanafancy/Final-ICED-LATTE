@@ -3,6 +3,7 @@ package proyecto.iso2.dominio.entidades;
 import jakarta.persistence.*;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -18,8 +19,10 @@ public class Pedido {
     private Restaurante restaurante;
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
+    @Enumerated(EnumType.STRING)
+    private MetodoPago metodoPago;
     @Column
-    private Date fecha;
+    private LocalDateTime fecha;
     @ManyToMany
     @JoinTable(
             name = "pedido_items",
@@ -62,10 +65,17 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public Date getFecha() {
+    public MetodoPago getMetodoPago() {
+        return metodoPago;
+    }
+    public void setMetodoPago(MetodoPago metodoPago) {
+        this.metodoPago = metodoPago;
+    }
+
+    public LocalDateTime getFecha() {
         return fecha;
     }
-    public void setFecha(Date fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 

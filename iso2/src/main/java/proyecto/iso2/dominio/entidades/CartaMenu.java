@@ -13,7 +13,7 @@ public class CartaMenu {
     @ManyToOne
     @JoinColumn(name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
-    @OneToMany(mappedBy = "cartaMenu", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cartaMenu", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<ItemMenu> items;
 
     public CartaMenu(){}

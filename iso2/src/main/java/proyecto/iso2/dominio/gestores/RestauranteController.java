@@ -86,34 +86,65 @@ public class RestauranteController {
     public String login() {
         return "login";
     }*/
-        @PostMapping("/favorito/{id}")
-        public String toggleFavorito (@PathVariable Long id, HttpSession session){
-            Cliente cliente = (Cliente) session.getAttribute("cliente");
+    @PostMapping("/favorito/{id}")
+    public String toggleFavorito (@PathVariable Long id, HttpSession session){
+         Cliente cliente = (Cliente) session.getAttribute("cliente");
             if (cliente != null) {
                 //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
-                Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
-                if (restauranteOpt.isPresent()) {
-                    Restaurante restaurante = restauranteOpt.get();
+              Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
+              if (restauranteOpt.isPresent()) {
+                 Restaurante restaurante = restauranteOpt.get();
                     if (cliente.getFavoritos().contains(restaurante)) {
                         cliente.getFavoritos().remove(restaurante);
                     } else {
                         cliente.getFavoritos().add(restaurante);
-                    }
-                    usuarioDAO.save(cliente);
-                }
-            }
-            return "redirect:/";
+                 }
+                 usuarioDAO.save(cliente);
+              }
+         }
+         return "redirect:/";
+    }
+    @GetMapping("/restaurantes/favoritos")
+    public String verFavoritos (HttpSession session, Model model){
+      Cliente cliente = (Cliente) session.getAttribute("cliente");
+
+        if (cliente == null) {
+           return "redirect:/login"; // Si no hay sesión, redirigir a login
         }
-        @GetMapping("/restaurantes/favoritos")
-        public String verFavoritos (HttpSession session, Model model){
-            Cliente cliente = (Cliente) session.getAttribute("cliente");
 
-            if (cliente == null) {
-                return "redirect:/login"; // Si no hay sesión, redirigir a login
-            }
+      model.addAttribute("favoritos", cliente.getFavoritos());
+      return "favoritos"; // Página donde mostraremos la lista de favoritos
+    }
+    @GetMapping("/restaurante/{id}")
+    public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
+        Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
 
-            model.addAttribute("favoritos", cliente.getFavoritos());
-            return "favoritos"; // Página donde mostraremos la lista de favoritos
-
+        if (restaurante == null) {
+            return "redirect:/"; //si no se encuentra restaurante, volver a inicio
         }
+
+        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+
+        for (CartaMenu carta : cartas) {
+            List<ItemMenu> items = itemMenuDAO.findByCartaMenu(carta);
+            carta.setItems(items);
+        }
+
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+
+        model.addAttribute("restaurante", restaurante);
+        model.addAttribute("cartas", cartas);
+        model.addAttribute("cliente", cliente);
+        //depurar:
+        System.out.println("Cartas encontradas: " + cartas.size());
+        for (CartaMenu carta : cartas) {
+            System.out.println("Carta: " + carta.getNombre());
+            List<ItemMenu> items = itemMenuDAO.findByCartaMenu(carta);
+            System.out.println("Items en " + carta.getNombre() + ": " + items.size());
+            for (ItemMenu item : items) {
+                System.out.println(" - " + item.getNombre() + ": " + item.getPrecio() + "€");
+            }
+        }
+        return "verMenus";
+    }
 }
