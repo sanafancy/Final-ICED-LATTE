@@ -1,13 +1,17 @@
 package proyecto.iso2.dominio.gestores;
 
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -46,7 +50,7 @@ public class PedidoController {
 
         return pedidoDAO.save(pedido);
     }
-    @GetMapping("/cliente/{clienteId}")
+    /*@GetMapping("/cliente/{clienteId}")
     public List<Pedido> obtenerPedidosCliente(@PathVariable Long clienteId) {
         Cliente cliente = clienteDAO.findById(clienteId).orElse(null);
         if (cliente == null) {
@@ -54,7 +58,7 @@ public class PedidoController {
         }
 
         return pedidoDAO.findByCliente(cliente);
-    }
+    }*/
     @GetMapping("/restaurante/{restauranteId}")
     public List<Pedido> obtenerPedidosRestaurante(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteDAO.findById(restauranteId).orElse(null);
@@ -63,6 +67,43 @@ public class PedidoController {
         }
 
         return pedidoDAO.findByRestaurante(restaurante);
-
     }
+    /*@PostMapping("/pedidos/confirmar")
+    @ResponseBody
+    public ResponseEntity<String> confirmarPedido(@RequestBody Map<Long, Map<String, Object>> carrito, HttpSession session) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+
+        if (cliente == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Debe iniciar sesión para hacer un pedido.");
+        }
+
+        Pedido pedido = new Pedido();
+        pedido.setCliente(cliente);
+        pedido.setFecha(LocalDateTime.now());
+        pedido.setEstado(EstadoPedido.PEDIDO);
+
+        List<DetallePedido> detalles = new ArrayList<>();
+
+        for (Map.Entry<Long, Map<String, Object>> entry : carrito.entrySet()) {
+            Long itemId = entry.getKey();
+            Map<String, Object> datosItem = entry.getValue();
+
+            Integer cantidad = (Integer) datosItem.get("cantidad");
+            if (cantidad > 0) {
+                ItemMenu item = itemMenuDAO.findById(itemId).orElse(null);
+                if (item != null) {
+                    DetallePedido detalle = new DetallePedido();
+                    detalle.setItem(item);
+                    detalle.setCantidad(cantidad);
+                    detalle.setPedido(pedido);
+                    detalles.add(detalle);
+                }
+            }
+        }
+
+        pedido.setDetalles(detalles);
+        pedidoDAO.save(pedido);
+
+        return ResponseEntity.ok("Pedido confirmado");
+    }*/
 }

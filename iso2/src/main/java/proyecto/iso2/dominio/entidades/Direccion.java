@@ -17,6 +17,9 @@ public class Direccion {
     private int codigoPostal;
     @Column
     private String municipio;
+    @ManyToOne
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
 
     public Direccion() {    }
     public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio) {
@@ -75,4 +78,6 @@ public class Direccion {
         this.municipio = municipio;
     }
 
+    public Cliente getCliente() {return cliente;}
+    public void setCliente(Cliente cliente) {this.cliente = cliente;}
 }

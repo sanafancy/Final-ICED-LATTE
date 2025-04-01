@@ -24,6 +24,8 @@ public class Cliente extends Usuario{
     private List<Restaurante> favoritos = new ArrayList<>(); //creamos una nueva tabla lista usuario - favorito
     @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    private List<Direccion> direcciones = new ArrayList<>();
 
     public Cliente() {}
 
@@ -32,6 +34,7 @@ public class Cliente extends Usuario{
         this.nombre = nombre;
         this.apellidos=apellidos;
         this.dni=dni;
+        this.direcciones=direcciones;
     }
 
     // Getters y Setters
@@ -75,6 +78,13 @@ public class Cliente extends Usuario{
     }
     public void setPedidos(List<Pedido> pedidos) {
         this.pedidos = pedidos;
+    }
+
+    public List<Direccion> getDirecciones() {
+        return direcciones;
+    }
+    public void setDirecciones(List<Direccion> direcciones) {
+        this.direcciones = direcciones;
     }
 
     @Override

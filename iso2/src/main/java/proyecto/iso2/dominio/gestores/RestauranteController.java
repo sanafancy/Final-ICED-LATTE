@@ -117,12 +117,11 @@ public class RestauranteController {
     }
     @GetMapping("/restaurante/{id}")
     public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
-        Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
-
-        if (restaurante == null) {
-            return "redirect:/"; //si no se encuentra restaurante, volver a inicio
+        Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
+        if (restauranteOpt.isEmpty()) {
+            return "redirect:/"; // Redirigir si el restaurante no existe
         }
-
+        Restaurante restaurante = restauranteOpt.get();
         List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
 
         for (CartaMenu carta : cartas) {
@@ -131,6 +130,9 @@ public class RestauranteController {
         }
 
         Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente != null) {
+            model.addAttribute("direcciones", cliente.getDirecciones());
+        }
 
         model.addAttribute("restaurante", restaurante);
         model.addAttribute("cartas", cartas);

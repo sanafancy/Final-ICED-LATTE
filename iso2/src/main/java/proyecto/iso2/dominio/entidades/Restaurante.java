@@ -12,6 +12,7 @@ public class Restaurante extends Usuario{
     @Column
     private String cif;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
     private Direccion direccion;
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;

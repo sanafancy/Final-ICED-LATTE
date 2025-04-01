@@ -1,36 +1,125 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>¡Realiza tu pedido!</title>
 </head>
 <body>
+
 <h1>¡Realiza tu pedido!</h1>
 
-    <form action="/pedidos/confirmar" method="post">
-        <input type="hidden" th:if="${cliente != null}" th:value="${cliente.idUsuario}">
-        <input type="hidden" name="restauranteId" th:value="${restaurante.idUsuario}" />
+<form onsubmit="event.preventDefault(); confirmarPedido();">
+    <select name="direccionId" th:if="${cliente != null && cliente.direcciones != null}">
+        <option th:each="direccion : ${cliente.direcciones}"
+                th:value="${direccion.id}"
+                th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
+        </option>
+    </select>
 
-        <h2>Menús de <span th:text="${restaurante.nombre}"></span></h2>
+    <h2>Menús de <span th:text="${restaurante.nombre}"></span></h2>
 
-        <div th:if="${cartas != null and not #lists.isEmpty(cartas)}">
-            <ul>
-                <li th:each="carta : ${cartas}">
-                    <h3 th:text="${carta.nombre}">Nombre de la Carta</h3>
-                    <ul th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
-                        <li th:each="item : ${carta.items}">
-                            <span th:text="${item.nombre}"></span> -
-                            <span th:text="'€' + ${item.precio}"></span>
-                            <button th:attr="onclick='añadirAlCarrito(' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ')'">
-                                Añadir al carrito
-                            </button>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+    <div th:if="${cartas != null and not #lists.isEmpty(cartas)}">
+        <ul>
+            <li th:each="carta : ${cartas}">
+                <h3 th:text="${carta.nombre}">Nombre de la Carta</h3>
+                <ul th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
+                    <li th:each="item : ${carta.items}">
+                        <span th:text="${item.nombre}"></span> -
+                        <span th:text="'€' + ${item.precio}"></span>
 
-        <p th:if="${cartas == null or #lists.isEmpty(cartas)}">No hay menús disponibles.</p>
-    </form>
+                        <!-- Botón quitar -->
+                        <button type="button"
+                                th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
+                        <!-- Cantidad en carrito, con otro id para reforzar interpolacion -->
+                        <span id="'cantidad-' + ${item.id}">0</span>
+                        <!-- Botón añadir -->
+                        <button type="button"
+                                th:attr="onclick='actualizarCarrito(1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">+</button>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <button id="continuarPedido" style="display: none;" onclick="confirmarPedido()">Continuar con el pedido</button>
+    <p id="total-precio">Total: €0.00</p>
+    <p th:if="${cartas == null or #lists.isEmpty(cartas)}">No hay menús disponibles.</p>
+</form>
+
+<!-- Implementación de JavaScript para el carrito -->
+<script>
+    let carrito = {}; // Como objeto
+
+    function actualizarCarrito(cambio, itemId, itemNombre, itemPrecio) {
+        console.log("📌 Actualizando carrito:", { cambio, itemId, itemNombre, itemPrecio });
+
+        if (!carrito[itemId]) {
+            carrito[itemId] = { nombre: itemNombre, precio: itemPrecio, cantidad: 0 };
+        }
+        carrito[itemId].cantidad += cambio;
+
+        // Evitar cantidades negativas
+        if (carrito[itemId].cantidad < 0) {carrito[itemId].cantidad = 0;}
+
+        // Actualizar cantidad en la interfaz,esperar al dom
+        setTimeout(() => {
+            //let cantidadElemento = document.getElementById(`cantidad-${itemId}`); "'cantidad-' + ${item.id}"
+            let cantidadElemento = document.getElementById("'cantidad-' + ${item.id}");
+            if (cantidadElemento) {
+                cantidadElemento.innerText = carrito[itemId].cantidad;
+                console.log(`✅ Se actualizó #cantidad-${itemId} a ${carrito[itemId].cantidad}`);
+            } else {
+                console.error(`❌ No se encontró el elemento #cantidad-${itemId}`);
+            }
+        }, 100);
+
+        // Calcular total
+        let total = Object.values(carrito).reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+        document.getElementById("total-precio").innerText = `Total: €${total.toFixed(2)}`;
+
+        // Verificar si hay al menos un item en el carrito para mostrar el botón
+        let hayItems = Object.values(carrito).some(item => item.cantidad > 0);
+        document.getElementById("continuarPedido").style.display = hayItems ? "block" : "none";
+
+        console.log("🛒 Carrito actualizado:", carrito);
+    }
+
+    function confirmarPedido() {
+        let clienteId = "[[${cliente != null ? cliente.idUsuario : ''}]]";
+        let restauranteId = "[[${restaurante.idUsuario}]]";
+        let direccionElement = document.querySelector("select[name='direccionId']");
+        let direccionId = direccionElement ? direccionElement.value : "";
+
+        let metodoPago = "PAYPAL"; // Ajustarlo dinámicamente si es necesario
+        let itemIds = Object.keys(carrito).filter(itemId => carrito[itemId].cantidad > 0);
+
+        if (clienteId.trim() === "" || (direccionElement && direccionId.trim() === "")) {
+            alert("Error: No se puede hacer el pedido sin un cliente y una dirección.");
+            return;
+        }
+
+        fetch('/pedidos/crear', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({
+                clienteId: clienteId,
+                restauranteId: restauranteId,
+                direccionId: direccionId,
+                metodoPago: metodoPago,
+                itemIds: itemIds.join(',')
+            })
+        })
+            .then(response => {
+                if (!response.ok) throw new Error("Error en la solicitud");
+                return response.json();
+            })
+            .then(data => {
+                alert("Pedido creado con éxito!");
+                window.location.href = "/pedidos/detalle";
+            })
+            .catch(error => console.error("Error al confirmar pedido:", error));
+    }
+</script>
+
 </body>
 </html>
