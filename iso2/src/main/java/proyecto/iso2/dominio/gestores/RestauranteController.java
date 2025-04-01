@@ -97,34 +97,43 @@ public class RestauranteController {
     public String login() {
         return "login";
     }*/
-        @PostMapping("/favorito/{id}")
-        public String toggleFavorito (@PathVariable Long id, HttpSession session){
-            Cliente cliente = (Cliente) session.getAttribute("cliente");
-            if (cliente != null) {
-                //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
-                Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
-                if (restauranteOpt.isPresent()) {
-                    Restaurante restaurante = restauranteOpt.get();
-                    if (cliente.getFavoritos().contains(restaurante)) {
-                        cliente.getFavoritos().remove(restaurante);
-                    } else {
-                        cliente.getFavoritos().add(restaurante);
-                    }
-                    usuarioDAO.save(cliente);
+    @PostMapping("/favorito/{id}")
+    public String toggleFavorito (@PathVariable Long id, HttpSession session){
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente != null) {
+            //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
+            Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
+            if (restauranteOpt.isPresent()) {
+                Restaurante restaurante = restauranteOpt.get();
+                if (cliente.getFavoritos().contains(restaurante)) {
+                    cliente.getFavoritos().remove(restaurante);
+                } else {
+                    cliente.getFavoritos().add(restaurante);
                 }
+                usuarioDAO.save(cliente);
             }
-            return "redirect:/";
         }
-        @GetMapping("/restaurantes/favoritos")
-        public String verFavoritos (HttpSession session, Model model){
-            Cliente cliente = (Cliente) session.getAttribute("cliente");
+        return "redirect:/";
+    }
+    @GetMapping("/restaurantes/favoritos")
+    public String verFavoritos (HttpSession session, Model model){
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
 
-            if (cliente == null) {
-                return "redirect:/login"; // Si no hay sesión, redirigir a login
-            }
-
-            model.addAttribute("favoritos", cliente.getFavoritos());
-            return "favoritos"; // Página donde mostraremos la lista de favoritos
-
+        if (cliente == null) {
+            return "redirect:/login"; // Si no hay sesión, redirigir a login
         }
+
+        model.addAttribute("favoritos", cliente.getFavoritos());
+        return "favoritos"; // Página donde mostraremos la lista de favoritos
+
+    }
+    @PostMapping("/eliminarRestaurante")
+    public String eliminarRestaurante(HttpSession session) {
+        Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
+        if (restaurante != null) {
+            restauranteDAO.delete(restaurante);
+            session.invalidate(); // Elimina la sesión
+        }
+        return "redirect:/"; // Redirige a la página de inicio
+    }
 }

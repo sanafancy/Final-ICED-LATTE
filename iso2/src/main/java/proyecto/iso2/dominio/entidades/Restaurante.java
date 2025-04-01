@@ -1,6 +1,8 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -9,8 +11,10 @@ public class Restaurante extends Usuario{
     private String nombre;
     @Column
     private String cif;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private Direccion direccion;
+    @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CartaMenu> cartas = new ArrayList<>();
 
     public Restaurante() {}
     // Constructor
