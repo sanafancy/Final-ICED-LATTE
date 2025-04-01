@@ -43,8 +43,12 @@ public class RestauranteController {
         return "inicio";
     }
     @GetMapping("/buscarRestaurante")
-    public String buscarRestaurante(@RequestParam(required = false) String busqueda, Model model) {
+    public String buscarRestaurante(@RequestParam(required = false) String busqueda,
+                                    HttpSession session,
+                                    Model model) {
         List<Restaurante> restaurantes;
+
+        // Procesar la búsqueda
         if (busqueda != null && !busqueda.isEmpty()) {
             restaurantes = restauranteDAO.findByNombreContainingIgnoreCase(busqueda);
             restaurantes.addAll(restauranteDAO.findByDireccion_CalleContainingIgnoreCase(busqueda));
@@ -59,6 +63,13 @@ public class RestauranteController {
             restaurantes = restauranteDAO.findAll();
         }
         model.addAttribute("restaurantes", restaurantes);
+
+        // Agregar el cliente al modelo si está en sesión
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente != null) {
+            model.addAttribute("cliente", cliente);
+        }
+
         return "inicio";
     }
 
