@@ -27,12 +27,13 @@
                         <span th:text="${item.nombre}"></span> -
                         <span th:text="'€' + ${item.precio}"></span>
 
-                        <!-- Botón quitar -->
+                        <!-- Boton quitar -->
                         <button type="button"
                                 th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
                         <!-- Cantidad en carrito, con otro id para reforzar interpolacion -->
-                        <span id="'cantidad-' + ${item.id}">0</span>
-                        <!-- Botón añadir -->
+                        <!--span id="'cantidad-' + ${item.id}">0</span-->
+                        <span th:id="|cantidad-${item.id}|">0</span>
+                        <!-- Boton añadir -->
                         <button type="button"
                                 th:attr="onclick='actualizarCarrito(1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">+</button>
                     </li>
@@ -63,8 +64,8 @@
 
         // Actualizar cantidad en la interfaz,esperar al dom
         setTimeout(() => {
-            //let cantidadElemento = document.getElementById(`cantidad-${itemId}`); "'cantidad-' + ${item.id}"
-            let cantidadElemento = document.getElementById("'cantidad-' + ${item.id}");
+            let cantidadElemento = document.getElementById(`cantidad-${itemId}`); //"'cantidad-' + ${item.id}"
+            //let cantidadElemento = document.getElementById("'cantidad-' + ${item.id}");
             if (cantidadElemento) {
                 cantidadElemento.innerText = carrito[itemId].cantidad;
                 console.log(`✅ Se actualizó #cantidad-${itemId} a ${carrito[itemId].cantidad}`);
