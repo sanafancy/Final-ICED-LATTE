@@ -16,7 +16,7 @@ Este repositorio contiene el código fuente del sistema de gestión de pedidos y
 ## 🛠️ Tecnologías Utilizadas
 - **Backend**: Java con Spring Boot
 - **Frontend**: HTML, CSS, JavaScript
-- **Base de datos**: 
+- **Base de datos**: H2
 - **Control de versiones**: GitHub
 - **Calidad del código**: SonarCloud
 - **Gestión de tareas**: Notion
