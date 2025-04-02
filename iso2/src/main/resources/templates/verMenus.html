@@ -9,7 +9,7 @@
 <h1>¡Realiza tu pedido!</h1>
 
 <form onsubmit="event.preventDefault(); confirmarPedido();">
-    <select name="direccionId" th:if="${cliente != null && cliente.direcciones != null}">
+    <select name="direccionId" th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}">
         <option th:each="direccion : ${cliente.direcciones}"
                 th:value="${direccion.id}"
                 th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
@@ -30,8 +30,6 @@
                         <!-- Boton quitar -->
                         <button type="button"
                                 th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
-                        <!-- Cantidad en carrito, con otro id para reforzar interpolacion -->
-                        <!--span id="'cantidad-' + ${item.id}">0</span-->
                         <span th:id="|cantidad-${item.id}|">0</span>
                         <!-- Boton añadir -->
                         <button type="button"
@@ -62,10 +60,9 @@
         // Evitar cantidades negativas
         if (carrito[itemId].cantidad < 0) {carrito[itemId].cantidad = 0;}
 
-        // Actualizar cantidad en la interfaz,esperar al dom
+        // Actualizar cantidad en la interfaz,esperar al dom con el timeout
         setTimeout(() => {
-            let cantidadElemento = document.getElementById(`cantidad-${itemId}`); //"'cantidad-' + ${item.id}"
-            //let cantidadElemento = document.getElementById("'cantidad-' + ${item.id}");
+            let cantidadElemento = document.getElementById(`cantidad-${itemId}`); 
             if (cantidadElemento) {
                 cantidadElemento.innerText = carrito[itemId].cantidad;
                 console.log(`✅ Se actualizó #cantidad-${itemId} a ${carrito[itemId].cantidad}`);

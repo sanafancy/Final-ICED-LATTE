@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
@@ -68,6 +69,17 @@ public class PedidoController {
 
         return pedidoDAO.findByRestaurante(restaurante);
     }
+    @GetMapping("/verMenus")
+    public String verMenus(Model model, @AuthenticationPrincipal Cliente cliente) {
+        if (cliente != null) {
+            // Asegura que las direcciones están cargadas
+            List<Direccion> direcciones = cliente.getDirecciones();
+            System.out.println("Direcciones del cliente: " + direcciones);
+            model.addAttribute("cliente", cliente);
+        }
+        return "verMenus";
+    }
+
     /*@PostMapping("/pedidos/confirmar")
     @ResponseBody
     public ResponseEntity<String> confirmarPedido(@RequestBody Map<Long, Map<String, Object>> carrito, HttpSession session) {
