@@ -5,7 +5,7 @@ Somos un equipo de cuatro desarrolladores que trabajamos en la misma empresa y g
 
 ### 📌 Miembros del Equipo
 - **Dacil Naomi Jara**
-- **Ting Ting Xu**
+- **Tingting Xu**
 - **Ingrid Niveiro Ben**
 - **Zineb Elouaazizi**
 
