@@ -73,6 +73,9 @@
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
+						<configuration>
+							<destFile>${project.build.directory}/jacoco.exec</destFile>
+						</configuration>
 					</execution>
 					<execution>
 						<id>report</id>
@@ -80,12 +83,11 @@
 						<goals>
 							<goal>report</goal>
 						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+						</configuration>
 					</execution>
 				</executions>
-				<configuration>
-					<outputDirectory>${project.build.directory}</outputDirectory>
-					<dataFile>${project.build.directory}/jacoco.exec</dataFile>
-				</configuration>
 			</plugin>
 
 			<plugin>
