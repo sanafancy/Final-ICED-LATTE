@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Confirmar Pedido</title>
+</head>
+<body>
+  <h2>Confirmar Pedido</h2>
+
+  <p><strong>Cliente:</strong> <span th:text="${cliente.nombre}"></span></p>
+  <!--p><strong>Dirección:</strong> <span th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}"></span></p-->
+  <select name="direccionId" id="direccionSelect"
+          th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}"
+          onchange="actualizarDireccionSeleccionada()">
+    <option th:each="direccion : ${cliente.direcciones}"
+            th:value="${direccion.id}"
+            th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
+    </option>
+  </select>
+
+  <h3>Resumen del pedido:</h3>
+  <ul>
+    <li th:each="item : ${itemsPedido}">
+      <span th:text="${item.nombre}"></span> -
+      <span th:text="'€' + ${item.precio}"></span>
+    </li>
+  </ul>
+
+  <h3>Total: <span th:text="'€' + ${total}"></span></h3>
+
+  <h3>Método de Pago</h3>
+    <!--form action="/confirmarPedido" method="POST">
+      <input type="hidden" name="clienteId" th:value="${cliente.idUsuario}" />
+      <input type="hidden" name="direccionId" th:value="${direccion.id}" />
+      <div>
+        <h2>Confirmar Pedido</h2>
+        <p>Cliente: <span th:text="${cliente.nombre}"></span></p>
+        <p>Dirección: <span th:text="${direccion.calle}"></span></p>
+
+        <h3>Items del Pedido</h3>
+        <ul>
+          <li th:each="item : ${itemsPedido}">
+            <span th:text="${item.nombre}"></span> -
+            <span th:text="'€' + ${item.precio}"></span>
+          </li>
+        </ul>
+
+        <p>Total: <span th:text="${total}"></span></p>
+
+        <h3>Método de pago</h3>
+        <select name="metodoPago">
+          <option th:each="metodo : ${metodosPago}" th:value="${metodo}" th:text="${metodo}"></option>
+        </select>
+
+        <button type="submit">Proceder al Pago</button>
+      </div>
+    </form-->
+
+</body>
+</html>

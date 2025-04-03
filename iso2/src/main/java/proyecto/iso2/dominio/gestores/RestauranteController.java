@@ -136,4 +136,38 @@ public class RestauranteController {
         }
         return "redirect:/"; // Redirige a la página de inicio
     }
+    @GetMapping("/restaurante/{id}")
+    public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
+        Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
+        if (restauranteOpt.isEmpty()) {
+            return "redirect:/"; // Redirigir si el restaurante no existe
+        }
+        Restaurante restaurante = restauranteOpt.get();
+        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+
+        for (CartaMenu carta : cartas) {
+            List<ItemMenu> items = itemMenuDAO.findByCartaMenu(carta);
+            carta.setItems(items);
+        }
+
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente != null) {
+            model.addAttribute("direcciones", cliente.getDirecciones());
+        }
+
+        model.addAttribute("restaurante", restaurante);
+        model.addAttribute("cartas", cartas);
+        model.addAttribute("cliente", cliente);
+        //depurar:
+        System.out.println("Cartas encontradas: " + cartas.size());
+        for (CartaMenu carta : cartas) {
+            System.out.println("Carta: " + carta.getNombre());
+            List<ItemMenu> items = itemMenuDAO.findByCartaMenu(carta);
+            System.out.println("Items en " + carta.getNombre() + ": " + items.size());
+            for (ItemMenu item : items) {
+                System.out.println(" - " + item.getNombre() + ": " + item.getPrecio() + "€");
+            }
+        }
+        return "verMenus";
+    }
 }

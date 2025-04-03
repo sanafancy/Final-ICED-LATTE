@@ -22,6 +22,15 @@ public class Cliente extends Usuario{
             inverseJoinColumns = @JoinColumn(name = "restaurante_id")
     )
     private List<Restaurante> favoritos = new ArrayList<>(); //creamos una nueva tabla lista usuario - favorito
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL)
+    private List<Pedido> pedidos;
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "direccion_cliente",  // Nombre de la tabla intermedia
+            joinColumns = @JoinColumn(name = "cliente_id"),
+            inverseJoinColumns = @JoinColumn(name = "direccion_id")
+    )
+    private List<Direccion> direcciones = new ArrayList<>();
 
     public Cliente() {}
 
@@ -30,6 +39,7 @@ public class Cliente extends Usuario{
         this.nombre = nombre;
         this.apellidos=apellidos;
         this.dni=dni;
+        this.direcciones=direcciones;
     }
 
     // Getters y Setters
@@ -64,9 +74,22 @@ public class Cliente extends Usuario{
         }
         return favoritos;
     }
-
     public void setFavoritos(List<Restaurante> favoritos) {
         this.favoritos = favoritos != null ? favoritos : new ArrayList<>();
+    }
+
+    public List<Pedido> getPedidos() {
+        return pedidos;
+    }
+    public void setPedidos(List<Pedido> pedidos) {
+        this.pedidos = pedidos;
+    }
+
+    public List<Direccion> getDirecciones() {
+        return direcciones;
+    }
+    public void setDirecciones(List<Direccion> direcciones) {
+        this.direcciones = direcciones;
     }
 
     @Override
