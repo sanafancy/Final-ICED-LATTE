@@ -37,6 +37,9 @@ public class Pedido {
         this.restaurante = restaurante;
     }
 
+    public Pedido(Cliente cliente, Direccion direccion, Double total) {
+    }
+
     public Long getId() {
         return id;
     }

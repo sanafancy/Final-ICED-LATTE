@@ -5,38 +5,56 @@
   <title>Confirmar Pedido</title>
 </head>
 <body>
-<h1>Confirmar Pedido</h1>
+  <h2>Confirmar Pedido</h2>
 
-<h2>Dirección de entrega</h2>
-<select name="direccionId">
-  <option th:each="direccion : ${cliente.direcciones}" th:value="${direccion.id}" th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></option>
-</select>
+  <p><strong>Cliente:</strong> <span th:text="${cliente.nombre}"></span></p>
+  <!--p><strong>Dirección:</strong> <span th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}"></span></p-->
+  <select name="direccionId" id="direccionSelect"
+          th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}"
+          onchange="actualizarDireccionSeleccionada()">
+    <option th:each="direccion : ${cliente.direcciones}"
+            th:value="${direccion.id}"
+            th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
+    </option>
+  </select>
 
-<h2>Método de Pago</h2>
-<select name="metodoPago">
-  <option value="CREDIT_CARD">Credit_card</option>
-  <option value="PAYPAL">PayPal</option>
-</select>
+  <h3>Resumen del pedido:</h3>
+  <ul>
+    <li th:each="item : ${itemsPedido}">
+      <span th:text="${item.nombre}"></span> -
+      <span th:text="'€' + ${item.precio}"></span>
+    </li>
+  </ul>
 
-<h2>Resumen del Pedido</h2>
-<ul>
-  <li th:each="item : ${itemsSeleccionados}">
-    <span th:text="${item.nombre}">Nombre del Item</span> -
-    <span th:text="'Cantidad: ' + ${item.cantidad}">Cantidad</span> -
-    <span th:text="'$' + ${item.precio * item.cantidad}">Precio</span>
-  </li>
-</ul>
+  <h3>Total: <span th:text="'€' + ${total}"></span></h3>
 
-<h2>Total: <span th:text="'$' + ${total}"></span></h2>
+  <h3>Método de Pago</h3>
+    <!--form action="/confirmarPedido" method="POST">
+      <input type="hidden" name="clienteId" th:value="${cliente.idUsuario}" />
+      <input type="hidden" name="direccionId" th:value="${direccion.id}" />
+      <div>
+        <h2>Confirmar Pedido</h2>
+        <p>Cliente: <span th:text="${cliente.nombre}"></span></p>
+        <p>Dirección: <span th:text="${direccion.calle}"></span></p>
 
-<form action="/pedidos/crear" method="post">
-  <input type="hidden" name="clienteId" th:value="${cliente.idUsuario}" />
-  <input type="hidden" name="restauranteId" th:value="${restaurante.idUsuario}" />
-  <input type="hidden" name="itemsSeleccionados" th:value="${itemsSeleccionados}" />
-  <input type="hidden" name="direccionId" th:value="${direccion.id}" />
-  <input type="hidden" name="metodoPago" th:value="${metodoPago}" />
+        <h3>Items del Pedido</h3>
+        <ul>
+          <li th:each="item : ${itemsPedido}">
+            <span th:text="${item.nombre}"></span> -
+            <span th:text="'€' + ${item.precio}"></span>
+          </li>
+        </ul>
 
-  <button type="submit">Confirmar Pedido</button>
-</form>
+        <p>Total: <span th:text="${total}"></span></p>
+
+        <h3>Método de pago</h3>
+        <select name="metodoPago">
+          <option th:each="metodo : ${metodosPago}" th:value="${metodo}" th:text="${metodo}"></option>
+        </select>
+
+        <button type="submit">Proceder al Pago</button>
+      </div>
+    </form-->
+
 </body>
 </html>

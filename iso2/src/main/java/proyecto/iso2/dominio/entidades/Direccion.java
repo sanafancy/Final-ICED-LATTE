@@ -74,4 +74,5 @@ public class Direccion {
     public void setMunicipio(String municipio) {
         this.municipio = municipio;
     }
+
 }

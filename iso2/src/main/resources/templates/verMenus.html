@@ -8,15 +8,21 @@
 
 <h1>¡Realiza tu pedido!</h1>
 
-<form onsubmit="event.preventDefault(); confirmarPedido();">
-    <select name="direccionId" th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}">
+<!--form th:action="@{/confirmarPedido}" method="post"-->
+<form action="/pedido/confirmarPedido" method="post" id="formConfirmarPedido">
+    <input type="hidden" name="carrito" id="carritoData" />
+    <input type="hidden" name="clienteId" th:if="${cliente != null}" th:value="${cliente.idUsuario}" />
+    <select name="direccionId" id="direccionSelect"
+            th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}"
+            onchange="actualizarDireccionSeleccionada()">
         <option th:each="direccion : ${cliente.direcciones}"
                 th:value="${direccion.id}"
                 th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
         </option>
     </select>
+    <input type="hidden" name="direccionIdSeleccionada" id="direccionIdSeleccionada" />
 
-    <h2>Menús de <span th:text="${restaurante.nombre}"></span></h2>
+    <h2 th:if="${restaurante != null}" th:text="'Menús de ' + ${restaurante.nombre}"></h2>
 
     <div th:if="${cartas != null and not #lists.isEmpty(cartas)}">
         <ul>
@@ -39,14 +45,29 @@
             </li>
         </ul>
     </div>
-
-    <button id="continuarPedido" style="display: none;" onclick="confirmarPedido()">Continuar con el pedido</button>
+    <label for="metodoPago">Método de pago:</label>
+    <select name="metodoPago" id="metodoPago">
+        <option value="PAYPAL">PayPal</option>
+        <option value="CREDIT_CARD">Tarjeta de crédito</option>
+    </select>
+    <input type="hidden" name="total" id="totalPedido" />
+    <button id="continuarPedido" style="display: none;" type="submit">Continuar con el pedido</button>
     <p id="total-precio">Total: €0.00</p>
     <p th:if="${cartas == null or #lists.isEmpty(cartas)}">No hay menús disponibles.</p>
 </form>
 
-<!-- Implementación de JavaScript para el carrito -->
+<!-- Implementación de JavaScript para el carrito y crear pedido en bd -->
 <script>
+    function actualizarDireccionSeleccionada() {
+        let select = document.getElementById("direccionSelect");
+        let direccionInput = document.getElementById("direccionIdSeleccionada");
+        direccionInput.value = select.value;
+    }
+
+    function actualizarTotalPedido(total) {
+        document.getElementById("totalPedido").value = total;
+    }
+
     let carrito = {}; // Como objeto
 
     function actualizarCarrito(cambio, itemId, itemNombre, itemPrecio) {
@@ -58,11 +79,11 @@
         carrito[itemId].cantidad += cambio;
 
         // Evitar cantidades negativas
-        if (carrito[itemId].cantidad < 0) {carrito[itemId].cantidad = 0;}
+        if (carrito[itemId].cantidad < 0) { carrito[itemId].cantidad = 0; }
 
-        // Actualizar cantidad en la interfaz,esperar al dom con el timeout
+        // Actualizar cantidad en la interfaz
         setTimeout(() => {
-            let cantidadElemento = document.getElementById(`cantidad-${itemId}`); 
+            let cantidadElemento = document.getElementById(`cantidad-${itemId}`);
             if (cantidadElemento) {
                 cantidadElemento.innerText = carrito[itemId].cantidad;
                 console.log(`✅ Se actualizó #cantidad-${itemId} a ${carrito[itemId].cantidad}`);
@@ -71,7 +92,7 @@
             }
         }, 100);
 
-        // Calcular total
+        // Calcular el total
         let total = Object.values(carrito).reduce((acc, item) => acc + item.precio * item.cantidad, 0);
         document.getElementById("total-precio").innerText = `Total: €${total.toFixed(2)}`;
 
@@ -80,43 +101,29 @@
         document.getElementById("continuarPedido").style.display = hayItems ? "block" : "none";
 
         console.log("🛒 Carrito actualizado:", carrito);
-    }
 
-    function confirmarPedido() {
-        let clienteId = "[[${cliente != null ? cliente.idUsuario : ''}]]";
-        let restauranteId = "[[${restaurante.idUsuario}]]";
-        let direccionElement = document.querySelector("select[name='direccionId']");
-        let direccionId = direccionElement ? direccionElement.value : "";
+        // Cuando el carrito está listo, actualizar el campo oculto con el carrito en formato JSON
+        let carritoSimplificado = {};
 
-        let metodoPago = "PAYPAL"; // Ajustarlo dinámicamente si es necesario
-        let itemIds = Object.keys(carrito).filter(itemId => carrito[itemId].cantidad > 0);
-
-        if (clienteId.trim() === "" || (direccionElement && direccionId.trim() === "")) {
-            alert("Error: No se puede hacer el pedido sin un cliente y una dirección.");
-            return;
+        // Crear una versión simplificada con solo el ID del item y su cantidad
+        for (let itemId in carrito) {
+            if (carrito[itemId].cantidad > 0) { // Solo enviar items con cantidad mayor a 0
+                carritoSimplificado[itemId] = carrito[itemId].cantidad;
+            }
         }
 
-        fetch('/pedidos/crear', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                clienteId: clienteId,
-                restauranteId: restauranteId,
-                direccionId: direccionId,
-                metodoPago: metodoPago,
-                itemIds: itemIds.join(',')
-            })
-        })
-            .then(response => {
-                if (!response.ok) throw new Error("Error en la solicitud");
-                return response.json();
-            })
-            .then(data => {
-                alert("Pedido creado con éxito!");
-                window.location.href = "/pedidos/detalle";
-            })
-            .catch(error => console.error("Error al confirmar pedido:", error));
+        // Asignar el JSON correcto al campo oculto
+        document.getElementById("carritoData").value = JSON.stringify(carritoSimplificado);
     }
+
+    // Asegurarse de que el carrito se envíe correctamente al hacer el submit del formulario
+    document.getElementById("formConfirmarPedido").addEventListener("submit", function(event) {
+        // Validar que el carrito no esté vacío
+        if (Object.keys(carrito).length === 0) {
+            alert("¡Tu carrito está vacío!");
+            event.preventDefault();  // Evitar el envío del formulario si el carrito está vacío
+        }
+    });
 </script>
 
 </body>
