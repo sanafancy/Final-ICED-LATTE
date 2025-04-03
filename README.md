@@ -5,7 +5,7 @@ Somos un equipo de cuatro desarrolladores que trabajamos en la misma empresa y g
 
 ### 📌 Miembros del Equipo
 - **Dacil Naomi Jara**
-- **Ting Ting Xu**
+- **Tingting Xu**
 - **Ingrid Niveiro Ben**
 - **Zineb Elouaazizi**
 
@@ -16,7 +16,7 @@ Este repositorio contiene el código fuente del sistema de gestión de pedidos y
 ## 🛠️ Tecnologías Utilizadas
 - **Backend**: Java con Spring Boot
 - **Frontend**: HTML, CSS, JavaScript
-- **Base de datos**: 
+- **Base de datos**: H2
 - **Control de versiones**: GitHub
 - **Calidad del código**: SonarCloud
 - **Gestión de tareas**: Notion

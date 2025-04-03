@@ -9,8 +9,9 @@
 
     <button onclick="location.href='/cartas/crear'">Crear Carta</button>
     <button onclick="location.href='/direcciones'">Editar Dirección</button>
-    <button onclick="location.href='/eliminarRestaurante'">Eliminar Restaurante</button>
-
+    <form action="/eliminarRestaurante" method="post">
+        <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar este restaurante?')">Eliminar Restaurante</button>
+    </form>
     <h2>Cartas Existentes</h2>
     <ul>
         <li th:each="carta : ${cartas}">
