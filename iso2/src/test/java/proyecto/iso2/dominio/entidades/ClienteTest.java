@@ -2,10 +2,8 @@ package proyecto.iso2.dominio.entidades;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ClienteTest {
@@ -28,7 +26,7 @@ public class ClienteTest {
 
     @Test
     public void testConstructorConParametros() {
-        // Verificar que los campos se inicializan correctamente
+        // Verifica que los campos se inicializan correctamente
         assertEquals("juan@email.com", cliente.getEmail());
         assertEquals("password123", cliente.getPass());
         assertEquals("Juan", cliente.getNombre());
@@ -71,7 +69,6 @@ public class ClienteTest {
 
     @Test
     public void testToString() {
-        // Suponemos que el idUsuario es null porque no se ha persistido, ajustamos la expectativa
         String expected = "Cliente [idUsuario=null, pass=password123, nombre=Juan, apellidos=Pérez, dni=12345678A]";
         assertEquals(expected, cliente.toString());
     }
