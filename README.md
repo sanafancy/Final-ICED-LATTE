@@ -20,6 +20,7 @@ Este repositorio contiene el código fuente del sistema de gestión de pedidos y
 - **Control de versiones**: GitHub
 - **Calidad del código**: SonarCloud
 - **Gestión de tareas**: Notion
+- **Testing**: JUnit, Mockito
 
 ## 📌 Flujo de Trabajo con Kanban
 Usamos Notion para la gestión del flujo de trabajo en el tablero Kanban con las siguientes columnas:
