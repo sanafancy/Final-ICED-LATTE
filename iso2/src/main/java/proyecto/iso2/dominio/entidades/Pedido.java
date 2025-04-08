@@ -17,8 +17,7 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
-    @OneToOne
-    @JoinColumn(name = "pedido_id")
+    @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
     private ServicioEntrega servicioEntrega;
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
