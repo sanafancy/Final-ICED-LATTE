@@ -17,8 +17,7 @@ public class Direccion {
     private int codigoPostal;
     @Column
     private String municipio;
-    @OneToOne
-    @JoinColumn(name = "direccion_id")
+    @OneToOne(mappedBy = "direccion", cascade = CascadeType.ALL)
     private ServicioEntrega servicioEntrega;
 
     public Direccion() {    }
@@ -80,5 +79,6 @@ public class Direccion {
     }
 
     public ServicioEntrega getServicioEntrega() {return servicioEntrega;}
+
     public void setServicioEntrega(ServicioEntrega servicioEntrega) {this.servicioEntrega = servicioEntrega;}
 }
