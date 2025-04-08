@@ -2,6 +2,9 @@ package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class Repartidor extends Usuario {
     @Column
@@ -12,6 +15,8 @@ public class Repartidor extends Usuario {
     private String nif;
     @Column
     private int eficiencia;
+    @OneToMany(mappedBy = "repartidor", cascade = CascadeType.ALL)
+    private List<ServicioEntrega> serviciosEntrega;
 
     public Repartidor() {}
 
@@ -21,6 +26,7 @@ public class Repartidor extends Usuario {
         this.apellidos = apellidos;
         this.nif = nif;
         this.eficiencia = eficiencia;
+        this.serviciosEntrega = new ArrayList<ServicioEntrega>();
     }
 
     // Getters y Setters
@@ -55,6 +61,10 @@ public class Repartidor extends Usuario {
     public void setEficiencia(int eficiencia) {
         this.eficiencia = eficiencia;
     }
+
+    public List<ServicioEntrega> getServiciosEntrega() {return serviciosEntrega;}
+
+    public void setServiciosEntrega(List<ServicioEntrega> serviciosEntrega) {this.serviciosEntrega = serviciosEntrega;}
 
     @Override
     public String toString() {
