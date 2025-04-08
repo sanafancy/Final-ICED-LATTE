@@ -17,6 +17,9 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "restaurante_id")
     private Restaurante restaurante;
+    @OneToOne
+    @JoinColumn(name = "pedido_id")
+    private ServicioEntrega servicioEntrega;
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
     @Enumerated(EnumType.STRING)
@@ -29,12 +32,14 @@ public class Pedido {
             joinColumns = @JoinColumn(name = "pedido_id"),
             inverseJoinColumns = @JoinColumn(name = "item_id")
     )
+
     private List<ItemMenu> items;
 
     public Pedido() {}
-    public Pedido(Cliente cliente, Restaurante restaurante) {
+    public Pedido(Cliente cliente, Restaurante restaurante, ServicioEntrega servicioEntrega) {
         this.cliente = cliente;
         this.restaurante = restaurante;
+        this.servicioEntrega = servicioEntrega;
     }
 
     public Pedido(Cliente cliente, Direccion direccion, Double total) {
@@ -88,4 +93,7 @@ public class Pedido {
     public void setItems(List<ItemMenu> items) {
         this.items = items;
     }
+
+    public ServicioEntrega getServicioEntrega() {return servicioEntrega;}
+    public void setServicioEntrega(ServicioEntrega servicioEntrega) {this.servicioEntrega = servicioEntrega;}
 }
