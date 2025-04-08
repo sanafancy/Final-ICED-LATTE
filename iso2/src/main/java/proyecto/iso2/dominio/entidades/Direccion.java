@@ -17,14 +17,18 @@ public class Direccion {
     private int codigoPostal;
     @Column
     private String municipio;
+    @OneToOne
+    @JoinColumn(name = "direccion_id")
+    private ServicioEntrega servicioEntrega;
 
     public Direccion() {    }
-    public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio) {
+    public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio, ServicioEntrega servicioEntrega) {
         this.calle = calle;
         this.numero = numero;
         this.complemento = complemento;
         this.codigoPostal = codigoPostal;
         this.municipio = municipio;
+        this.servicioEntrega = servicioEntrega;
     }
 
     public Long getId() {
@@ -75,4 +79,6 @@ public class Direccion {
         this.municipio = municipio;
     }
 
+    public ServicioEntrega getServicioEntrega() {return servicioEntrega;}
+    public void setServicioEntrega(ServicioEntrega servicioEntrega) {this.servicioEntrega = servicioEntrega;}
 }
