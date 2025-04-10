@@ -185,51 +185,6 @@ public class PedidoControllerTest {
         verify(pedidoDAO, times(1)).save(any(Pedido.class));
     }
 */
-    /*// Pruebas para el método obtenerPedidosRestaurante (GET /pedido/restaurante/{restauranteId})
-    @Test
-    public void testObtenerPedidosRestaurante_RestauranteExistente() throws Exception {
-        // Datos de prueba
-        Long restauranteId = 2L;
-        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante@ejemplo.com", "pass123", "CIF1", new Direccion());
-        List<Pedido> pedidos = Arrays.asList(new Pedido(), new Pedido());
-        for (Pedido pedido : pedidos) {
-            pedido.setCliente(crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A"));
-            pedido.setEstado(EstadoPedido.PEDIDO);
-            setField(pedido, "id", 1L);
-        }
-
-        // Configurar los mocks
-        when(restauranteDAO.findById(restauranteId)).thenReturn(Optional.of(restaurante));
-        when(pedidoDAO.findByRestaurante(restaurante)).thenReturn(pedidos);
-
-        // Ejecutar la solicitud GET y esperar una respuesta JSON
-        mockMvc.perform(get("/pedido/restaurante/{restauranteId}", restauranteId))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$.length()").value(2))
-                .andExpect(jsonPath("$[0].id").value(1L))
-                .andExpect(jsonPath("$[1].id").value(1L));
-
-        // Verificar que se llamó al DAO
-        verify(pedidoDAO, times(1)).findByRestaurante(restaurante);
-    }
-
-    @Test
-    public void testObtenerPedidosRestaurante_RestauranteNoExistente() throws Exception {
-        // Datos de prueba
-        Long restauranteId = 2L;
-
-        // Configurar los mocks
-        when(restauranteDAO.findById(restauranteId)).thenReturn(Optional.empty());
-
-        // Ejecutar la solicitud GET y esperar una excepción debido al ClassCastException
-        mockMvc.perform(get("/pedido/restaurante/{restauranteId}", restauranteId))
-                .andExpect(status().is5xxServerError());
-
-        // Verificar que no se llamó a findByRestaurante
-        verify(pedidoDAO, never()).findByRestaurante(any());
-    }*/
 
     // Pruebas para el método verMenus (GET /pedido/verMenus)
     @Test
@@ -401,35 +356,6 @@ public class PedidoControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
-/*
-    @Test
-    public void testProcesarPago_DireccionInvalida() throws Exception {
-        // Datos de prueba
-        Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
-        Map<Long, Integer> carrito = new HashMap<>();
-        carrito.put(1L, 2); // 2 unidades del item 1
-        session.setAttribute("cliente", cliente);
-        session.setAttribute("carrito", carrito); // Asegurar que el carrito esté en la sesión
-        Long direccionId = 3L;
-
-        // Configurar los mocks
-        ItemMenu item1 = crearItemMenu(1L, 10.0, new CartaMenu());
-        when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item1));
-        when(direccionDAO.findById(direccionId)).thenReturn(Optional.empty());
-
-        // Ejecutar la solicitud POST
-        mockMvc.perform(post("/pedido/procesarPago")
-                        .param("direccionId", direccionId.toString())
-                        .param("total", "35.0")
-                        .param("metodoPago", MetodoPago.PAYPAL.name())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("confirmarPedido"))
-                .andExpect(model().attribute("cliente", cliente)) // Asegurar que el cliente esté en el modelo
-                .andExpect(model().attribute("total", 35.0)) // Total calculado: 2 * 10
-                .andExpect(model().attribute("itemsPedido", Arrays.asList(item1, item1))) // 2 unidades del item1
-                .andExpect(model().attribute("error", "Dirección no válida"));
-    }*/
 
     @Test
     public void testProcesarPago_CarritoVacio() throws Exception {
