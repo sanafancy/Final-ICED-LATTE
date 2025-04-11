@@ -118,20 +118,8 @@ public class PedidoController {
             return "redirect:/login"; // Si no hay cliente, redirigir al login
         }
         System.out.println("Llegamos a GET /confirmarPedido");
-        // obtener direccion seleccionada en verMenus
-        /*Long direccionIdSeleccionada = (Long) session.getAttribute("direccionSeleccionada");
-        System.out.println("direccionIdSeleccionada en GetMapping: "+direccionIdSeleccionada);
-        if (direccionIdSeleccionada == null) {
-            model.addAttribute("error", "No has seleccionado una dirección.");
-            return "verMenus";
-        }*/
-        //buscar la dirección en la base de datos
-        /*Optional<Direccion> direccionOpt = direccionDAO.findById(direccionIdSeleccionada);
-        if (!direccionOpt.isPresent()) {
-            model.addAttribute("error", "La dirección seleccionada no es válida.");
-            return "verMenus";
-        }
-        Direccion direccion = direccionOpt.get();*/
+        Pedido pedido = (Pedido) session.getAttribute("pedido");
+        model.addAttribute("pedido", pedido);
 
         // Obtener los datos del pedido desde la sesión
         Map<Long, Integer> carrito = (Map<Long, Integer>) session.getAttribute("carrito");
@@ -229,6 +217,7 @@ public class PedidoController {
         model.addAttribute("metodosPago", MetodoPago.values());
         // Guardar el pedido en la base de datos
         pedidoDAO.save(pedido);
+        session.setAttribute("pedido", pedido); // Guarda el pedido en sesión
         System.out.println("Fin de PostMapping");
         // Eliminar el carrito de la sesión después de confirmar el pedido
         //session.removeAttribute("carrito");
@@ -236,7 +225,17 @@ public class PedidoController {
         // Redirigir al GET de confirmarPedido para mostrar el resumen final
         return "redirect:/pedido/confirmarPedido";
     }
-
+    @PostMapping("/eliminar")
+    public String eliminarPedido(@RequestParam Long pedidoId, HttpSession session) {
+        Optional<Pedido> pedidoOpt = pedidoDAO.findById(pedidoId);
+        if (pedidoOpt.isPresent()) {
+            pedidoDAO.delete(pedidoOpt.get());
+            session.removeAttribute("pedido");
+            session.removeAttribute("pedidoId");
+            session.removeAttribute("carrito");
+        }
+        return "redirect:/"; // O donde quieras llevar al usuario
+    }
     @PostMapping("/procesarPago")
     public String procesarPago(@RequestParam Long direccionId, @RequestParam double total,
                                @RequestParam String metodoPago, HttpSession session, Model model) {
