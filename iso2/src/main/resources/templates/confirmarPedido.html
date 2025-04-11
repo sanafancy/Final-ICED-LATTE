@@ -11,8 +11,7 @@
   <form action="/confirmarPedido" method="post">
     <!-- seleccionar direccion-->
     <label for="direccionSelect"><strong>Dirección de envío:</strong></label>
-    <select name="direccionId" id="direccionSelect"
-            th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}">
+    <select name="direccionId" id="direccionSelect">
       <option th:each="direccion : ${cliente.direcciones}"
               th:value="${direccion.id}"
               th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
@@ -31,14 +30,14 @@
     <h3>Total: <span th:text="'€' + ${total}"></span></h3>
 
     <!--metodo de pago elegido -->
-    <p><strong>Método de pago:</strong> <span th:text="${metodoPago}"></span></p>
+    <h3>Método de Pago</h3>
+    <p th:text="${metodoPago}">Pago no seleccionado</p>
 
-    <input type="hidden" name="clienteId" th:value="${cliente.idUsuario}" />
-    <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-    <input type="hidden" name="metodoPago" th:value="${metodoPago}" />
-
-    <!-- Botones -->
-    <button type="submit" formaction="/pedido/confirmar">Confirmar</button>
+    <form th:action="@{/pedido/finalizar}" method="post">
+      <input type="hidden" name="direccionId" th:value="${direccionIdSeleccionada}" />
+      <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
+      <button type="submit">Confirmar</button>
+    </form>
     <form th:action="@{/pedido/eliminar}" method="post">
       <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
       <button type="submit">Atrás</button>

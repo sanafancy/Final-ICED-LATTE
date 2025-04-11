@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
@@ -24,9 +25,10 @@ public class ServicioEntregaController {
     @Autowired
     private RepartidorDAO repartidorDAO;
 
-    @PostMapping("/asignarRepartidor/{pedidoId}")
-    public String asignarRepartidor(@PathVariable Long pedidoId, HttpSession session, RedirectAttributes redirectAttrs) {
+    @PostMapping("/finalizar")
+    public String finalizarPedido(@PathVariable Long pedidoId, HttpSession session, RedirectAttributes redirectAttrs) {
         Optional<Pedido> pedidoOpt = pedidoDAO.findById(pedidoId);
+
         if (!pedidoOpt.isPresent()) {
             redirectAttrs.addFlashAttribute("error", "Pedido no encontrado.");
             return "redirect:/pedidos";
@@ -46,6 +48,9 @@ public class ServicioEntregaController {
             redirectAttrs.addFlashAttribute("error", "Dirección inválida.");
             return "redirect:/pedido/confirmarPedido";
         }
+        Direccion direccion = direccionOpt.get();
+        pedido.setEstado(EstadoPedido.PAGADO);
+        pedidoDAO.save(pedido);
 
         // Seleccionar un repartidor disponible (esto es una lógica muy simple)
         List<Repartidor> repartidores = repartidorDAO.findAll();
@@ -67,7 +72,7 @@ public class ServicioEntregaController {
         servicioEntregaDAO.save(servicioEntrega);
 
         redirectAttrs.addFlashAttribute("success", "Repartidor asignado exitosamente.");
-        return "redirect:/pedido/confirmarPedido"; // o redirige donde sea necesario
+        return "redirect:/pagoExitoso"; // o redirige donde sea necesario
     }
 
 }

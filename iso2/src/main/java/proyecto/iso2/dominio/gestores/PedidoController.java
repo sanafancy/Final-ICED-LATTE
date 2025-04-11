@@ -113,11 +113,19 @@ public class PedidoController {
     @GetMapping("/confirmarPedido")
     public String confirmarPedido(HttpSession session, Model model) {
         // Verificar si el cliente está en sesión
-        Cliente cliente = (Cliente) session.getAttribute("cliente");
-        if (cliente == null) {
+        Cliente clienteSesion = (Cliente) session.getAttribute("cliente");
+        if (clienteSesion == null) {
             return "redirect:/login"; // Si no hay cliente, redirigir al login
         }
+        Optional<Cliente> clienteOpt = clienteDAO.findById(clienteSesion.getIdUsuario());
+        if (!clienteOpt.isPresent()) {
+            model.addAttribute("error", "No se pudo cargar el cliente");
+            return "redirect:/login";
+        }
+        Cliente cliente = clienteOpt.get();
+
         System.out.println("Llegamos a GET /confirmarPedido");
+        System.out.println("Direcciones del cliente: " + cliente.getDirecciones());
         Pedido pedido = (Pedido) session.getAttribute("pedido");
         model.addAttribute("pedido", pedido);
 
@@ -143,11 +151,12 @@ public class PedidoController {
         System.out.println("Total calculado (GET confirmarPedido): " + total);
         System.out.println("Items en el pedido (GET confirmarPedido): " + itemsPedido);
 
+        MetodoPago metodoPago = (MetodoPago) session.getAttribute("metodoPago");
+        model.addAttribute("metodoPago", metodoPago);
         model.addAttribute("cliente", cliente);
-        //model.addAttribute("direccion", direccion);
         model.addAttribute("itemsPedido", itemsPedido);
         model.addAttribute("total", total);
-        //model.addAttribute("metodosPago", MetodoPago.values());
+
 
         return "confirmarPedido"; // Mostrar la vista de confirmarPedido
     }
@@ -217,6 +226,7 @@ public class PedidoController {
         model.addAttribute("metodosPago", MetodoPago.values());
         // Guardar el pedido en la base de datos
         pedidoDAO.save(pedido);
+        session.setAttribute("metodoPago", metodoPago);
         session.setAttribute("pedido", pedido); // Guarda el pedido en sesión
         System.out.println("Fin de PostMapping");
         // Eliminar el carrito de la sesión después de confirmar el pedido
@@ -234,7 +244,7 @@ public class PedidoController {
             session.removeAttribute("pedidoId");
             session.removeAttribute("carrito");
         }
-        return "redirect:/"; // O donde quieras llevar al usuario
+        return "redirect:/verMenus"; // O donde quieras llevar al usuario
     }
     @PostMapping("/procesarPago")
     public String procesarPago(@RequestParam Long direccionId, @RequestParam double total,
@@ -293,8 +303,4 @@ public class PedidoController {
         return "redirect:/pagoExitoso";
     }
 
-    @GetMapping("/pago")
-    public String mostrarPago() {
-        return "pago"; // Mostrar la página "pedido PAGADO"
-    }
 }
