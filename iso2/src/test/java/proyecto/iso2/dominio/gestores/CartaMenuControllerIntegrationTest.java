@@ -67,7 +67,7 @@ public class CartaMenuControllerIntegrationTest {
 
     @Test
     public void testMostrarFormularioCreacion() throws Exception {
-        mockMvc.perform(get("/cartas/crear") // Ajustar de /menu/crear a /cartas/crear
+        mockMvc.perform(get("/cartas/crear")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("crearCarta"))
@@ -76,7 +76,7 @@ public class CartaMenuControllerIntegrationTest {
 
     @Test
     public void testCrearCarta() throws Exception {
-        mockMvc.perform(post("/cartas/crear") // Ajustar de /menu/crear a /cartas/crear
+        mockMvc.perform(post("/cartas/crear")
                         .session(session)
                         .param("nombre", "Menú Nuevo")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED))
@@ -91,7 +91,7 @@ public class CartaMenuControllerIntegrationTest {
 
     @Test
     public void testCrearCarta_SinSesion() throws Exception {
-        mockMvc.perform(post("/cartas/crear") // Ajustar de /menu/crear a /cartas/crear
+        mockMvc.perform(post("/cartas/crear")
                         .param("nombre", "Menú Nuevo")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED))
                 .andExpect(status().is3xxRedirection())
@@ -100,7 +100,7 @@ public class CartaMenuControllerIntegrationTest {
 
     @Test
     public void testMostrarFormularioEdicion() throws Exception {
-        mockMvc.perform(get("/cartas/editar/" + carta.getId()) // Nueva prueba para /cartas/editar/{id}
+        mockMvc.perform(get("/cartas/editar/" + carta.getId())
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editarCarta"))
