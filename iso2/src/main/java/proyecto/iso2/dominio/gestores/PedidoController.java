@@ -15,6 +15,7 @@ import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +55,7 @@ public class PedidoController {
         pedido.setCliente(cliente);
         pedido.setRestaurante(restaurante);
         pedido.setEstado(EstadoPedido.PEDIDO);
-        pedido.setMetodoPago(metodoPago);
+        pedido.setPagoId(null);
         pedido.setFecha(LocalDateTime.now());
         pedido.setItems(items);
 
@@ -182,24 +183,17 @@ public class PedidoController {
         // Guardar el carrito en la sesión para que esté disponible en el GET
         session.setAttribute("carrito", carritoMap);
 
-        // Obtener la dirección seleccionada por el cliente
-        /*Optional<Direccion> direccionOpt = direccionDAO.findById(direccionId);
-        if (!direccionOpt.isPresent()) {
-            model.addAttribute("error", "Dirección no encontrada");
-            return "confirmarPedido"; // Redirigir a la página de confirmarPedido con error
-        }
-        Direccion direccion = direccionOpt.get();*/
-
         // Crear y guardar el pedido
         Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
-        pedido.setMetodoPago(metodoPago);
+        pedido.setPagoId(null);
         pedido.setEstado(EstadoPedido.PEDIDO); // Estado inicial del pedido
         pedido.setFecha(LocalDateTime.now());
 
         System.out.println("Carrito en sesión antes del POST: " + carritoMap);
         // Calcular el total del pedido
         double total = 0;
+        DecimalFormat df = new DecimalFormat("#.##"); //asegurarnos que el total solo tenga 2 decimales
         Restaurante restaurante = null;
         List<ItemMenu> itemsPedido = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : carritoMap.entrySet()) {
@@ -222,7 +216,7 @@ public class PedidoController {
         model.addAttribute("cliente", cliente);
         //model.addAttribute("direccion", direccion);
         model.addAttribute("itemsPedido", itemsPedido);
-        model.addAttribute("total", total);
+        model.addAttribute("total", df.format(total));
         model.addAttribute("metodosPago", MetodoPago.values());
         // Guardar el pedido en la base de datos
         pedidoDAO.save(pedido);
@@ -280,7 +274,7 @@ public class PedidoController {
         //pedido.setDireccion(direccion);
         pedido.setEstado(EstadoPedido.PEDIDO);
         //pedido.setTotal(total);
-        pedido.setMetodoPago(metodoPagoEnum);
+        pedido.setPagoId(null);
 
         List<ItemMenu> itemsPedido = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : carrito.entrySet()) {

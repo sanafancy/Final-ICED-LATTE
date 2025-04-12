@@ -19,8 +19,9 @@ public class Pedido {
     private Restaurante restaurante;
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
-    @Enumerated(EnumType.STRING)
-    private MetodoPago metodoPago;
+    @OneToOne
+    @JoinColumn(name = "pago_id", referencedColumnName = "id_transaccion")
+    private Pago pago;
     @Column
     private LocalDateTime fecha;
     @ManyToMany
@@ -68,11 +69,11 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public MetodoPago getMetodoPago() {
-        return metodoPago;
+    public Pago getPagoId() {
+        return pago;
     }
-    public void setMetodoPago(MetodoPago metodoPago) {
-        this.metodoPago = metodoPago;
+    public void setPagoId(MetodoPago metodoPago) {
+        this.pago = pago;
     }
 
     public LocalDateTime getFecha() {

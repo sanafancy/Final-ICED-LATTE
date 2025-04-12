@@ -34,9 +34,23 @@
     <p th:text="${metodoPago}">Pago no seleccionado</p>
 
     <form th:action="@{/pedido/finalizar}" method="post">
-      <input type="hidden" name="direccionId" th:value="${direccionIdSeleccionada}" />
       <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-      <button type="submit">Confirmar</button>
+
+      <label for="direccion">Selecciona una dirección:</label>
+      <select name="direccionId" id="direccion" required>
+        <option th:each="dir : ${cliente.direcciones}"
+                th:value="${dir.id}"
+                th:text="${dir.calle} + ' ' + ${dir.numero} + ', ' + ${dir.municipio}">
+        </option>
+      </select>
+
+      <label for="metodoPago">Selecciona método de pago:</label>
+      <select name="metodoPago" id="metodoPago" required>
+        <option th:each="m : ${T(paquete.enums.MetodoPago).values()}"
+                th:value="${m}" th:text="${m}"></option>
+      </select>
+
+      <button type="submit">Confirmar Pedido</button>
     </form>
     <form th:action="@{/pedido/eliminar}" method="post">
       <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
