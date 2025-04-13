@@ -67,12 +67,24 @@ public class DirecciónControllerIntegrationTest {
 
         // Ejecutamos las operaciones de eliminación dentro de una transacción, respetando las dependencias
         transactionTemplate.execute(status -> {
-            // Eliminar registros de las tablas que dependen de direccion
+            // Eliminar tablas dependientes primero
+            entityManager.createNativeQuery("DELETE FROM pedido_items").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM cliente_favoritos").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM direccion_cliente").executeUpdate();
+            entityManager.createQuery("DELETE FROM ItemMenu").executeUpdate();
+            entityManager.createQuery("DELETE FROM CartaMenu").executeUpdate(); // CartaMenu antes de Restaurante
+            entityManager.createQuery("DELETE FROM Pedido").executeUpdate();
+
+            // Eliminar tablas intermedias
+            entityManager.createQuery("DELETE FROM Repartidor").executeUpdate();
             entityManager.createQuery("DELETE FROM Restaurante").executeUpdate();
-            // Eliminar registros de direccion
+            entityManager.createQuery("DELETE FROM Cliente").executeUpdate();
+
+            // Eliminar tablas base
             entityManager.createQuery("DELETE FROM Direccion").executeUpdate();
-            // Eliminar registros de usuario
             entityManager.createNativeQuery("DELETE FROM usuario").executeUpdate();
+
+            entityManager.flush();
             return null;
         });
 

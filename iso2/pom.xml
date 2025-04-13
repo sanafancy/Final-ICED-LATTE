@@ -84,9 +84,7 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>3.2.5</version>
-				<configuration>
-					<argLine>-javaagent:${user.home}/.m2/repository/net/bytebuddy/byte-buddy-agent/1.15.11/byte-buddy-agent-1.15.11.jar</argLine>
-				</configuration>
+
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
@@ -100,6 +98,10 @@
 						</goals>
 						<configuration>
 							<destFile>${project.build.directory}/jacoco.exec</destFile>
+							<append>true</append>
+							<includes>
+								<include>proyecto.iso2.**</include>
+							</includes>
 						</configuration>
 					</execution>
 					<execution>
@@ -110,6 +112,19 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>report-xml</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+							<formats>
+								<format>XML</format>
+							</formats>
 						</configuration>
 					</execution>
 				</executions>
