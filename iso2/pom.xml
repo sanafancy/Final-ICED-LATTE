@@ -59,12 +59,6 @@
 			<artifactId>mockito-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- H2 Database para pruebas -->
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<scope>test</scope>
-		</dependency>
 		<!-- Hamcrest para aserciones más expresivas -->
 		<dependency>
 			<groupId>org.hamcrest</groupId>
