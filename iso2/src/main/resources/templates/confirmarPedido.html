@@ -10,13 +10,13 @@
   <p><strong>Cliente:</strong> <span th:text="${cliente.nombre}"></span></p>
   <form action="/confirmarPedido" method="post">
     <!-- seleccionar direccion-->
-    <label for="direccionSelect"><strong>Dirección de envío:</strong></label>
+    <!--label for="direccionSelect"><strong>Dirección de envío:</strong></label>
     <select name="direccionId" id="direccionSelect">
       <option th:each="direccion : ${cliente.direcciones}"
               th:value="${direccion.id}"
               th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
       </option>
-    </select>
+    </select-->
 
     <!-- Resumen del pedido -->
     <h3>Resumen del pedido:</h3>
@@ -35,7 +35,6 @@
 
     <form th:action="@{/pedido/finalizar}" method="post">
       <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-
       <label for="direccion">Selecciona una dirección:</label>
       <select name="direccionId" id="direccion" required>
         <option th:each="dir : ${cliente.direcciones}"
@@ -46,8 +45,7 @@
 
       <label for="metodoPago">Selecciona método de pago:</label>
       <select name="metodoPago" id="metodoPago" required>
-        <option th:each="m : ${T(paquete.enums.MetodoPago).values()}"
-                th:value="${m}" th:text="${m}"></option>
+        <option th:each="m : ${metodosPago}" th:value="${m}" th:text="${m}"></option>
       </select>
 
       <button type="submit">Confirmar Pedido</button>

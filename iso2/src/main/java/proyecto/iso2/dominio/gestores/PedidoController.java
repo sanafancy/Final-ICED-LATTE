@@ -61,15 +61,7 @@ public class PedidoController {
 
         return pedidoDAO.save(pedido);
     }
-    /*@GetMapping("/cliente/{clienteId}")
-    public List<Pedido> obtenerPedidosCliente(@PathVariable Long clienteId) {
-        Cliente cliente = clienteDAO.findById(clienteId).orElse(null);
-        if (cliente == null) {
-            return (List<Pedido>) ResponseEntity.notFound().build();
-        }
 
-        return pedidoDAO.findByCliente(cliente);
-    }*/
     @GetMapping("/restaurante/{restauranteId}")
     public List<Pedido> obtenerPedidosRestaurante(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteDAO.findById(restauranteId).orElse(null);
@@ -111,6 +103,7 @@ public class PedidoController {
 
         return "verMenus"; // Cargar la vista
     }
+
     @GetMapping("/confirmarPedido")
     public String confirmarPedido(HttpSession session, Model model) {
         // Verificar si el cliente está en sesión
@@ -124,10 +117,11 @@ public class PedidoController {
             return "redirect:/login";
         }
         Cliente cliente = clienteOpt.get();
+        Pedido pedido = (Pedido) session.getAttribute("pedido");
+        if (pedido == null) return "redirect:/verMenus";
 
         System.out.println("Llegamos a GET /confirmarPedido");
         System.out.println("Direcciones del cliente: " + cliente.getDirecciones());
-        Pedido pedido = (Pedido) session.getAttribute("pedido");
         model.addAttribute("pedido", pedido);
 
         // Obtener los datos del pedido desde la sesión
@@ -152,8 +146,8 @@ public class PedidoController {
         System.out.println("Total calculado (GET confirmarPedido): " + total);
         System.out.println("Items en el pedido (GET confirmarPedido): " + itemsPedido);
 
-        MetodoPago metodoPago = (MetodoPago) session.getAttribute("metodoPago");
-        model.addAttribute("metodoPago", metodoPago);
+        model.addAttribute("pedido", pedido);
+        model.addAttribute("metodosPago", MetodoPago.values());
         model.addAttribute("cliente", cliente);
         model.addAttribute("itemsPedido", itemsPedido);
         model.addAttribute("total", total);
