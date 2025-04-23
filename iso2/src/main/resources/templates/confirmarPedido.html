@@ -2,58 +2,50 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Confirma tu Pedido</title>
+  <title>Confirmar Pedido</title>
 </head>
 <body>
-  <h2>Confirmar Pedido</h2>
+<h1>Confirmar Pedido</h1>
 
-  <p><strong>Cliente:</strong> <span th:text="${cliente.nombre}"></span></p>
-  <form action="/confirmarPedido" method="post">
-    <!-- seleccionar direccion-->
-    <!--label for="direccionSelect"><strong>Dirección de envío:</strong></label>
-    <select name="direccionId" id="direccionSelect">
-      <option th:each="direccion : ${cliente.direcciones}"
-              th:value="${direccion.id}"
-              th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
-      </option>
-    </select-->
+<div th:if="${error != null}">
+  <p style="color: red;" th:text="${error}"></p>
+</div>
 
-    <!-- Resumen del pedido -->
-    <h3>Resumen del pedido:</h3>
-    <ul>
-      <li th:each="item : ${itemsPedido}">
-        <span th:text="${item.nombre}"></span> -
-        <span th:text="'€' + ${item.precio}"></span>
-      </li>
-    </ul>
+<div th:if="${cliente != null}">
+  <h2>Datos del Cliente</h2>
+  <p>Nombre: <span th:text="${cliente.nombre}"></span></p>
+</div>
+<div th:unless="${cliente != null}">
+  <p style="color: red;">Error: No se encontró información del cliente.</p>
+</div>
 
-    <h3>Total: <span th:text="'€' + ${total}"></span></h3>
+<div th:if="${pedido != null}">
+  <h2>Detalles del Pedido</h2>
+  <p>ID del Pedido: <span th:text="${pedido.id}"></span></p>
+  <p>Estado: <span th:text="${pedido.estado}"></span></p>
+  <ul>
+    <li th:each="item : ${pedido.items}">
+      <span th:text="${item.nombre} + ' - €' + ${item.precio}"></span>
+    </li>
+  </ul>
+</div>
 
-    <!--metodo de pago elegido -->
-    <h3>Método de Pago</h3>
-    <p th:text="${metodoPago}">Pago no seleccionado</p>
+<div th:if="${direccion != null}">
+  <h2>Dirección de Envío</h2>
+  <p th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}"></p>
+</div>
 
-    <form th:action="@{/pedido/finalizar}" method="post">
-      <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-      <label for="direccion">Selecciona una dirección:</label>
-      <select name="direccionId" id="direccion" required>
-        <option th:each="dir : ${cliente.direcciones}"
-                th:value="${dir.id}"
-                th:text="${dir.calle} + ' ' + ${dir.numero} + ', ' + ${dir.municipio}">
-        </option>
-      </select>
+<div th:if="${metodoPago != null}">
+  <h2>Método de Pago</h2>
+  <p th:text="${metodoPago}"></p>
+</div>
 
-      <label for="metodoPago">Selecciona método de pago:</label>
-      <select name="metodoPago" id="metodoPago" required>
-        <option th:each="m : ${metodosPago}" th:value="${m}" th:text="${m}"></option>
-      </select>
+<form th:action="@{/pedido/finalizar}" method="post">
+  <input type="hidden" name="pedidoId" th:value="${pedido?.id}" />
+  <input type="hidden" name="direccionId" th:value="${direccion?.id}" />
+  <input type="hidden" name="metodoPago" th:value="${metodoPago}" />
+  <button type="submit" th:disabled="${pedido == null or direccion == null or metodoPago == null}">Confirmar Pedido</button>
+</form>
 
-      <button type="submit">Confirmar Pedido</button>
-    </form>
-    <form th:action="@{/pedido/eliminar}" method="post">
-      <input type="hidden" name="pedidoId" th:value="${pedido.id}" />
-      <button type="submit">Atrás</button>
-    </form>
-  </form>
 </body>
 </html>

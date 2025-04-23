@@ -8,67 +8,56 @@
 
 <h1>¡Realiza tu pedido!</h1>
 
-<!--form th:action="@{/confirmarPedido}" method="post"-->
 <form action="/pedido/confirmarPedido" method="post" id="formConfirmarPedido">
     <input type="hidden" name="carrito" id="carritoData" />
     <input type="hidden" name="clienteId" th:if="${cliente != null}" th:value="${cliente.idUsuario}" />
-    <select name="direccionId" id="direccionSelect"
-            th:if="${cliente != null and not #lists.isEmpty(cliente.direcciones)}"
-            onchange="actualizarDireccionSeleccionada()">
-        <option th:each="direccion : ${cliente.direcciones}"
-                th:value="${direccion.id}"
-                th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}">
-        </option>
-    </select>
-    <input type="hidden" name="direccionIdSeleccionada" id="direccionIdSeleccionada" />
+    <input type="hidden" name="direccionId" id="direccionId" />
+    <input type="hidden" name="metodoPago" id="metodoPagoHidden" />
+    <input type="hidden" name="total" id="totalPedido" />
 
     <h2 th:if="${restaurante != null}" th:text="'Menús de ' + ${restaurante.nombre}"></h2>
-
     <div th:if="${cartas != null and not #lists.isEmpty(cartas)}">
         <ul>
             <li th:each="carta : ${cartas}">
                 <h3 th:text="${carta.nombre}">Nombre de la Carta</h3>
                 <ul th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
                     <li th:each="item : ${carta.items}">
-                        <span th:text="${item.nombre}"></span> -
-                        <span th:text="'€' + ${item.precio}"></span>
-
-                        <!-- Boton quitar -->
-                        <button type="button"
-                                th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
+                        <span th:text="${item.nombre}"></span> - <span th:text="'€' + ${item.precio}"></span>
+                        <button type="button" th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
                         <span th:id="|cantidad-${item.id}|">0</span>
-                        <!-- Boton añadir -->
-                        <button type="button"
-                                th:attr="onclick='actualizarCarrito(1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">+</button>
+                        <button type="button" th:attr="onclick='actualizarCarrito(1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">+</button>
                     </li>
                 </ul>
             </li>
         </ul>
     </div>
-    <label for="metodoPago">Método de pago:</label>
-    <select name="metodoPago" id="metodoPago">
-        <option value="PAYPAL">PayPal</option>
-        <option value="CREDIT_CARD">Tarjeta de crédito</option>
-    </select>
-    <input type="hidden" name="total" id="totalPedido" />
-    <button id="continuarPedido" style="display: none;" type="submit">Continuar con el pedido</button>
-    <p id="total-precio">Total: €0.00</p>
     <p th:if="${cartas == null or #lists.isEmpty(cartas)}">No hay menús disponibles.</p>
+
+    <!-- Resumen del pedido al final -->
+    <div class="order-summary">
+        <h3>Resumen del pedido</h3>
+        <div th:if="${cliente != null}">
+            <label for="direccionSelect">Dirección de envío:</label>
+            <select id="direccionSelect" onchange="actualizarDireccion()" required>
+                <option value="">Selecciona una dirección</option>
+                <option th:each="direccion : ${cliente.direcciones}" th:value="${direccion.id}" th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}"></option>
+            </select>
+            <p id="direccionTexto" style="display: none;"></p>
+        </div>
+        <label for="metodoPagoSelect">Método de pago:</label>
+        <select id="metodoPagoSelect" onchange="actualizarMetodoPago()">
+            <option value="">Selecciona un método de pago</option>
+            <option value="PAYPAL">PayPal</option>
+            <option value="CREDIT_CARD">Tarjeta de crédito</option>
+        </select>
+        <p id="metodoPagoTexto" style="display: none;"></p>
+        <p id="total-precio">Total: €0.00</p>
+        <button id="continuarPedido" style="display: none;" type="submit">Continuar con el pedido</button>
+    </div>
 </form>
 
-<!-- Implementación de JavaScript para el carrito y crear pedido en bd -->
 <script>
-    function actualizarDireccionSeleccionada() {
-        let select = document.getElementById("direccionSelect");
-        let direccionInput = document.getElementById("direccionIdSeleccionada");
-        direccionInput.value = select.value;
-    }
-
-    function actualizarTotalPedido(total) {
-        document.getElementById("totalPedido").value = total;
-    }
-
-    let carrito = {}; // Como objeto
+    let carrito = {};
 
     function actualizarCarrito(cambio, itemId, itemNombre, itemPrecio) {
         console.log("📌 Actualizando carrito:", { cambio, itemId, itemNombre, itemPrecio });
@@ -78,51 +67,90 @@
         }
         carrito[itemId].cantidad += cambio;
 
-        // Evitar cantidades negativas
-        if (carrito[itemId].cantidad < 0) { carrito[itemId].cantidad = 0; }
+        if (carrito[itemId].cantidad < 0) {
+            carrito[itemId].cantidad = 0;
+        }
 
-        // Actualizar cantidad en la interfaz
-        setTimeout(() => {
-            let cantidadElemento = document.getElementById(`cantidad-${itemId}`);
-            if (cantidadElemento) {
-                cantidadElemento.innerText = carrito[itemId].cantidad;
-                console.log(`✅ Se actualizó #cantidad-${itemId} a ${carrito[itemId].cantidad}`);
-            } else {
-                console.error(`❌ No se encontró el elemento #cantidad-${itemId}`);
-            }
-        }, 100);
+        let cantidadElemento = document.getElementById(`cantidad-${itemId}`);
+        if (cantidadElemento) {
+            cantidadElemento.innerText = carrito[itemId].cantidad;
+            console.log(`✅ Se actualizó #cantidad-${itemId} a ${carrito[itemId].cantidad}`);
+        } else {
+            console.error(`❌ No se encontró el elemento #cantidad-${itemId}`);
+        }
 
-        // Calcular el total
         let total = Object.values(carrito).reduce((acc, item) => acc + item.precio * item.cantidad, 0);
         document.getElementById("total-precio").innerText = `Total: €${total.toFixed(2)}`;
+        document.getElementById("totalPedido").value = total.toFixed(2);
 
-        // Verificar si hay al menos un item en el carrito para mostrar el botón
         let hayItems = Object.values(carrito).some(item => item.cantidad > 0);
         document.getElementById("continuarPedido").style.display = hayItems ? "block" : "none";
 
-        console.log("🛒 Carrito actualizado:", carrito);
-
-        // Cuando el carrito está listo, actualizar el campo oculto con el carrito en formato JSON
         let carritoSimplificado = {};
-
-        // Crear una versión simplificada con solo el ID del item y su cantidad
         for (let itemId in carrito) {
-            if (carrito[itemId].cantidad > 0) { // Solo enviar items con cantidad mayor a 0
+            if (carrito[itemId].cantidad > 0) {
                 carritoSimplificado[itemId] = carrito[itemId].cantidad;
             }
         }
 
-        // Asignar el JSON correcto al campo oculto
+        console.log("🛒 Carrito simplificado:", carritoSimplificado);
         document.getElementById("carritoData").value = JSON.stringify(carritoSimplificado);
     }
 
-    // Asegurarse de que el carrito se envíe correctamente al hacer el submit del formulario
-    document.getElementById("formConfirmarPedido").addEventListener("submit", function(event) {
-        // Validar que el carrito no esté vacío
-        if (Object.keys(carrito).length === 0) {
-            alert("¡Tu carrito está vacío!");
-            event.preventDefault();  // Evitar el envío del formulario si el carrito está vacío
+    function actualizarDireccion() {
+        let select = document.getElementById("direccionSelect");
+        let texto = document.getElementById("direccionTexto");
+        let hidden = document.getElementById("direccionId");
+        if (select.value) {
+            texto.innerText = `Dirección seleccionada: ${select.options[select.selectedIndex].text}`;
+            texto.style.display = "block";
+            hidden.value = select.value;
+        } else {
+            texto.style.display = "none";
+            hidden.value = "";
         }
+        console.log("📍 Dirección seleccionada: ", hidden.value);
+    }
+
+    function actualizarMetodoPago() {
+        let select = document.getElementById("metodoPagoSelect");
+        let texto = document.getElementById("metodoPagoTexto");
+        let hidden = document.getElementById("metodoPagoHidden");
+        if (select.value) {
+            texto.innerText = `Método de pago seleccionado: ${select.options[select.selectedIndex].text}`;
+            texto.style.display = "block";
+            hidden.value = select.value;
+        } else {
+            texto.style.display = "none";
+            hidden.value = "";
+        }
+        console.log("💳 Método de pago seleccionado: ", hidden.value);
+    }
+
+    document.getElementById("formConfirmarPedido").addEventListener("submit", function(event) {
+        let carritoSimplificado = {};
+        for (let itemId in carrito) {
+            if (carrito[itemId].cantidad > 0) {
+                carritoSimplificado[itemId] = carrito[itemId].cantidad;
+            }
+        }
+        if (Object.keys(carritoSimplificado).length === 0) {
+            alert("¡Tu carrito está vacío!");
+            event.preventDefault();
+            return;
+        }
+        if (!document.getElementById("direccionId").value) {
+            alert("Por favor, selecciona una dirección de envío.");
+            event.preventDefault();
+            return;
+        }
+        if (!document.getElementById("metodoPagoHidden").value) {
+            alert("Por favor, selecciona un método de pago.");
+            event.preventDefault();
+            return;
+        }
+        console.log("📤 Enviando formulario con carrito:", carritoSimplificado);
+        document.getElementById("carritoData").value = JSON.stringify(carritoSimplificado);
     });
 </script>
 
