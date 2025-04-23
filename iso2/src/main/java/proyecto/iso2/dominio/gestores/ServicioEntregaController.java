@@ -26,6 +26,8 @@ public class ServicioEntregaController {
     private RepartidorDAO repartidorDAO;
     @Autowired
     private PagoDAO pagoDAO;
+    @Autowired
+    private ItemMenuDAO itemMenuDAO;
 
     @PostMapping("/pedido/finalizar")
     public String finalizarPedido(
@@ -63,14 +65,13 @@ public class ServicioEntregaController {
             return "confirmarPedido";
         }
 
-        // Verificar que el pedido tenga ítems
+        // Verificar y actualizar ítems del pedido desde el carrito
         Map<Long, Integer> carrito = (Map<Long, Integer>) session.getAttribute("carrito");
         if (carrito == null || carrito.isEmpty()) {
             model.addAttribute("error", "El carrito está vacío");
             return "confirmarPedido";
         }
 
-        // Actualizar ítems del pedido
         List<ItemMenu> items = new java.util.ArrayList<>();
         for (Long itemId : carrito.keySet()) {
             Optional<ItemMenu> itemOpt = itemMenuDAO.findById(itemId);
@@ -112,11 +113,11 @@ public class ServicioEntregaController {
         // Limpiar la sesión
         session.removeAttribute("carrito");
         session.removeAttribute("pedido");
+        session.removeAttribute("direccionId");
+        session.removeAttribute("metodoPago");
+        session.removeAttribute("restauranteId");
 
         model.addAttribute("success", "Pedido confirmado y pago realizado con éxito.");
         return "pagoExitoso";
     }
-
-    @Autowired
-    private ItemMenuDAO itemMenuDAO; // Añadir esta dependencia
 }

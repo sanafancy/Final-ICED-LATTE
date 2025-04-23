@@ -24,7 +24,7 @@
   <h2>Detalles del Pedido</h2>
   <ul>
     <li th:each="item : ${itemsPedido}">
-      <span th:text="${item.nombre} + ' - €' + ${item.precio}"></span>
+      <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (Cantidad: ' + ${carrito[item.id] != null ? carrito[item.id] : 0} + ')'"></span>
     </li>
   </ul>
   <p>Total: <span th:text="'€' + ${total}"></span></p>
@@ -33,58 +33,41 @@
   <p style="color: red;">Error: No hay ítems en el pedido.</p>
 </div>
 
-<div th:if="${cliente != null and cliente.direcciones != null and not #lists.isEmpty(cliente.direcciones)}">
-  <h2>Selecciona Dirección de Envío</h2>
-  <select name="direccionId" id="direccionSelect" required>
-    <option value="">Selecciona una dirección</option>
-    <option th:each="direccion : ${cliente.direcciones}"
-            th:value="${direccion.id}"
-            th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}">
-    </option>
-  </select>
+<div th:if="${direccion != null}">
+  <h2>Dirección de Envío</h2>
+  <p th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></p>
 </div>
-<div th:unless="${cliente != null and cliente.direcciones != null and not #lists.isEmpty(cliente.direcciones)}">
-  <p style="color: red;">Error: No hay direcciones disponibles. Por favor, añade una dirección.</p>
+<div th:unless="${direccion != null}">
+  <p style="color: red;">Error: No se seleccionó una dirección de envío.</p>
 </div>
 
-<div>
-  <h2>Selecciona Método de Pago</h2>
-  <select name="metodoPago" id="metodoPagoSelect" required>
-    <option value="">Selecciona un método de pago</option>
-    <option th:each="metodo : ${metodosPago}"
-            th:value="${metodo}"
-            th:text="${metodo}">
-    </option>
-  </select>
+<div th:if="${metodoPago != null}">
+  <h2>Método de Pago</h2>
+  <p th:text="${metodoPago}"></p>
+</div>
+<div th:unless="${metodoPago != null}">
+  <p style="color: red;">Error: No se seleccionó un método de pago.</p>
 </div>
 
 <form th:action="@{/pedido/finalizar}" method="post" id="formConfirmarPedido">
   <input type="hidden" name="pedidoId" th:value="${pedido?.id}"/>
-  <input type="hidden" name="direccionId" id="direccionId"/>
-  <input type="hidden" name="metodoPago" id="metodoPagoHidden"/>
-  <button type="submit" th:disabled="${pedido == null or itemsPedido == null or total == null}">Confirmar Pedido</button>
+  <input type="hidden" name="direccionId" th:value="${direccion?.id}"/>
+  <input type="hidden" name="metodoPago" th:value="${metodoPago}"/>
+  <button type="submit" th:disabled="${pedido == null or itemsPedido == null or total == null or direccion == null or metodoPago == null}">Confirmar Pedido</button>
 </form>
 
-<a href="/verMenus?restauranteId=${pedido?.restaurante?.idUsuario}">Volver a Menús</a>
+<a th:href="@{/verMenus(restauranteId=${pedido?.restaurante?.idUsuario})}">Volver a Menús</a>
 
 <script>
-  document.getElementById("direccionSelect")?.addEventListener("change", function () {
-    document.getElementById("direccionId").value = this.value;
-  });
-
-  document.getElementById("metodoPagoSelect")?.addEventListener("change", function () {
-    document.getElementById("metodoPagoHidden").value = this.value;
-  });
-
   document.getElementById("formConfirmarPedido").addEventListener("submit", function (event) {
-    const direccionId = document.getElementById("direccionId").value;
-    const metodoPago = document.getElementById("metodoPagoHidden").value;
+    const direccionId = document.querySelector("input[name='direccionId']").value;
+    const metodoPago = document.querySelector("input[name='metodoPago']").value;
     if (!direccionId) {
-      alert("Por favor, selecciona una dirección de envío.");
+      alert("Por favor, selecciona una dirección de envío en la página anterior.");
       event.preventDefault();
     }
     if (!metodoPago) {
-      alert("Por favor, selecciona un método de pago.");
+      alert("Por favor, selecciona un método de pago en la página anterior.");
       event.preventDefault();
     }
   });

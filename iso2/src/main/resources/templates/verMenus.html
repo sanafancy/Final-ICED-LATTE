@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>¡Realiza tu pedido!</title>
@@ -45,7 +45,7 @@
             <p id="direccionTexto" style="display: none;"></p>
         </div>
         <label for="metodoPagoSelect">Método de pago:</label>
-        <select id="metodoPagoSelect" onchange="actualizarMetodoPago()">
+        <select id="metodoPagoSelect" onchange="actualizarMetodoPago()" required>
             <option value="">Selecciona un método de pago</option>
             <option value="PAYPAL">PayPal</option>
             <option value="CREDIT_CARD">Tarjeta de crédito</option>

@@ -83,6 +83,19 @@ public class PedidoController {
             return "redirect:/verMenus?restauranteId=" + pedido.getRestaurante().getIdUsuario();
         }
 
+        Long direccionId = (Long) session.getAttribute("direccionId");
+        Optional<Direccion> direccionOpt = direccionId != null ? direccionDAO.findById(direccionId) : Optional.empty();
+        if (!direccionOpt.isPresent()) {
+            model.addAttribute("error", "No se seleccionó una dirección válida");
+            return "redirect:/verMenus?restauranteId=" + pedido.getRestaurante().getIdUsuario();
+        }
+
+        String metodoPago = (String) session.getAttribute("metodoPago");
+        if (metodoPago == null || metodoPago.isEmpty()) {
+            model.addAttribute("error", "No se seleccionó un método de pago");
+            return "redirect:/verMenus?restauranteId=" + pedido.getRestaurante().getIdUsuario();
+        }
+
         double total = 0;
         List<ItemMenu> itemsPedido = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : carrito.entrySet()) {
@@ -95,10 +108,12 @@ public class PedidoController {
         }
 
         model.addAttribute("pedido", pedido);
-        model.addAttribute("metodosPago", MetodoPago.values());
         model.addAttribute("cliente", cliente);
         model.addAttribute("itemsPedido", itemsPedido);
+        model.addAttribute("carrito", carrito);
         model.addAttribute("total", String.format("%.2f", total));
+        model.addAttribute("direccion", direccionOpt.get());
+        model.addAttribute("metodoPago", metodoPago);
 
         return "confirmarPedido";
     }
@@ -107,6 +122,7 @@ public class PedidoController {
     public String procesarPedido(
             @RequestParam String metodoPago,
             @RequestParam String carrito,
+            @RequestParam Long direccionId,
             HttpSession session,
             Model model) throws JsonProcessingException {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
@@ -122,7 +138,22 @@ public class PedidoController {
             return "verMenus";
         }
 
+        Optional<Direccion> direccionOpt = direccionDAO.findById(direccionId);
+        if (!direccionOpt.isPresent()) {
+            model.addAttribute("error", "Dirección no válida");
+            return "verMenus";
+        }
+
+        try {
+            MetodoPago.valueOf(metodoPago);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("error", "Método de pago no válido");
+            return "verMenus";
+        }
+
         session.setAttribute("carrito", carritoMap);
+        session.setAttribute("direccionId", direccionId);
+        session.setAttribute("metodoPago", metodoPago);
 
         Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
@@ -153,11 +184,6 @@ public class PedidoController {
         session.setAttribute("pedido", pedido);
         session.setAttribute("restauranteId", restaurante.getIdUsuario());
 
-        model.addAttribute("cliente", cliente);
-        model.addAttribute("itemsPedido", itemsPedido);
-        model.addAttribute("total", String.format("%.2f", total));
-        model.addAttribute("metodosPago", MetodoPago.values());
-
         return "redirect:/pedido/confirmarPedido";
     }
 
@@ -169,6 +195,8 @@ public class PedidoController {
             session.removeAttribute("pedido");
             session.removeAttribute("carrito");
             session.removeAttribute("restauranteId");
+            session.removeAttribute("direccionId");
+            session.removeAttribute("metodoPago");
         }
         return "redirect:/verMenus";
     }
