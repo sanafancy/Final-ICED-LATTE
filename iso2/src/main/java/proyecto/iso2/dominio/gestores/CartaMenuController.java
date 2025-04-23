@@ -12,7 +12,9 @@ import proyecto.iso2.persistencia.*;
 @Controller
 @RequestMapping("/cartas")
 public class CartaMenuController {
+    @Autowired
     private CartaMenuDAO cartaMenuDAO;
+    @Autowired
     private ItemMenuDAO itemMenuDAO;
 
     private static final String redInicioRest = "redirect:/inicioRestaurante";

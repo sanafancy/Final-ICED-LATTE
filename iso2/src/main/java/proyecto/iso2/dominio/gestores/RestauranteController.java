@@ -121,7 +121,7 @@ public class RestauranteController {
         }
 
         model.addAttribute("favoritos", cliente.getFavoritos());
-        return redInicio; // Página donde mostraremos la lista de favoritos
+        return "favoritos"; // Página donde mostraremos la lista de favoritos
 
     }
     @PostMapping("/eliminarRestaurante")
