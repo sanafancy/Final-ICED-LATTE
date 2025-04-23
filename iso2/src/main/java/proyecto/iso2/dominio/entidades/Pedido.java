@@ -1,8 +1,6 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
-
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -38,9 +36,6 @@ public class Pedido {
         this.restaurante = restaurante;
     }
 
-    public Pedido(Cliente cliente, Direccion direccion, Double total) {
-    }
-
     public Long getId() {
         return id;
     }
@@ -69,10 +64,10 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public Pago getPagoId() {
+    public Pago getPago() {
         return pago;
     }
-    public void setPagoId(MetodoPago metodoPago) {
+    public void setPago(Pago pago) {
         this.pago = pago;
     }
 

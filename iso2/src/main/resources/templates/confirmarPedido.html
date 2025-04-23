@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <title>Confirmar Pedido</title>
@@ -14,38 +14,80 @@
 <div th:if="${cliente != null}">
   <h2>Datos del Cliente</h2>
   <p>Nombre: <span th:text="${cliente.nombre}"></span></p>
+  <p>Apellidos: <span th:text="${cliente.apellidos}"></span></p>
 </div>
 <div th:unless="${cliente != null}">
   <p style="color: red;">Error: No se encontró información del cliente.</p>
 </div>
 
-<div th:if="${pedido != null}">
+<div th:if="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
   <h2>Detalles del Pedido</h2>
-  <p>ID del Pedido: <span th:text="${pedido.id}"></span></p>
-  <p>Estado: <span th:text="${pedido.estado}"></span></p>
   <ul>
-    <li th:each="item : ${pedido.items}">
+    <li th:each="item : ${itemsPedido}">
       <span th:text="${item.nombre} + ' - €' + ${item.precio}"></span>
     </li>
   </ul>
+  <p>Total: <span th:text="'€' + ${total}"></span></p>
+</div>
+<div th:unless="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
+  <p style="color: red;">Error: No hay ítems en el pedido.</p>
 </div>
 
-<div th:if="${direccion != null}">
-  <h2>Dirección de Envío</h2>
-  <p th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio}"></p>
+<div th:if="${cliente != null and cliente.direcciones != null and not #lists.isEmpty(cliente.direcciones)}">
+  <h2>Selecciona Dirección de Envío</h2>
+  <select name="direccionId" id="direccionSelect" required>
+    <option value="">Selecciona una dirección</option>
+    <option th:each="direccion : ${cliente.direcciones}"
+            th:value="${direccion.id}"
+            th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}">
+    </option>
+  </select>
+</div>
+<div th:unless="${cliente != null and cliente.direcciones != null and not #lists.isEmpty(cliente.direcciones)}">
+  <p style="color: red;">Error: No hay direcciones disponibles. Por favor, añade una dirección.</p>
 </div>
 
-<div th:if="${metodoPago != null}">
-  <h2>Método de Pago</h2>
-  <p th:text="${metodoPago}"></p>
+<div>
+  <h2>Selecciona Método de Pago</h2>
+  <select name="metodoPago" id="metodoPagoSelect" required>
+    <option value="">Selecciona un método de pago</option>
+    <option th:each="metodo : ${metodosPago}"
+            th:value="${metodo}"
+            th:text="${metodo}">
+    </option>
+  </select>
 </div>
 
-<form th:action="@{/pedido/finalizar}" method="post">
-  <input type="hidden" name="pedidoId" th:value="${pedido?.id}" />
-  <input type="hidden" name="direccionId" th:value="${direccion?.id}" />
-  <input type="hidden" name="metodoPago" th:value="${metodoPago}" />
-  <button type="submit" th:disabled="${pedido == null or direccion == null or metodoPago == null}">Confirmar Pedido</button>
+<form th:action="@{/pedido/finalizar}" method="post" id="formConfirmarPedido">
+  <input type="hidden" name="pedidoId" th:value="${pedido?.id}"/>
+  <input type="hidden" name="direccionId" id="direccionId"/>
+  <input type="hidden" name="metodoPago" id="metodoPagoHidden"/>
+  <button type="submit" th:disabled="${pedido == null or itemsPedido == null or total == null}">Confirmar Pedido</button>
 </form>
 
+<a href="/verMenus?restauranteId=${pedido?.restaurante?.idUsuario}">Volver a Menús</a>
+
+<script>
+  document.getElementById("direccionSelect")?.addEventListener("change", function () {
+    document.getElementById("direccionId").value = this.value;
+  });
+
+  document.getElementById("metodoPagoSelect")?.addEventListener("change", function () {
+    document.getElementById("metodoPagoHidden").value = this.value;
+  });
+
+  document.getElementById("formConfirmarPedido").addEventListener("submit", function (event) {
+    const direccionId = document.getElementById("direccionId").value;
+    const metodoPago = document.getElementById("metodoPagoHidden").value;
+    if (!direccionId) {
+      alert("Por favor, selecciona una dirección de envío.");
+      event.preventDefault();
+    }
+    if (!metodoPago) {
+      alert("Por favor, selecciona un método de pago.");
+      event.preventDefault();
+    }
+  });
+</script>
 </body>
 </html>
