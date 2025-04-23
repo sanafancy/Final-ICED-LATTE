@@ -22,6 +22,8 @@ public class RestauranteController {
     private ItemMenuDAO itemMenuDAO;
     @Autowired
     private UsuarioDAO usuarioDAO;
+    @Autowired
+    private DireccionDAO direccionDAO;
 
     private static final String redInicio = "redirect:/";
 
@@ -92,10 +94,6 @@ public class RestauranteController {
         return "inicioRestaurante";
     }
 
-    /*@GetMapping("/login")
-    public String login() {
-        return "login";
-    }*/
     @PostMapping("/favorito/{id}")
     public String toggleFavorito (@PathVariable Long id, HttpSession session){
         Cliente cliente = (Cliente) session.getAttribute("cliente");
