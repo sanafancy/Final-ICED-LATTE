@@ -21,10 +21,9 @@ public class RestauranteController {
     @Autowired
     private ItemMenuDAO itemMenuDAO;
     @Autowired
-    private DireccionDAO direccionDAO;
-
-    @Autowired
     private UsuarioDAO usuarioDAO;
+
+    private static final String redInicio = "redirect:/";
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
@@ -113,7 +112,7 @@ public class RestauranteController {
                 usuarioDAO.save(cliente);
             }
         }
-        return "redirect:/";
+        return redInicio;
     }
     @GetMapping("/restaurantes/favoritos")
     public String verFavoritos (HttpSession session, Model model){
@@ -124,7 +123,7 @@ public class RestauranteController {
         }
 
         model.addAttribute("favoritos", cliente.getFavoritos());
-        return "favoritos"; // Página donde mostraremos la lista de favoritos
+        return redInicio; // Página donde mostraremos la lista de favoritos
 
     }
     @PostMapping("/eliminarRestaurante")
@@ -134,13 +133,13 @@ public class RestauranteController {
             restauranteDAO.delete(restaurante);
             session.invalidate(); // Elimina la sesión
         }
-        return "redirect:/"; // Redirige a la página de inicio
+        return redInicio; // Redirige a la página de inicio
     }
     @GetMapping("/restaurante/{id}")
     public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
         Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
         if (restauranteOpt.isEmpty()) {
-            return "redirect:/"; // Redirigir si el restaurante no existe
+            return redInicio; // Redirigir si el restaurante no existe
         }
         Restaurante restaurante = restauranteOpt.get();
         List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);

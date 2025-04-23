@@ -5,16 +5,12 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
-
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +33,8 @@ public class PedidoController {
     @Autowired
     private CartaMenuDAO cartaMenuDAO;
 
+    private static final String redLogin = "redirect:/login";
+
     @PostMapping("/crear")
     public Pedido crearPedido(
             @RequestParam Long clienteId,
@@ -46,8 +44,6 @@ public class PedidoController {
             @RequestParam List<Long> itemIds) {
         Cliente cliente = clienteDAO.findById(clienteId).orElseThrow();
         Restaurante restaurante = restauranteDAO.findById(restauranteId).orElseThrow();
-        Direccion direccion = direccionDAO.findById(direccionId).orElseThrow();
-
         List<ItemMenu> items = itemMenuDAO.findAllById(itemIds);
 
         Pedido pedido = new Pedido();
@@ -60,15 +56,6 @@ public class PedidoController {
 
         return pedidoDAO.save(pedido);
     }
-    /*@GetMapping("/cliente/{clienteId}")
-    public List<Pedido> obtenerPedidosCliente(@PathVariable Long clienteId) {
-        Cliente cliente = clienteDAO.findById(clienteId).orElse(null);
-        if (cliente == null) {
-            return (List<Pedido>) ResponseEntity.notFound().build();
-        }
-
-        return pedidoDAO.findByCliente(cliente);
-    }*/
     @GetMapping("/restaurante/{restauranteId}")
     public List<Pedido> obtenerPedidosRestaurante(@PathVariable Long restauranteId) {
         Restaurante restaurante = restauranteDAO.findById(restauranteId).orElse(null);
@@ -86,7 +73,7 @@ public class PedidoController {
         // Verificar si hay cliente
         if (cliente == null) {
             model.addAttribute("error", "Debes iniciar sesión");
-            return "redirect:/login"; // Redirigir si no hay cliente en sesión
+            return redLogin; // Redirigir si no hay cliente en sesión
         }
 
         // Obtener restaurante y menús
@@ -115,23 +102,9 @@ public class PedidoController {
         // Verificar si el cliente está en sesión
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
-            return "redirect:/login"; // Si no hay cliente, redirigir al login
+            return redLogin; // Si no hay cliente, redirigir al login
         }
         System.out.println("Llegamos a GET /confirmarPedido");
-        // obtener direccion seleccionada en verMenus
-        /*Long direccionIdSeleccionada = (Long) session.getAttribute("direccionSeleccionada");
-        System.out.println("direccionIdSeleccionada en GetMapping: "+direccionIdSeleccionada);
-        if (direccionIdSeleccionada == null) {
-            model.addAttribute("error", "No has seleccionado una dirección.");
-            return "verMenus";
-        }*/
-        //buscar la dirección en la base de datos
-        /*Optional<Direccion> direccionOpt = direccionDAO.findById(direccionIdSeleccionada);
-        if (!direccionOpt.isPresent()) {
-            model.addAttribute("error", "La dirección seleccionada no es válida.");
-            return "verMenus";
-        }
-        Direccion direccion = direccionOpt.get();*/
 
         // Obtener los datos del pedido desde la sesión
         Map<Long, Integer> carrito = (Map<Long, Integer>) session.getAttribute("carrito");
@@ -156,10 +129,8 @@ public class PedidoController {
         System.out.println("Items en el pedido (GET confirmarPedido): " + itemsPedido);
 
         model.addAttribute("cliente", cliente);
-        //model.addAttribute("direccion", direccion);
         model.addAttribute("itemsPedido", itemsPedido);
         model.addAttribute("total", total);
-        //model.addAttribute("metodosPago", MetodoPago.values());
 
         return "confirmarPedido"; // Mostrar la vista de confirmarPedido
     }
@@ -171,7 +142,7 @@ public class PedidoController {
         // Verificar si el cliente está en sesión
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
-            return "redirect:/login"; // Si no hay cliente, redirigir al login
+            return redLogin; // Si no hay cliente, redirigir al login
         }
         System.out.println("En POST /confirmarPedido");
         // Verificar si hay items en el carrito
@@ -184,14 +155,6 @@ public class PedidoController {
         }
         // Guardar el carrito en la sesión para que esté disponible en el GET
         session.setAttribute("carrito", carritoMap);
-
-        // Obtener la dirección seleccionada por el cliente
-        /*Optional<Direccion> direccionOpt = direccionDAO.findById(direccionId);
-        if (!direccionOpt.isPresent()) {
-            model.addAttribute("error", "Dirección no encontrada");
-            return "confirmarPedido"; // Redirigir a la página de confirmarPedido con error
-        }
-        Direccion direccion = direccionOpt.get();*/
 
         // Crear y guardar el pedido
         Pedido pedido = new Pedido();
@@ -223,7 +186,6 @@ public class PedidoController {
         pedido.setRestaurante(restaurante);
         // Agregar datos al modelo
         model.addAttribute("cliente", cliente);
-        //model.addAttribute("direccion", direccion);
         model.addAttribute("itemsPedido", itemsPedido);
         model.addAttribute("total", total);
         model.addAttribute("metodosPago", MetodoPago.values());
@@ -231,7 +193,6 @@ public class PedidoController {
         pedidoDAO.save(pedido);
         System.out.println("Fin de PostMapping");
         // Eliminar el carrito de la sesión después de confirmar el pedido
-        //session.removeAttribute("carrito");
 
         // Redirigir al GET de confirmarPedido para mostrar el resumen final
         return "redirect:/pedido/confirmarPedido";
@@ -242,7 +203,7 @@ public class PedidoController {
                                @RequestParam String metodoPago, HttpSession session, Model model) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
-            return "redirect:/login";
+            return redLogin;
         }
 
         Optional<Direccion> direccionOpt = direccionDAO.findById(direccionId);
@@ -250,7 +211,6 @@ public class PedidoController {
             model.addAttribute("error", "Dirección no válida");
             return "confirmarPedido";
         }
-        Direccion direccion = direccionOpt.get();
 
         MetodoPago metodoPagoEnum;
         try {
@@ -268,15 +228,12 @@ public class PedidoController {
 
         Pedido pedido = new Pedido();
         pedido.setCliente(cliente);
-        //pedido.setDireccion(direccion);
         pedido.setEstado(EstadoPedido.PEDIDO);
-        //pedido.setTotal(total);
         pedido.setMetodoPago(metodoPagoEnum);
 
         List<ItemMenu> itemsPedido = new ArrayList<>();
         for (Map.Entry<Long, Integer> entry : carrito.entrySet()) {
             Long itemMenuId = entry.getKey();
-            int cantidad = entry.getValue();
             Optional<ItemMenu> itemMenuOpt = itemMenuDAO.findById(itemMenuId);
 
             if (itemMenuOpt.isPresent()) {

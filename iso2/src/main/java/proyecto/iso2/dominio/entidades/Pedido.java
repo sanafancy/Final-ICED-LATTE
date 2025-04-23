@@ -2,7 +2,6 @@ package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.List;
 

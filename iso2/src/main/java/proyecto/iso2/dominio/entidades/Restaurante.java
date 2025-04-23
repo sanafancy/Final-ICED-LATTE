@@ -1,11 +1,7 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
-
-import java.util.List;
-
 
 @Entity
 public class Restaurante extends Usuario{

@@ -9,15 +9,14 @@ import jakarta.servlet.http.HttpSession;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/cartas")
 public class CartaMenuController {
-    @Autowired
     private CartaMenuDAO cartaMenuDAO;
-    @Autowired
     private ItemMenuDAO itemMenuDAO;
+
+    private static final String redInicioRest = "redirect:/inicioRestaurante";
+    private static final String redCartasEditar = "redirect:/cartas/editar/";
 
     @GetMapping("/crear")
     public String mostrarFormularioCreacion(Model model) {
@@ -31,10 +30,9 @@ public class CartaMenuController {
         if (restaurante == null) {
             return "redirect:/login";
         }
-        //carta.setId(null);
         carta.setRestaurante(restaurante);
         cartaMenuDAO.save(carta);
-        return "redirect:/inicioRestaurante";
+        return redInicioRest;
     }
 
     @GetMapping("/editar/{id}")
@@ -53,35 +51,35 @@ public class CartaMenuController {
     public String actualizarCarta(@PathVariable Long id, @ModelAttribute CartaMenu cartaActualizada) {
         CartaMenu carta = cartaMenuDAO.findById(id).orElse(null);
         if (carta == null) {
-            return "redirect:/inicioRestaurante";
+            return redInicioRest;
         }
 
         carta.setNombre(cartaActualizada.getNombre());
         cartaMenuDAO.save(carta);
-        return "redirect:/cartas/editar/" + id;
+        return redCartasEditar + id;
     }
 
     @PostMapping("/eliminar/{id}")
     public String eliminarCarta(@PathVariable Long id) {
         cartaMenuDAO.deleteById(id);
-        return "redirect:/inicioRestaurante";
+        return redInicioRest;
     }
 
     @PostMapping("/editar/{cartaId}/agregarItem")
     public String agregarItem(@PathVariable Long cartaId, @ModelAttribute ItemMenu item) {
         CartaMenu carta = cartaMenuDAO.findById(cartaId).orElse(null);
         if (carta == null) {
-            return "redirect:/inicioRestaurante";
+            return redInicioRest;
         }
 
         item.setCartaMenu(carta);
         itemMenuDAO.save(item);
-        return "redirect:/cartas/editar/" + cartaId;
+        return redCartasEditar + cartaId;
     }
 
     @PostMapping("/editar/{cartaId}/eliminarItem/{itemId}")
     public String eliminarItem(@PathVariable Long cartaId, @PathVariable Long itemId) {
         itemMenuDAO.deleteById(itemId);
-        return "redirect:/cartas/editar/" + cartaId;
+        return redCartasEditar + cartaId;
     }
 }
