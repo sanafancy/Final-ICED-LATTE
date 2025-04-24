@@ -17,9 +17,6 @@ public class CartaMenuController {
     @Autowired
     private ItemMenuDAO itemMenuDAO;
 
-    private static final String redInicioRest = "redirect:/inicioRestaurante";
-    private static final String redCartasEditar = "redirect:/cartas/editar/";
-
     @GetMapping("/crear")
     public String mostrarFormularioCreacion(Model model) {
         model.addAttribute("carta", new CartaMenu());
@@ -34,7 +31,7 @@ public class CartaMenuController {
         }
         carta.setRestaurante(restaurante);
         cartaMenuDAO.save(carta);
-        return redInicioRest;
+        return "redirect:/inicioRestaurante";
     }
 
     @GetMapping("/editar/{id}")
@@ -53,35 +50,35 @@ public class CartaMenuController {
     public String actualizarCarta(@PathVariable Long id, @ModelAttribute CartaMenu cartaActualizada) {
         CartaMenu carta = cartaMenuDAO.findById(id).orElse(null);
         if (carta == null) {
-            return redInicioRest;
+            return "redirect:/inicioRestaurante";
         }
 
         carta.setNombre(cartaActualizada.getNombre());
         cartaMenuDAO.save(carta);
-        return redCartasEditar + id;
+        return "redirect:/cartas/editar/" + id;
     }
 
     @PostMapping("/eliminar/{id}")
     public String eliminarCarta(@PathVariable Long id) {
         cartaMenuDAO.deleteById(id);
-        return redInicioRest;
+        return "redirect:/inicioRestaurante";
     }
 
     @PostMapping("/editar/{cartaId}/agregarItem")
     public String agregarItem(@PathVariable Long cartaId, @ModelAttribute ItemMenu item) {
         CartaMenu carta = cartaMenuDAO.findById(cartaId).orElse(null);
         if (carta == null) {
-            return redInicioRest;
+            return "redirect:/inicioRestaurante";
         }
 
         item.setCartaMenu(carta);
         itemMenuDAO.save(item);
-        return redCartasEditar + cartaId;
+        return "redirect:/cartas/editar/" + cartaId;
     }
 
     @PostMapping("/editar/{cartaId}/eliminarItem/{itemId}")
     public String eliminarItem(@PathVariable Long cartaId, @PathVariable Long itemId) {
         itemMenuDAO.deleteById(itemId);
-        return redCartasEditar + cartaId;
+        return "redirect:/cartas/editar/" + cartaId;
     }
 }

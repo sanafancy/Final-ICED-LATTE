@@ -33,14 +33,12 @@ public class PedidoController {
     @Autowired
     private CartaMenuDAO cartaMenuDAO;
 
-    private static final String redLogin = "redirect:/login";
-
     @GetMapping("/verMenus")
     public String verMenus(Model model, @RequestParam Long restauranteId, HttpSession session) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
             model.addAttribute("error", "Debes iniciar sesión");
-            return redLogin;
+            return "redirect:/login";
         }
 
         Optional<Restaurante> restauranteOpt = restauranteDAO.findById(restauranteId);
@@ -63,13 +61,13 @@ public class PedidoController {
     public String confirmarPedido(HttpSession session, Model model) {
         Cliente clienteSesion = (Cliente) session.getAttribute("cliente");
         if (clienteSesion == null) {
-            return redLogin;
+            return "redirect:/login";
         }
 
         Optional<Cliente> clienteOpt = clienteDAO.findById(clienteSesion.getIdUsuario());
         if (!clienteOpt.isPresent()) {
             model.addAttribute("error", "No se pudo cargar el cliente");
-            return redLogin;
+            return "redirect:/login";
         }
         Cliente cliente = clienteOpt.get();
 
@@ -130,7 +128,7 @@ public class PedidoController {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
             model.addAttribute("error", "Debes iniciar sesión");
-            return redLogin;
+            return "redirect:/login";
         }
 
         ObjectMapper objectMapper = new ObjectMapper();
@@ -146,8 +144,9 @@ public class PedidoController {
             return "verMenus";
         }
 
+        MetodoPago metodoPagoEnum;
         try {
-            MetodoPago.valueOf(metodoPago);
+            metodoPagoEnum = MetodoPago.valueOf(metodoPago);
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", "Método de pago no válido");
             return "verMenus";
@@ -161,6 +160,7 @@ public class PedidoController {
         pedido.setCliente(cliente);
         pedido.setEstado(EstadoPedido.PEDIDO);
         pedido.setFecha(LocalDateTime.now());
+        pedido.setMetodoPago(metodoPagoEnum); // Guardar el metodo de pado en el pedido
 
         double total = 0;
         Restaurante restaurante = null;
@@ -181,6 +181,7 @@ public class PedidoController {
 
         pedido.setRestaurante(restaurante);
         pedido.setItems(itemsPedido);
+        pedido.setTotal(total); // total precio
         pedidoDAO.save(pedido);
 
         session.setAttribute("pedido", pedido);

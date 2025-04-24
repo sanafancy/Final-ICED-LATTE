@@ -21,11 +21,10 @@ public class RestauranteController {
     @Autowired
     private ItemMenuDAO itemMenuDAO;
     @Autowired
-    private UsuarioDAO usuarioDAO;
-    @Autowired
     private DireccionDAO direccionDAO;
 
-    private static final String redInicio = "redirect:/";
+    @Autowired
+    private UsuarioDAO usuarioDAO;
 
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
@@ -110,7 +109,7 @@ public class RestauranteController {
                 usuarioDAO.save(cliente);
             }
         }
-        return redInicio;
+        return "redirect:/";
     }
     @GetMapping("/restaurantes/favoritos")
     public String verFavoritos (HttpSession session, Model model){
@@ -131,13 +130,13 @@ public class RestauranteController {
             restauranteDAO.delete(restaurante);
             session.invalidate(); // Elimina la sesión
         }
-        return redInicio; // Redirige a la página de inicio
+        return "redirect:/"; // Redirige a la página de inicio
     }
     @GetMapping("/restaurante/{id}")
     public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
         Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
         if (restauranteOpt.isEmpty()) {
-            return redInicio; // Redirigir si el restaurante no existe
+            return "redirect:/"; // Redirigir si el restaurante no existe
         }
         Restaurante restaurante = restauranteOpt.get();
         List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);

@@ -13,6 +13,8 @@ import proyecto.iso2.persistencia.*;
 public class DireccionController {
     @Autowired
     private DireccionDAO direccionDAO;
+    @Autowired
+    private RestauranteDAO restauranteDAO;
 
     @GetMapping
     public String mostrarDireccion(HttpSession session, Model model) {
