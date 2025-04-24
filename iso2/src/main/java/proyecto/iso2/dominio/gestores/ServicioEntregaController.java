@@ -3,7 +3,6 @@ package proyecto.iso2.dominio.gestores;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -11,7 +10,6 @@ import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -32,7 +30,6 @@ public class ServicioEntregaController {
     private ItemMenuDAO itemMenuDAO;
 
     @PostMapping("/pedido/finalizar")
-    @Transactional
     public String finalizarPedido(
             @RequestParam Long direccionId,
             @RequestParam Long pedidoId,
@@ -75,81 +72,52 @@ public class ServicioEntregaController {
             return "confirmarPedido";
         }
 
-        List<ItemMenu> items = new ArrayList<>();
-        double total = 0;
-        for (Map.Entry<Long, Integer> entry : carrito.entrySet()) {
-            Optional<ItemMenu> itemOpt = itemMenuDAO.findById(entry.getKey());
+        List<ItemMenu> items = new java.util.ArrayList<>();
+        for (Long itemId : carrito.keySet()) {
+            Optional<ItemMenu> itemOpt = itemMenuDAO.findById(itemId);
             if (itemOpt.isPresent()) {
-                ItemMenu item = itemOpt.get();
-                items.add(item);
-                total += item.getPrecio() * entry.getValue();
+                items.add(itemOpt.get());
             }
         }
         pedido.setItems(items);
         pedido.setFecha(LocalDateTime.now());
-        pedido.setTotal(total);
-        pedido.setMetodoPago(metodoPagoEnum);
 
-        try {
-            // Crear y guardar el pago
-            System.out.println("Creando pago para pedido ID: " + pedidoId);
-            Pago pago = new Pago(metodoPagoEnum, pedido, LocalDateTime.now());
-            System.out.println("Pago antes de guardar: idTransaccion=" + pago.getIdTransaccion() +
-                    ", metodoPago=" + pago.getMetodoPago() +
-                    ", pedidoId=" + (pago.getPedido() != null ? pago.getPedido().getId() : "null") +
-                    ", fechaTransaccion=" + pago.getFechaTransaccion());
-            System.out.println("Guardando pago...");
-            Pago savedPago = pagoDAO.save(pago);
-            System.out.println("Pago guardado con ID: " + savedPago.getIdTransaccion());
+        // Crear y guardar el pago
+        Pago pago = new Pago();
+        pago.setMetodoPago(metodoPagoEnum);
+        pago.setPedido(pedido);
+        pagoDAO.save(pago);
 
-            // Actualizar estado del pedido a PAGADO
-            System.out.println("Actualizando estado del pedido ID: " + pedidoId + " a PAGADO");
-            pedido.setEstado(EstadoPedido.PAGADO);
-            pedido.setPago(savedPago);
-            pedidoDAO.save(pedido);
-            System.out.println("Pedido actualizado");
+        // Actualizar estado del pedido a PAGADO
+        pedido.setEstado(EstadoPedido.PAGADO);
+        pedido.setPago(pago);
+        pedidoDAO.save(pedido);
 
-            // Asignar repartidor
-            System.out.println("Buscando repartidor...");
-            List<Repartidor> repartidores = repartidorDAO.findAll();
-            Repartidor repartidorAsignado = null;
-            for (Repartidor repartidor : repartidores) {
-                if (repartidor.getEficiencia() != null) {
-                    repartidorAsignado = repartidor;
-                    break;
-                }
-            }
-            if (repartidorAsignado == null) {
-                model.addAttribute("error", "No hay repartidores disponibles con eficiencia definida");
-                return "confirmarPedido";
-            }
-            System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());
-
-            // Crear y guardar el servicio de entrega
-            System.out.println("Creando servicio de entrega...");
-            ServicioEntrega servicioEntrega = new ServicioEntrega();
-            servicioEntrega.setPedido(pedido);
-            servicioEntrega.setDireccion(direccion);
-            servicioEntrega.setRepartidor(repartidorAsignado);
-            servicioEntrega.setFechaRecepcion(LocalDateTime.now());
-            servicioEntrega.setFechaEntrega(null);
-            servicioEntregaDAO.save(servicioEntrega);
-            System.out.println("Servicio de entrega guardado");
-
-            // Limpiar la sesión
-            session.removeAttribute("carrito");
-            session.removeAttribute("pedido");
-            session.removeAttribute("direccionId");
-            session.removeAttribute("metodoPago");
-            session.removeAttribute("restauranteId");
-
-            model.addAttribute("success", "Pedido confirmado y pago realizado con éxito.");
-            return "pagoExitoso"; // Redirige a pagoExitoso.html
-        } catch (Exception e) {
-            System.err.println("Error al procesar el pago: " + e.getMessage());
-            e.printStackTrace();
-            model.addAttribute("error", "Error al procesar el pago: " + e.getMessage());
+        // Asignar repartidor (lógica simple: tomar el primero disponible)
+        List<Repartidor> repartidores = repartidorDAO.findAll();
+        if (repartidores.isEmpty()) {
+            model.addAttribute("error", "No hay repartidores disponibles");
             return "confirmarPedido";
         }
+        Repartidor repartidorAsignado = repartidores.get(0); // Mejorar esta lógica en el futuro
+
+        // Crear y guardar el servicio de entrega
+        ServicioEntrega servicioEntrega = new ServicioEntrega();
+        servicioEntrega.setPedido(pedido);
+        servicioEntrega.setDireccion(direccion);
+        servicioEntrega.setRepartidor(repartidorAsignado);
+        servicioEntrega.setFechaRecepcion(LocalDateTime.now());
+        servicioEntrega.setFechaEntrega(null);
+        servicioEntregaDAO.save(servicioEntrega);
+
+        // Limpiar la sesión
+        session.removeAttribute("carrito");
+        session.removeAttribute("pedido");
+        session.removeAttribute("direccionId");
+        session.removeAttribute("metodoPago");
+        session.removeAttribute("restauranteId");
+
+        model.addAttribute("success", "Pedido confirmado y pago realizado con éxito.");
+        return "pagoExitoso";
     }
 }

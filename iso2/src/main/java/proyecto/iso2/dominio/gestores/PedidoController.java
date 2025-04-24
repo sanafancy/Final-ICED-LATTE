@@ -146,9 +146,8 @@ public class PedidoController {
             return "verMenus";
         }
 
-        MetodoPago metodoPagoEnum;
         try {
-            metodoPagoEnum = MetodoPago.valueOf(metodoPago);
+            MetodoPago.valueOf(metodoPago);
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", "Método de pago no válido");
             return "verMenus";
@@ -162,7 +161,6 @@ public class PedidoController {
         pedido.setCliente(cliente);
         pedido.setEstado(EstadoPedido.PEDIDO);
         pedido.setFecha(LocalDateTime.now());
-        pedido.setMetodoPago(metodoPagoEnum); // Guardar el metodo de pado en el pedido
 
         double total = 0;
         Restaurante restaurante = null;
@@ -183,7 +181,6 @@ public class PedidoController {
 
         pedido.setRestaurante(restaurante);
         pedido.setItems(itemsPedido);
-        pedido.setTotal(total); // total precio
         pedidoDAO.save(pedido);
 
         session.setAttribute("pedido", pedido);
