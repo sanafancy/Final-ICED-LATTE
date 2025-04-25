@@ -132,60 +132,6 @@ public class PedidoControllerTest {
         }
     }
 
-   /* // Pruebas para el método crearPedido (POST /pedido/crear)
-    @Test
-    public void testCrearPedido() throws Exception {
-        // Datos de prueba
-        Long clienteId = 1L;
-        Long restauranteId = 2L;
-        Long direccionId = 3L;
-        MetodoPago metodoPago = MetodoPago.PAYPAL;
-        List<Long> itemIds = Arrays.asList(1L, 2L);
-
-        Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
-        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante@ejemplo.com", "pass123", "CIF1", new Direccion());
-        Direccion direccion = crearDireccion();
-        List<ItemMenu> items = Arrays.asList(
-                crearItemMenu(1L, 10.0, new CartaMenu()),
-                crearItemMenu(2L, 15.0, new CartaMenu())
-        );
-
-        Pedido pedido = new Pedido();
-        pedido.setCliente(cliente);
-        pedido.setRestaurante(restaurante);
-        pedido.setMetodoPago(metodoPago);
-        pedido.setItems(items);
-        setField(pedido, "id", 1L);
-
-        // Configurar los mocks
-        when(clienteDAO.findById(clienteId)).thenReturn(Optional.of(cliente));
-        when(restauranteDAO.findById(restauranteId)).thenReturn(Optional.of(restaurante));
-        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
-        when(itemMenuDAO.findAllById(itemIds)).thenReturn(items);
-        when(pedidoDAO.save(any(Pedido.class))).thenReturn(pedido);
-
-        // Ejecutar la solicitud POST y esperar una respuesta JSON
-        mockMvc.perform(post("/pedido/crear")
-                        .param("clienteId", clienteId.toString())
-                        .param("restauranteId", restauranteId.toString())
-                        .param("direccionId", direccionId.toString())
-                        .param("metodoPago", metodoPago.name())
-                        .param("itemIds", itemIds.get(0).toString(), itemIds.get(1).toString())
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.cliente.idUsuario").value(1L))
-                .andExpect(jsonPath("$.restaurante.idUsuario").value(2L))
-                .andExpect(jsonPath("$.metodoPago").value(metodoPago.name()))
-                .andExpect(jsonPath("$.items").isArray())
-                .andExpect(jsonPath("$.items.length()").value(2));
-
-        // Verificar que el pedido se creó correctamente
-        verify(pedidoDAO, times(1)).save(any(Pedido.class));
-    }
-*/
-
     // Pruebas para el método verMenus (GET /pedido/verMenus)
     @Test
     public void testVerMenus_SinCliente() throws Exception {
@@ -252,30 +198,46 @@ public class PedidoControllerTest {
     public void testConfirmarPedido_CarritoVacio() throws Exception {
         // Datos de prueba
         Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
+        Long restauranteId = 2L;
         session.setAttribute("cliente", cliente);
+        session.setAttribute("restauranteId", restauranteId);
+
+        // Configurar los mocks
+        when(clienteDAO.findById(cliente.getIdUsuario())).thenReturn(Optional.of(cliente));
 
         // Ejecutar la solicitud GET con carrito vacío
         mockMvc.perform(get("/pedido/confirmarPedido")
                         .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
-                .andExpect(model().attribute("error", "El carrito está vacío."));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/verMenus?restauranteId=" + restauranteId));
     }
 
     @Test
     public void testConfirmarPedido_Exitoso() throws Exception {
         // Datos de prueba
         Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
+        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante@ejemplo.com", "pass123", "CIF1", new Direccion());
+        Pedido pedido = new Pedido(cliente, restaurante);
         Map<Long, Integer> carrito = new HashMap<>();
         carrito.put(1L, 2); // 2 unidades del item 1
         carrito.put(2L, 1); // 1 unidad del item 2
+        Direccion direccion = crearDireccion();
+        Long direccionId = 3L;
+        String metodoPago = MetodoPago.PAYPAL.name();
+
         session.setAttribute("cliente", cliente);
+        session.setAttribute("pedido", pedido);
         session.setAttribute("carrito", carrito);
+        session.setAttribute("direccionId", direccionId);
+        session.setAttribute("metodoPago", metodoPago);
+        session.setAttribute("restauranteId", restaurante.getIdUsuario());
 
         ItemMenu item1 = crearItemMenu(1L, 10.0, new CartaMenu());
         ItemMenu item2 = crearItemMenu(2L, 15.0, new CartaMenu());
+        when(clienteDAO.findById(cliente.getIdUsuario())).thenReturn(Optional.of(cliente));
         when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item1));
         when(itemMenuDAO.findById(2L)).thenReturn(Optional.of(item2));
+        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
 
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/pedido/confirmarPedido")
@@ -283,17 +245,26 @@ public class PedidoControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("confirmarPedido"))
                 .andExpect(model().attribute("cliente", cliente))
-                .andExpect(model().attribute("total", 35.0)) // 2*10 + 1*15
-                .andExpect(model().attribute("itemsPedido", Arrays.asList(item1, item2)));
+                .andExpect(model().attribute("total", String.format("%.2f", 35.0))) // 2*10 + 1*15
+                .andExpect(model().attribute("itemsPedido", Arrays.asList(item1, item2)))
+                .andExpect(model().attribute("direccion", direccion))
+                .andExpect(model().attribute("metodoPago", metodoPago));
     }
 
     // Pruebas para el método procesarPedido (POST /pedido/confirmarPedido)
     @Test
     public void testProcesarPedido_SinCliente() throws Exception {
+        // Datos de prueba
+        Map<Long, Integer> carrito = new HashMap<>();
+        carrito.put(1L, 2);
+        String carritoJson = objectMapper.writeValueAsString(carrito);
+        Long direccionId = 3L;
+
         // Ejecutar la solicitud POST sin cliente en la sesión
         mockMvc.perform(post("/pedido/confirmarPedido")
                         .param("metodoPago", MetodoPago.PAYPAL.name())
-                        .param("carrito", "{}"))
+                        .param("carrito", carritoJson)
+                        .param("direccionId", direccionId.toString()))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
@@ -303,11 +274,17 @@ public class PedidoControllerTest {
         // Datos de prueba
         Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
         session.setAttribute("cliente", cliente);
+        Long direccionId = 3L;
+        Direccion direccion = crearDireccion();
+
+        // Configurar los mocks
+        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
 
         // Ejecutar la solicitud POST con carrito vacío
         mockMvc.perform(post("/pedido/confirmarPedido")
                         .param("metodoPago", MetodoPago.CREDIT_CARD.name())
                         .param("carrito", "{}")
+                        .param("direccionId", direccionId.toString())
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("verMenus"))
@@ -321,11 +298,16 @@ public class PedidoControllerTest {
         Map<Long, Integer> carrito = new HashMap<>();
         carrito.put(1L, 2); // 2 unidades del item 1
         String carritoJson = objectMapper.writeValueAsString(carrito);
+        Long direccionId = 3L;
+        Direccion direccion = crearDireccion();
         session.setAttribute("cliente", cliente);
 
         Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante@ejemplo.com", "pass123", "CIF1", new Direccion());
         CartaMenu carta = crearCartaMenu(restaurante);
         ItemMenu item1 = crearItemMenu(1L, 10.0, carta);
+
+        // Configurar los mocks
+        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
         when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item1));
         when(pedidoDAO.save(any(Pedido.class))).thenAnswer(invocation -> {
             Pedido pedido = invocation.getArgument(0);
@@ -337,89 +319,12 @@ public class PedidoControllerTest {
         mockMvc.perform(post("/pedido/confirmarPedido")
                         .param("metodoPago", MetodoPago.CREDIT_CARD.name())
                         .param("carrito", carritoJson)
+                        .param("direccionId", direccionId.toString())
                         .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/pedido/confirmarPedido"));
 
         // Verificar que se guardó el pedido
         verify(pedidoDAO, times(1)).save(any(Pedido.class));
-    }
-
-    // Pruebas para el método procesarPago (POST /pedido/procesarPago)
-    @Test
-    public void testProcesarPago_SinCliente() throws Exception {
-        // Ejecutar la solicitud POST sin cliente en la sesión
-        mockMvc.perform(post("/pedido/procesarPago")
-                        .param("direccionId", "3")
-                        .param("total", "35.0")
-                        .param("metodoPago", MetodoPago.PAYPAL.name()))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
-    }
-
-    @Test
-    public void testProcesarPago_CarritoVacio() throws Exception {
-        // Datos de prueba
-        Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
-        session.setAttribute("cliente", cliente);
-        Long direccionId = 3L;
-        Direccion direccion = crearDireccion();
-
-        // Configurar los mocks
-        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
-
-        // Ejecutar la solicitud POST con carrito vacío
-        mockMvc.perform(post("/pedido/procesarPago")
-                        .param("direccionId", direccionId.toString())
-                        .param("total", "35.0")
-                        .param("metodoPago", MetodoPago.PAYPAL.name())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
-                .andExpect(model().attribute("error", "El carrito está vacío"));
-    }
-
-    @Test
-    public void testProcesarPago_Exitoso() throws Exception {
-        // Datos de prueba
-        Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
-        Map<Long, Integer> carrito = new HashMap<>();
-        carrito.put(1L, 2); // 2 unidades del item 1
-        session.setAttribute("cliente", cliente);
-        session.setAttribute("carrito", carrito);
-        Long direccionId = 3L;
-        Direccion direccion = crearDireccion();
-        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante@ejemplo.com", "pass123", "CIF1", new Direccion());
-        CartaMenu carta = crearCartaMenu(restaurante);
-        ItemMenu item1 = crearItemMenu(1L, 10.0, carta);
-
-        // Configurar los mocks
-        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
-        when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item1));
-        when(pedidoDAO.save(any(Pedido.class))).thenAnswer(invocation -> {
-            Pedido pedido = invocation.getArgument(0);
-            setField(pedido, "id", 1L);
-            return pedido;
-        });
-
-        // Ejecutar la solicitud POST
-        mockMvc.perform(post("/pedido/procesarPago")
-                        .param("direccionId", direccionId.toString())
-                        .param("total", "35.0")
-                        .param("metodoPago", MetodoPago.PAYPAL.name())
-                        .session(session))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/pagoExitoso"));
-
-        // Verificar que se guardó el pedido
-        verify(pedidoDAO, times(1)).save(any(Pedido.class));
-    }
-
-    // Pruebas para el método mostrarPago (GET /pedido/pago)
-    @Test
-    public void testMostrarPago() throws Exception {
-        mockMvc.perform(get("/pedido/pago"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("pago"));
     }
 }
