@@ -1,6 +1,5 @@
 package proyecto.iso2.dominio.gestores;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +24,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
-public class PedidoControllerIntegrationTest {
+public class ServicioEntregaControllerIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private ServicioEntregaDAO servicioEntregaDAO;
 
     @Autowired
     private PedidoDAO pedidoDAO;
@@ -37,13 +39,19 @@ public class PedidoControllerIntegrationTest {
     private ClienteDAO clienteDAO;
 
     @Autowired
-    private RestauranteDAO restauranteDAO;
+    private DireccionDAO direccionDAO;
+
+    @Autowired
+    private RepartidorDAO repartidorDAO;
+
+    @Autowired
+    private PagoDAO pagoDAO;
 
     @Autowired
     private ItemMenuDAO itemMenuDAO;
 
     @Autowired
-    private DireccionDAO direccionDAO;
+    private RestauranteDAO restauranteDAO;
 
     @Autowired
     private CartaMenuDAO cartaMenuDAO;
@@ -55,17 +63,21 @@ public class PedidoControllerIntegrationTest {
     private CartaMenu cartaMenu;
     private ItemMenu itemMenu;
     private Pedido pedido;
+    private Repartidor repartidor;
     private Map<Long, Integer> carrito;
 
     @BeforeEach
     public void setUp() {
-        // Limpiar la base de datos
-        pedidoDAO.deleteAll();
-        itemMenuDAO.deleteAll();
-        cartaMenuDAO.deleteAll();
-        direccionDAO.deleteAll();
-        clienteDAO.deleteAll();
-        restauranteDAO.deleteAll();
+        // Limpiar la base de datos en orden inverso para respetar las restricciones de clave foránea
+        pagoDAO.deleteAllInBatch(); // Elimina pagos primero (depende de pedido)
+        servicioEntregaDAO.deleteAllInBatch(); // Elimina servicios de entrega (depende de pedido)
+        pedidoDAO.deleteAllInBatch(); // Ahora elimina pedidos
+        itemMenuDAO.deleteAllInBatch();
+        cartaMenuDAO.deleteAllInBatch();
+        direccionDAO.deleteAllInBatch();
+        repartidorDAO.deleteAllInBatch();
+        clienteDAO.deleteAllInBatch();
+        restauranteDAO.deleteAllInBatch();
 
         // Crear un cliente
         cliente = new Cliente();
@@ -116,6 +128,16 @@ public class PedidoControllerIntegrationTest {
         pedido.setTotal(20.0);
         pedido = pedidoDAO.save(pedido);
 
+        // Crear un repartidor
+        repartidor = new Repartidor();
+        repartidor.setEmail("repartidor@ejemplo.com");
+        repartidor.setPass("pass123");
+        repartidor.setNombre("Repartidor A");
+        repartidor.setApellidos("Apellido A");
+        repartidor.setNif("87654321B");
+        repartidor.setEficiencia(90);
+        repartidor = repartidorDAO.save(repartidor);
+
         // Configurar el carrito
         carrito = new HashMap<>();
         carrito.put(itemMenu.getId(), 2); // 2 unidades de la pizza
@@ -131,70 +153,45 @@ public class PedidoControllerIntegrationTest {
     }
 
     @Test
-    public void testConfirmarPedido_ConClienteYCarrito() throws Exception {
-        mockMvc.perform(get("/pedido/confirmarPedido")
+    public void testFinalizarPedido_SinCliente() throws Exception {
+        MockHttpSession sessionSinCliente = new MockHttpSession();
+        sessionSinCliente.setAttribute("carrito", carrito);
+
+        mockMvc.perform(post("/pedido/finalizar")
+                        .param("direccionId", direccion.getId().toString())
+                        .param("pedidoId", pedido.getId().toString())
+                        .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .session(sessionSinCliente))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    public void testFinalizarPedido_SinRepartidoresConEficiencia() throws Exception {
+        // Eliminar repartidor existente
+        repartidorDAO.deleteAllInBatch();
+
+        // Crear repartidor sin eficiencia
+        Repartidor repartidorSinEficiencia = new Repartidor();
+        repartidorSinEficiencia.setEmail("repartidor2@ejemplo.com");
+        repartidorSinEficiencia.setPass("pass123");
+        repartidorSinEficiencia.setNombre("Repartidor B");
+        repartidorSinEficiencia.setApellidos("Apellido B");
+        repartidorSinEficiencia.setNif("98765432B");
+        repartidorSinEficiencia.setEficiencia(null);
+        repartidorDAO.save(repartidorSinEficiencia);
+
+        mockMvc.perform(post("/pedido/finalizar")
+                        .param("direccionId", direccion.getId().toString())
+                        .param("pedidoId", pedido.getId().toString())
+                        .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("confirmarPedido"))
-                .andExpect(model().attributeExists("cliente"))
-                .andExpect(model().attributeExists("itemsPedido"))
-                .andExpect(model().attributeExists("total"))
-                .andExpect(model().attribute("total", is(String.format("%.2f", 20.0)))) // 2 pizzas x 10.0
-                .andExpect(model().attribute("itemsPedido", hasSize(1)))
-                .andExpect(model().attribute("itemsPedido", hasItem(
-                        hasProperty("nombre", is("Pizza"))
-                )));
-    }
-
-    @Test
-    public void testConfirmarPedido_SinCliente() throws Exception {
-        MockHttpSession sessionSinCliente = new MockHttpSession();
-        mockMvc.perform(get("/pedido/confirmarPedido")
-                        .session(sessionSinCliente))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
-    }
-
-    @Test
-    public void testConfirmarPedido_SinCarrito() throws Exception {
-        MockHttpSession sessionSinCarrito = new MockHttpSession();
-        sessionSinCarrito.setAttribute("cliente", cliente);
-        sessionSinCarrito.setAttribute("pedido", pedido);
-        sessionSinCarrito.setAttribute("direccionId", direccion.getId());
-        sessionSinCarrito.setAttribute("metodoPago", MetodoPago.CREDIT_CARD.toString());
-        sessionSinCarrito.setAttribute("restauranteId", restaurante.getIdUsuario());
-        // No se establece carrito
-
-        mockMvc.perform(get("/pedido/confirmarPedido")
-                        .session(sessionSinCarrito))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/verMenus?restauranteId=" + restaurante.getIdUsuario()));
-    }
-
-    @Test
-    public void testProcesarConfirmarPedido_SinCliente() throws Exception {
-        MockHttpSession sessionSinCliente = new MockHttpSession();
-        mockMvc.perform(post("/pedido/confirmarPedido")
-                        .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
-                        .param("carrito", "{\"1\":2}") // Formato JSON válido
-                        .param("direccionId", direccion.getId().toString())
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .session(sessionSinCliente))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/login"));
-    }
-
-    @Test
-    public void testProcesarConfirmarPedido_CarritoVacio() throws Exception {
-        mockMvc.perform(post("/pedido/confirmarPedido")
-                        .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
-                        .param("carrito", "{}") // JSON vacío válido
-                        .param("direccionId", direccion.getId().toString())
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
                 .andExpect(model().attributeExists("error"))
-                .andExpect(model().attribute("error", is("El carrito está vacío")));
+                .andExpect(model().attribute("error", is("No hay repartidores disponibles con eficiencia definida")));
     }
+
 }
