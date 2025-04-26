@@ -93,10 +93,6 @@ public class RestauranteController {
         return "inicioRestaurante";
     }
 
-    /*@GetMapping("/login")
-    public String login() {
-        return "login";
-    }*/
     @PostMapping("/favorito/{id}")
     public String toggleFavorito (@PathVariable Long id, HttpSession session){
         Cliente cliente = (Cliente) session.getAttribute("cliente");

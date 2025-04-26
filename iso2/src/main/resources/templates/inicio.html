@@ -14,6 +14,10 @@
     <th:block th:if="${cliente != null}">
         <p>Bienvenido, <span th:text="${cliente.nombre}"></span></p>
         <button onclick="location.href='/logout'">Cerrar Sesión</button>
+        <!-- boton de añadir direccion del cliente -->
+        <button onclick="location.href='/direcciones/añadir'">Añadir Dirección</button>
+        <!-- botn de ver direcciones -->
+        <button onclick="location.href='/direcciones/ver'">Ver Direcciones</button>
     </th:block>
     <form action="/buscarRestaurante" method="get">
         <input type="text" name="busqueda" placeholder="Nombre, Dirección, Código Postal o Municipio">
@@ -32,7 +36,6 @@
                     <span th:text="${restaurante.direccion.calle +', '+ restaurante.direccion.numero +', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</span>
                 </li>
             </ul>
-
             <!-- Boton para marcar favorito -->
             <form th:action="@{/restaurantes/favorito/{id}(id=${restaurante.idUsuario})}" method="post">
                 <button type="submit">

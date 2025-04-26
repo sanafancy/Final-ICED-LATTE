@@ -19,7 +19,7 @@
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 		<sonar.organization>sanafancy</sonar.organization>
 		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 		<sonar.projectKey>sanafancy_Final-ICED-LATTE</sonar.projectKey>
@@ -54,6 +54,18 @@
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!-- Hamcrest para aserciones más expresivas -->
+		<dependency>
+			<groupId>org.hamcrest</groupId>
+			<artifactId>hamcrest</artifactId>
+			<version>2.2</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -62,7 +74,12 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.5</version>
 
+			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
@@ -75,6 +92,10 @@
 						</goals>
 						<configuration>
 							<destFile>${project.build.directory}/jacoco.exec</destFile>
+							<append>true</append>
+							<includes>
+								<include>proyecto.iso2.**</include>
+							</includes>
 						</configuration>
 					</execution>
 					<execution>
@@ -85,6 +106,19 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>report-xml</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${project.build.directory}/site/jacoco</outputDirectory>
+							<formats>
+								<format>XML</format>
+							</formats>
 						</configuration>
 					</execution>
 				</executions>

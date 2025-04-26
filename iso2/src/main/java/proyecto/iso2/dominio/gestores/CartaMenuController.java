@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpSession;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
-import java.util.List;
-
 @Controller
 @RequestMapping("/cartas")
 public class CartaMenuController {
@@ -31,7 +29,6 @@ public class CartaMenuController {
         if (restaurante == null) {
             return "redirect:/login";
         }
-        //carta.setId(null);
         carta.setRestaurante(restaurante);
         cartaMenuDAO.save(carta);
         return "redirect:/inicioRestaurante";
