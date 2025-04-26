@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +21,9 @@ import java.util.Optional;
 
 @Controller
 public class ServicioEntregaController {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServicioEntregaController.class);
+
     @Autowired
     private ServicioEntregaDAO servicioEntregaDAO;
     @Autowired
@@ -39,7 +45,7 @@ public class ServicioEntregaController {
             @RequestParam String metodoPago,
             HttpSession session,
             Model model) {
-        System.out.println("Entrando a método finalizarPedido");
+        logger.info("Entrando a método finalizarPedido");
 
         // Verificar cliente en sesión
         Cliente cliente = (Cliente) session.getAttribute("cliente");
@@ -146,8 +152,7 @@ public class ServicioEntregaController {
             model.addAttribute("success", "Pedido confirmado y pago realizado con éxito.");
             return "pagoExitoso"; // Redirige a pagoExitoso.html
         } catch (Exception e) {
-            System.err.println("Error al procesar el pago: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al procesar el pago", e);
             model.addAttribute("error", "Error al procesar el pago: " + e.getMessage());
             return "confirmarPedido";
         }
