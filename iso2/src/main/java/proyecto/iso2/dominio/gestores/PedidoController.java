@@ -185,6 +185,12 @@ public class PedidoController {
         pedidoDAO.save(pedido);
 
         session.setAttribute("pedido", pedido);
+        if (restaurante != null) {
+            session.setAttribute("restauranteId", restaurante.getIdUsuario());
+        } else {
+            model.addAttribute("error", "No se pudo determinar el restaurante del pedido");
+            return "redirect:/verMenus";
+        }
         session.setAttribute("restauranteId", restaurante.getIdUsuario());
 
         return "redirect:/pedido/confirmarPedido";
