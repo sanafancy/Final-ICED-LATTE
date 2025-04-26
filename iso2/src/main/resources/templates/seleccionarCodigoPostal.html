@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+<!
+
+DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
@@ -16,8 +18,8 @@
   <select id="codigoPostal" name="codigoPostal" required>
     <option value="">Selecciona un código postal</option>
     <option th:each="cp : ${codigosPostales}"
-            th:value="${cp}"
-            th:text="${cp} + ' (' + ${cp.codigo} + ')'"></option>
+            th:value="${cp.ordinal()}"
+            th:text="${cp.toString()}"></option>
   </select>
   <button type="submit">Guardar</button>
 </form>

@@ -12,9 +12,9 @@ public class Repartidor extends Usuario {
     private String nif;
     @Column
     private Integer eficiencia;
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.ORDINAL)
     @Column(name = "codigo_postal")
-    private CodigoPostal codigoPostal; // Nuevo campo
+    private CodigoPostal codigoPostal;
 
     public Repartidor() {}
 
@@ -26,7 +26,6 @@ public class Repartidor extends Usuario {
         this.eficiencia = eficiencia;
     }
 
-    // Getters y Setters
     public String getNombre() {
         return nombre;
     }

@@ -37,13 +37,14 @@ public class RepartidorController {
             return "redirect:/login";
         }
         try {
-            CodigoPostal cp = CodigoPostal.valueOf(codigoPostal);
+            int ordinal = Integer.parseInt(codigoPostal);
+            CodigoPostal cp = CodigoPostal.values()[ordinal];
             repartidor.setCodigoPostal(cp);
             repartidorDAO.save(repartidor);
-        } catch (IllegalArgumentException e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
             return "redirect:/repartidor/seleccionar-codigo-postal?error=invalid";
         }
-        return "redirect:/repartidor/InicioRepartidor"; // Corregido
+        return "redirect:/repartidor/InicioRepartidor";
     }
 
     @GetMapping("/InicioRepartidor")
