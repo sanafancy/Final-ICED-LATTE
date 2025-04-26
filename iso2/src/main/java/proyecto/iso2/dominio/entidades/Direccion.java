@@ -17,17 +17,14 @@ public class Direccion {
     private int codigoPostal;
     @Column
     private String municipio;
-    @OneToOne(mappedBy = "direccion", cascade = CascadeType.ALL)
-    private ServicioEntrega servicioEntrega;
 
     public Direccion() {    }
-    public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio, ServicioEntrega servicioEntrega) {
+    public Direccion(String calle, int numero, String complemento, int codigoPostal, String municipio) {
         this.calle = calle;
         this.numero = numero;
         this.complemento = complemento;
         this.codigoPostal = codigoPostal;
         this.municipio = municipio;
-        this.servicioEntrega = servicioEntrega;
     }
 
     public Long getId() {
@@ -77,8 +74,4 @@ public class Direccion {
     public void setMunicipio(String municipio) {
         this.municipio = municipio;
     }
-
-    public ServicioEntrega getServicioEntrega() {return servicioEntrega;}
-
-    public void setServicioEntrega(ServicioEntrega servicioEntrega) {this.servicioEntrega = servicioEntrega;}
 }
