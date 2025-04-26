@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>Seleccionar Código Postal</title>
+</head>
+<body>
+<h1>Seleccionar Código Postal</h1>
+
+<div th:if="${param.error}">
+  <p style="color: red;">Código postal no válido. Por favor, selecciona uno de la lista.</p>
+</div>
+
+<form th:action="@{/repartidor/seleccionar-codigo-postal}" method="post">
+  <label for="codigoPostal">Código Postal:</label>
+  <select id="codigoPostal" name="codigoPostal" required>
+    <option value="">Selecciona un código postal</option>
+    <option th:each="cp : ${codigosPostales}"
+            th:value="${cp}"
+            th:text="${cp} + ' (' + ${cp.codigo} + ')'"></option>
+  </select>
+  <button type="submit">Guardar</button>
+</form>
+
+<a href="/repartidor/InicioRepartidor">Volver</a>
+</body>
+</html>

@@ -5,8 +5,14 @@
     <title>Inicio Repartidor</title>
 </head>
 <body>
-<h1>Bienvenido, <span th:text="${repartidor.nombre}"></span></h1>
-
+<h1>Bienvenido al Inicio del Repartidor</h1>
+<div th:if="${repartidor != null}">
+    <p>Bienvenido, <span th:text="${repartidor.nombre}"></span></p>
+</div>
+<div th:if="${repartidor == null}">
+    <p>No hay información de repartidor disponible.</p>
+</div>
+<button onclick="location.href='/repartidor/seleccionar-codigo-postal'">Seleccionar Código Postal</button>
 <button onclick="location.href='/logout'">Cerrar Sesión</button>
 </body>
 </html>

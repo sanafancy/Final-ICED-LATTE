@@ -27,7 +27,7 @@ public class LoginController {
     public String login(@RequestParam String email, @RequestParam String pass, HttpSession sesion, Model model) {
         Optional<Usuario> usuarioOpt = usuarioDAO.findByEmailAndPass(email, pass);
         if (usuarioOpt.isPresent()) {
-            Usuario usuario = usuarioOpt.get(); //consulta tipo de usuario segun email y pass
+            Usuario usuario = usuarioOpt.get();
             sesion.setAttribute("usuario", usuario);
             if (usuario instanceof Cliente) {
                 Cliente cliente = (Cliente) usuario;
@@ -37,9 +37,7 @@ public class LoginController {
                     cliente.setFavoritos(new ArrayList<>());
                 }
                 System.out.println("Favoritos del cliente: " + cliente.getFavoritos());
-
-                sesion.setAttribute("cliente", usuario); //guardar sesion como cliente
-                //System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
+                sesion.setAttribute("cliente", usuario);
                 return "redirect:/";
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);
@@ -48,7 +46,7 @@ public class LoginController {
             } else if (usuario instanceof Repartidor) {
                 sesion.setAttribute("repartidor", usuario);
                 System.out.println("Sesión iniciada para Repartidor: " + usuario.getEmail());
-                return "InicioRepartidor";
+                return "redirect:/repartidor/InicioRepartidor"; // Cambiado a redirección
             }
         }
         System.out.println("Error: Usuario no encontrado o credenciales incorrectas");
@@ -57,7 +55,7 @@ public class LoginController {
 
     @GetMapping("/logout")
     public String logout(HttpSession sesion) {
-        sesion.invalidate(); // 🔹 Elimina la sesión
-        return "redirect:/"; // Redirige a la página de inicio
+        sesion.invalidate();
+        return "redirect:/";
     }
 }

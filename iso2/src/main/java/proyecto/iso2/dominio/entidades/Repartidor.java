@@ -12,9 +12,9 @@ public class Repartidor extends Usuario {
     private String nif;
     @Column
     private Integer eficiencia;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinColumn(name = "direccion_id", referencedColumnName = "id")
-    private Direccion direccion;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "codigo_postal")
+    private CodigoPostal codigoPostal; // Nuevo campo
 
     public Repartidor() {}
 
@@ -59,15 +59,15 @@ public class Repartidor extends Usuario {
         this.eficiencia = eficiencia;
     }
 
-    public Direccion getDireccion() {
-        return direccion;
+    public CodigoPostal getCodigoPostal() {
+        return codigoPostal;
     }
 
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
+    public void setCodigoPostal(CodigoPostal codigoPostal) {
+        this.codigoPostal = codigoPostal;
     }
     @Override
     public String toString() {
-        return String.format("Repartidor [idUsuario=%s, pass=%s, nombre=%s, apellidos=%s, nif=%s, eficiencia=%s]", getIdUsuario(), getPass(), nombre, apellidos, nif, eficiencia);
+        return String.format("Repartidor [idUsuario=%s, pass=%s, nombre=%s, apellidos=%s, nif=%s, eficiencia=%s, codigoPostal=%s]", getIdUsuario(), getPass(), nombre, apellidos, nif, eficiencia, codigoPostal);
     }
 }
