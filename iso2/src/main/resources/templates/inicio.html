@@ -2,48 +2,65 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Inicio • Food Delivery</title>
+    <link rel="stylesheet" href="/css/inicio.css">
 </head>
 <body>
-    <h1>¿Tienes hambre?</h1>
-    <th:block th:if="${cliente == null}">
-        <button onclick="location.href='/registro'">Registrarse</button>
-        <button onclick="location.href='/login'">Iniciar Sesión</button>
-    </th:block>
-    <th:block th:if="${cliente != null}">
-        <p>Bienvenido, <span th:text="${cliente.nombre}"></span></p>
-        <button onclick="location.href='/logout'">Cerrar Sesión</button>
-        <!-- boton de añadir direccion del cliente -->
-        <button onclick="location.href='/direcciones/añadir'">Añadir Dirección</button>
-        <!-- botn de ver direcciones -->
-        <button onclick="location.href='/direcciones/ver'">Ver Direcciones</button>
-    </th:block>
-    <form action="/buscarRestaurante" method="get">
-        <input type="text" name="busqueda" placeholder="Nombre, Dirección, Código Postal o Municipio">
-        <button type="submit">Buscar</button>
-    </form>
-    <div th:if="${cliente != null}">
-        <a th:href="@{/restaurantes/favoritos}" class="btn btn-primary">Ver Favoritos</a>
+<!-- Header -->
+<header class="site-header">
+    <div class="container header-inner">
+        <a href="/" class="logo">🍔 FastFresh</a>
+        <nav>
+            <a href="/">Inicio</a>
+            <a href="/registro">Registro</a>
+            <a href="/login">Ingresar</a>
+            <a href="/restaurantes/favoritos">Favoritos</a>
+        </nav>
     </div>
-    <h2>Restaurantes Registrados:</h2>
-    <ul>
-        <li th:each="restaurante : ${restaurantes}">
-            <a th:href="${session.cliente != null} ? '/restaurante/' + ${restaurante.idUsuario} : '/login'"
-               th:text="${restaurante.nombre}">Nombre del Restaurante</a>
-            <ul>
-                <li>
-                    <span th:text="${restaurante.direccion.calle +', '+ restaurante.direccion.numero +', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</span>
-                </li>
-            </ul>
-            <!-- Boton para marcar favorito -->
-            <form th:action="@{/restaurantes/favorito/{id}(id=${restaurante.idUsuario})}" method="post">
-                <button type="submit">
-                    <span th:if="${cliente != null and cliente.favoritos != null and #lists.contains(cliente.favoritos, restaurante)}" th:text="'Favorito'"></span>
-                    <span th:if="${cliente != null and cliente.favoritos != null and !#lists.contains(cliente.favoritos, restaurante)}" th:text="'Marcar favorito'"></span>
-                </button>
-            </form>
-        </li>
-    </ul>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container hero-content">
+        <h1>¿Tienes hambre?</h1>
+        <p class="subtitle">Pide comida rápida y fresca en un clic</p>
+        <form action="/buscarRestaurante" method="get" class="hero-search">
+            <input type="text" name="busqueda" placeholder="Introduce tu ciudad o restaurante">
+            <button type="submit">Buscar 🚀</button>
+        </form>
+    </div>
+</section>
+
+<!-- Favoritos -->
+<section class="section favorites">
+    <div class="container">
+        <h2>⭐ Tus Favoritos</h2>
+        <div class="cards">
+            <!-- Aquí irían tus tarjetas de favoritos -->
+            <div class="card">– No tienes favoritos aún –</div>
+        </div>
+    </div>
+</section>
+
+<!-- Restaurantes -->
+<section class="section restaurants">
+    <div class="container">
+        <h2>🍽️ Restaurantes Registrados</h2>
+        <ul class="restaurant-list">
+            <li>
+                <strong>Nombre del Restaurante</strong><br>
+                Dirección completa aquí
+            </li>
+
+        </ul>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <div class="container">
+        <small>© 2025 FastFresh • Gestión de pedidos y entregas</small>
+    </div>
+</footer>
 </body>
 </html>
