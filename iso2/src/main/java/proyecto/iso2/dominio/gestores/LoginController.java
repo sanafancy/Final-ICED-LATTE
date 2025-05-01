@@ -40,7 +40,7 @@ public class LoginController {
 
                 sesion.setAttribute("cliente", usuario); //guardar sesion como cliente
                 //System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
-                return "redirect:/";
+                return "redirect:/inicio";
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);
                 System.out.println("Sesión iniciada para Restaurante: " + usuario.getEmail());
@@ -48,16 +48,21 @@ public class LoginController {
             } else if (usuario instanceof Repartidor) {
                 sesion.setAttribute("repartidor", usuario);
                 System.out.println("Sesión iniciada para Repartidor: " + usuario.getEmail());
-                return "InicioRepartidor";
+                return "redirect:/inicioRepartidor";
             }
         }
         System.out.println("Error: Usuario no encontrado o credenciales incorrectas");
         return "redirect:/login?error=true";
     }
 
+    @GetMapping("/inicioRepartidor")
+    public String showInicioRepartidor() {
+        return "inicioRepartidor";
+    }
+
     @GetMapping("/logout")
     public String logout(HttpSession sesion) {
         sesion.invalidate(); // 🔹 Elimina la sesión
-        return "redirect:/"; // Redirige a la página de inicio
+        return "redirect:/inicio"; // Redirige a la página de inicio
     }
 }

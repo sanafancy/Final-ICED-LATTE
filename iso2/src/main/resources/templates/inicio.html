@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,53 +6,54 @@
     <link rel="stylesheet" href="/css/inicio.css">
 </head>
 <body>
-<!-- Header -->
 <header class="site-header">
     <div class="container header-inner">
-        <a href="/" class="logo">🍔 FastFresh</a>
+        <a href="/inicio" class="logo">🍔 ICED Latte</a>
         <nav>
-            <a href="/">Inicio</a>
+            <a href="/restaurante/home">Inicio</a>
             <a href="/registro">Registro</a>
-            <a href="/login">Ingresar</a>
-            <a href="/restaurantes/favoritos">Favoritos</a>
+            <a href="/login">Login</a>
+            <a href="/restaurante/favoritos">Favoritos</a>
+            <th:block th:if="${session.restaurante != null}">
+                <a href="/restaurante/panel">Panel Restaurante</a>
+            </th:block>
         </nav>
+
     </div>
 </header>
 
-<!-- Hero -->
 <section class="hero">
     <div class="container hero-content">
         <h1>¿Tienes hambre?</h1>
         <p class="subtitle">Pide comida rápida y fresca en un clic</p>
-        <form action="/buscarRestaurante" method="get" class="hero-search">
+        <form action="/restaurante/buscar" method="get" class="hero-search">
             <input type="text" name="busqueda" placeholder="Introduce tu ciudad o restaurante">
             <button type="submit">Buscar 🚀</button>
         </form>
     </div>
 </section>
 
-<!-- Favoritos -->
 <section class="section favorites">
     <div class="container">
         <h2>⭐ Tus Favoritos</h2>
         <div class="cards">
-            <!-- Aquí irían tus tarjetas de favoritos -->
             <div class="card">– No tienes favoritos aún –</div>
         </div>
     </div>
 </section>
 
-<!-- Restaurantes -->
 <section class="section restaurants">
     <div class="container">
         <h2>🍽️ Restaurantes Registrados</h2>
         <ul class="restaurant-list">
-            <li>
-                <strong>Nombre del Restaurante</strong><br>
+            <li th:each="restaurante : ${restaurantes}">
+                <strong th:text="${restaurante.nombre}">Nombre del Restaurante</strong><br>
+                <span th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.municipio + ' (' + restaurante.direccion.codigoPostal + ')'}">
                 Dirección completa aquí
+                </span>
             </li>
-
         </ul>
+        <p th:if="${restaurantes != null and #lists.isEmpty(restaurantes)}">No se encontraron restaurantes.</p>
     </div>
 </section>
 
