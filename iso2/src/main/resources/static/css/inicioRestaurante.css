@@ -1,144 +1,132 @@
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Variables de color */
 :root {
-    --verde: #A8D5BA;
-    --verde-oscuro: #5DAE8B;
-    --gris-claro: #F1F1F1;
+    --verde: #009688;
+    --verde-oscuro: #00796b;
+    --gris-claro: #f8f9fa;
     --texto: #333;
 }
 
+/* Body y contenedores */
 body {
     font-family: 'Segoe UI', sans-serif;
-    background-color: var(--gris-claro);
     color: var(--texto);
-    margin: 0;
+    background: var(--gris-claro);
 }
 
-/* Header */
+/* Header y navegación */
 .site-header {
     background: white;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
-
 .header-inner {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 15px 30px;
+    justify-content: space-between;
+    padding: 15px 5%;
 }
-
 .logo {
     font-size: 1.5rem;
     color: var(--verde-oscuro);
     text-decoration: none;
     font-weight: bold;
 }
-
-nav a {
-    text-decoration: none;
-    color: var(--texto);
-    font-weight: 500;
-    margin-left: 20px;
-}
-
-nav a:hover {
-    color: var(--verde-oscuro);
-}
-
-/* Hero section */
-.hero {
-    background-image: url('https://images.unsplash.com/photo-1604908177522-402d06f46e58');
-    background-size: cover;
-    background-position: center;
-    height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.hero-overlay {
-    background-color: rgba(93, 174, 139, 0.7);
-    padding: 40px;
-    border-radius: 12px;
-}
-
-.hero h1 {
-    color: white;
-    font-size: 2.5rem;
-    margin: 0;
-}
-
-/* Cartas */
-.section {
-    padding: 40px 20px;
-    max-width: 1000px;
-    margin: 0 auto;
-}
-
-.section h2 {
-    font-size: 1.8rem;
-    color: var(--verde-oscuro);
-    margin-bottom: 20px;
-}
-
-.restaurant-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.restaurant-list li {
-    background: white;
-    padding: 15px 20px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 10px;
-    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-}
-
-.restaurant-list form {
-    display: inline;
-    margin-left: 10px;
-}
-
-.restaurant-list button {
-    background-color: var(--verde);
+.header-inner nav button {
+    background: var(--verde);
     color: white;
     border: none;
-    padding: 8px 12px;
-    border-radius: 6px;
+    border-radius: 20px;
+    padding: 8px 16px;
+    margin-left: 10px;
     cursor: pointer;
     font-size: 0.9rem;
+    transition: background 0.3s, transform 0.2s;
+}
+.header-inner nav button:hover {
+    background: var(--verde-oscuro);
+    transform: scale(1.05);
 }
 
-.restaurant-list button:hover {
-    background-color: var(--verde-oscuro);
-}
-
-/* Cerrar sesión */
-.logout-button {
+/* Hero (bienvenida) con fondo verde */
+.hero {
+    background: var(--verde);      /* Fondo verde sólido */
+    padding: 80px 20px;
     text-align: center;
-    margin: 40px 0;
-}
-
-.logout-button a {
-    background-color: var(--verde);
     color: white;
-    padding: 12px 24px;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background 0.3s;
+}
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.hero-content h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-family: 'Segoe UI', sans-serif;
 }
 
-.logout-button a:hover {
-    background-color: var(--verde-oscuro);
+/* Nombre del restaurante en gris */
+.hero-content .restaurant-name {
+    font-size: 3rem;
+    font-weight: bold;
+    color: var(--texto);           /* Texto en gris oscuro */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 0.5rem;
+}
+.hero-content .subheading {
+    font-size: 1.2rem;
+    font-style: italic;
+    color: rgba(255,255,255,0.8);
+}
+
+/* Sección de cartas existentes */
+.section {
+    max-width: 800px;
+    margin: 40px auto;
+    background: #ffffffcc;
+    border-radius: 10px;
+    padding: 20px;
+}
+.section h2 {
+    color: var(--verde-oscuro);
+    margin-bottom: 20px;
+    text-align: center;
+}
+.restaurant-list {
+    list-style: none;
+}
+.restaurant-list li {
+    margin: 10px 0;
+}
+.restaurant-list li a.card-link {
+    display: block;
+    background: var(--gris-claro);
+    padding: 12px 16px;
+    border-radius: 8px;
+    color: var(--texto);
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.1s;
+}
+.restaurant-list li a.card-link:hover {
+    background: var(--verde);
+    color: white;
+    transform: scale(1.02);
 }
 
 /* Footer */
 .site-footer {
     text-align: center;
-    padding: 30px 20px;
-    color: #555;
-    background: var(--gris-claro);
+    font-size: 0.9rem;
+    color: #777;
+    padding: 20px 0;
 }

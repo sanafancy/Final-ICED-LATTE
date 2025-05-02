@@ -86,11 +86,12 @@ public class CartaMenuController {
     public String verItemsCarta(@PathVariable Long id, Model model) {
         CartaMenu carta = cartaMenuDAO.findById(id).orElse(null);
         if (carta == null) {
-            return "redirect:/inicioRestaurante";
+            return "redirect:/restaurante/panel";
         }
         model.addAttribute("carta", carta);
         model.addAttribute("items", carta.getItems());
-        return "verCarta"; // nombre de la plantilla HTML que crearemos
+        return "verCarta";  // debe coincidir con el nombre del HTML sin la extensión
     }
+
 
 }

@@ -25,6 +25,8 @@ public class RestauranteController {
     private ItemMenuDAO itemMenuDAO;
     @Autowired
     private UsuarioDAO usuarioDAO;
+    @Autowired
+    private DireccionDAO direccionDAO;
 
     /**
      * Home público: lista todos los restaurantes (cliente)
@@ -74,22 +76,21 @@ public class RestauranteController {
      * Página principal del restaurante autenticado
      */
     @GetMapping("/panel")
-    public String inicioRestaurante(HttpSession session, Model model) {
+    public String panel(HttpSession session, Model model) {
         Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
-        if (restaurante == null) {
-            return "redirect:/login";
-        }
+        if (restaurante == null) return "redirect:/login";  // Redirigir al login si no hay restaurante en sesión
+
+        // Agregar el nombre del restaurante al modelo
+        model.addAttribute("restauranteNombre", restaurante.getNombre());  // Asumiendo que el restaurante tiene un campo "nombre"
 
         model.addAttribute("restaurante", restaurante);
-
         List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
-        for (CartaMenu carta : cartas) {
-            carta.setItems(itemMenuDAO.findByCartaMenu(carta));
-        }
+        cartas.forEach(c -> c.setItems(itemMenuDAO.findByCartaMenu(c)));
         model.addAttribute("cartas", cartas);
 
-        return "inicioRestaurante";
+        return "inicioRestaurante";  // Vista que muestra la información del restaurante
     }
+
 
     /**
      * Redirige desde /inicioRestaurante al panel (evita error 404)
@@ -171,4 +172,40 @@ public class RestauranteController {
         }
         return "verMenus";
     }
+    @GetMapping("/crearCarta")
+    public String formCrearCarta(Model model, HttpSession session) {
+        if (session.getAttribute("restaurante")==null) return "redirect:/login";
+        model.addAttribute("carta", new CartaMenu());
+        return "crearCarta";
+    }
+
+    @PostMapping("/crearCarta")
+    public String crearCarta(@ModelAttribute CartaMenu carta, HttpSession session) {
+        Restaurante r = (Restaurante) session.getAttribute("restaurante");
+        if (r == null) return "redirect:/login";  // Si no hay restaurante en la sesión, redirigir al login
+
+        carta.setRestaurante(r);  // Asociar la carta al restaurante
+        cartaMenuDAO.save(carta);  // Guardar la carta en la base de datos
+
+        return "redirect:/restaurante/panel";  // Redirigir al panel del restaurante
+    }
+
+
+    @GetMapping("/editarDireccion")
+    public String formEditarDireccion(Model model, HttpSession session) {
+        Restaurante r = (Restaurante) session.getAttribute("restaurante");
+        if (r==null) return "redirect:/login";
+        model.addAttribute("direccion", direccionDAO.findById(r.getDireccion().getId()).orElse(new Direccion()));
+        return "editarDireccion";
+    }
+    @PostMapping("/editarDireccion")
+    public String editarDireccion(@ModelAttribute Direccion direc, HttpSession session) {
+        Restaurante r = (Restaurante) session.getAttribute("restaurante");
+        if (r==null) return "redirect:/login";
+        Direccion saved = direccionDAO.save(direc);
+        r.setDireccion(saved);
+        restauranteDAO.save(r);
+        return "redirect:/restaurante/panel";
+    }
+
 }

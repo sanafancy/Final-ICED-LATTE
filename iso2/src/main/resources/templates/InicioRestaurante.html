@@ -1,46 +1,63 @@
 <!DOCTYPE html>
-<html lang="es">
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio Restaurante - ICED Latte</title>
+    <title>Inicio Restaurante – ICED Latte</title>
     <link rel="stylesheet" href="/css/inicioRestaurante.css">
+    <script>
+        function confirmarEliminacion() {
+            if (confirm("¿Seguro que quieres eliminar tu restaurante? Esta acción no se puede deshacer.")) {
+                document.getElementById('formEliminar').submit();
+            }
+        }
+    </script>
 </head>
 <body>
 
+<!-- Header -->
 <header class="site-header">
     <div class="header-inner">
-        <a href="#" class="logo">🍔 ICED Latte</a>
+        <a href="/" class="logo">🍔 ICED Latte</a>
         <nav>
-            <a href="/formCarta">Crear Carta</a>
-            <a href="/editarDireccion">Editar Dirección</a>
-            <a href="/eliminarRestaurante">Eliminar Restaurante</a>
+            <button onclick="location.href='/restaurante/crearCarta'">Crear Carta</button>
+            <button onclick="location.href='/restaurante/editarDireccion'">Editar Dirección</button>
+            <button onclick="confirmarEliminacion()">Eliminar Restaurante</button>
+            <button onclick="location.href='/logout'">Cerrar Sesión</button>
         </nav>
     </div>
 </header>
 
+
+<!-- Hero con fondo suave -->
+<!-- Hero Section (Bienvenida) -->
 <section class="hero">
     <div class="hero-overlay">
-        <h1>Bienvenido al Inicio del Restaurante</h1>
+        <div class="hero-content">
+            <h1>Bienvenido al Panel del Restaurante</h1>
+            <div class="restaurant-name">
+                Restaurante <strong th:text="${restaurante.nombre}">Nombre del Restaurante</strong>
+            </div>
+        </div>
     </div>
 </section>
 
+
+<!-- Cartas existentes -->
 <section class="section">
     <h2>Cartas Existentes</h2>
     <ul class="restaurant-list">
-        <th:block th:each="carta : ${cartas}">
-            <li>
-                <a th:href="@{'/cartas/' + ${carta.id}}" style="text-decoration: none; color: inherit;">
-                    <span th:text="${carta.nombre}">Carta</span>
-                </a>
-            </li>
-        </th:block>
+        <li th:each="carta : ${cartas}">
+            <a th:href="@{/cartas/{id}(id=${carta.id})}"
+               th:text="${carta.nombre}"
+               class="card-link">
+                Carta Principal
+            </a>
+        </li>
     </ul>
+    <p th:if="${#lists.isEmpty(cartas)}">No tienes cartas aún.</p>
 </section>
 
-<div class="logout-button">
-    <a href="/logout">Cerrar sesión</a>
-</div>
-
+<!-- Footer -->
 <footer class="site-footer">
     &copy; 2025 ICED Latte. Todos los derechos reservados.
 </footer>
