@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>¡Realiza tu pedido!</title>
+    <link rel="stylesheet" href="/css/verMenus.css">
 </head>
 <body>
 
@@ -19,8 +20,11 @@
     <div th:if="${cartas != null and not #lists.isEmpty(cartas)}">
         <ul>
             <li th:each="carta : ${cartas}">
-                <h3 th:text="${carta.nombre}">Nombre de la Carta</h3>
-                <ul th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
+                <h3 th:text="${carta.nombre}"
+                    th:attr="onclick='toggleItems(' + ${carta.id} + ')'"
+                    style="cursor: pointer;">
+                </h3>
+                <ul th:id="'items-' + ${carta.id}" style="display: none;" th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
                     <li th:each="item : ${carta.items}">
                         <span th:text="${item.nombre}"></span> - <span th:text="'€' + ${item.precio}"></span>
                         <button type="button" th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
@@ -152,6 +156,14 @@
         console.log("📤 Enviando formulario con carrito:", carritoSimplificado);
         document.getElementById("carritoData").value = JSON.stringify(carritoSimplificado);
     });
+
+    function toggleItems(cartaId) {
+        const itemsUl = document.getElementById(`items-${cartaId}`);
+        if (itemsUl) {
+            const visible = itemsUl.style.display === "block";
+            itemsUl.style.display = visible ? "none" : "block";
+        }
+    }
 </script>
 
 </body>

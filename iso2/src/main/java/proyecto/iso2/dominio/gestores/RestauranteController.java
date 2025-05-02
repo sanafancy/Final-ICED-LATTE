@@ -5,15 +5,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
-
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
+@RequestMapping("/restaurante")
 public class RestauranteController {
+
     @Autowired
     private RestauranteDAO restauranteDAO;
     @Autowired
@@ -21,148 +24,150 @@ public class RestauranteController {
     @Autowired
     private ItemMenuDAO itemMenuDAO;
     @Autowired
-    private DireccionDAO direccionDAO;
-
-    @Autowired
     private UsuarioDAO usuarioDAO;
 
-    @GetMapping("/")
-    public String home(HttpSession session, Model model) {
+    /**
+     * Home público: lista todos los restaurantes (cliente)
+     */
+    @GetMapping("/home")
+    public String homeCliente(HttpSession session, Model model) {
         List<Restaurante> restaurantes = restauranteDAO.findAll();
         model.addAttribute("restaurantes", restaurantes);
 
         Cliente cliente = (Cliente) session.getAttribute("cliente");
-
         if (cliente != null) {
-            System.out.println("Cliente autenticado: " + cliente.getEmail());
             model.addAttribute("cliente", cliente);
-        } else {
-            System.out.println("No hay sesión iniciada");
         }
-
         return "inicio";
     }
-    @GetMapping("/buscarRestaurante")
+
+    /**
+     * Búsqueda de restaurantes
+     */
+    @GetMapping("/buscar")
     public String buscarRestaurante(@RequestParam(required = false) String busqueda,
                                     HttpSession session,
                                     Model model) {
-        List<Restaurante> restaurantes;
+        Set<Restaurante> resultados = new LinkedHashSet<>();
 
-        // Procesar la búsqueda
-        if (busqueda != null && !busqueda.isEmpty()) {
-            restaurantes = restauranteDAO.findByNombreContainingIgnoreCase(busqueda);
-            restaurantes.addAll(restauranteDAO.findByDireccion_CalleContainingIgnoreCase(busqueda));
-            restaurantes.addAll(restauranteDAO.findByDireccion_MunicipioContainingIgnoreCase(busqueda));
+        if (busqueda != null && !busqueda.isBlank()) {
+            resultados.addAll(restauranteDAO.findByNombreContainingIgnoreCase(busqueda));
+            resultados.addAll(restauranteDAO.findByDireccion_CalleContainingIgnoreCase(busqueda));
+            resultados.addAll(restauranteDAO.findByDireccion_MunicipioContainingIgnoreCase(busqueda));
             try {
-                int codigoPostal = Integer.parseInt(busqueda);
-                restaurantes.addAll(restauranteDAO.findByDireccion_CodigoPostal(codigoPostal));
-            } catch (NumberFormatException e) {
-                // No es un código postal válido, ignorar
-            }
+                int cp = Integer.parseInt(busqueda);
+                resultados.addAll(restauranteDAO.findByDireccion_CodigoPostal(cp));
+            } catch (NumberFormatException ignored) {}
         } else {
-            restaurantes = restauranteDAO.findAll();
+            resultados.addAll(restauranteDAO.findAll());
         }
-        model.addAttribute("restaurantes", restaurantes);
 
-        // Agregar el cliente al modelo si está en sesión
+        model.addAttribute("restaurantes", List.copyOf(resultados));
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente != null) {
             model.addAttribute("cliente", cliente);
         }
-
         return "inicio";
     }
 
-    //anadir menu, item y dirección
-    @GetMapping("/inicioRestaurante")
+    /**
+     * Página principal del restaurante autenticado
+     */
+    @GetMapping("/panel")
     public String inicioRestaurante(HttpSession session, Model model) {
         Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
-
-        if (restaurante != null) {
-            System.out.println("Restaurante autenticado: " + restaurante.getEmail());
-            model.addAttribute("restaurante", restaurante);
-
-            // listar cartas existentes
-            List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
-            model.addAttribute("cartas", cartas);
-        } else {
-            System.out.println("No hay sesión iniciada para restaurante");
+        if (restaurante == null) {
             return "redirect:/login";
         }
+
+        model.addAttribute("restaurante", restaurante);
+
+        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+        for (CartaMenu carta : cartas) {
+            carta.setItems(itemMenuDAO.findByCartaMenu(carta));
+        }
+        model.addAttribute("cartas", cartas);
 
         return "inicioRestaurante";
     }
 
+    /**
+     * Redirige desde /inicioRestaurante al panel (evita error 404)
+     */
+    @GetMapping("/inicioRestaurante")
+    public String redirigirPanel() {
+        return "redirect:/restaurante/panel";
+    }
+
+    /**
+     * Alternar favorito (cliente)
+     */
     @PostMapping("/favorito/{id}")
-    public String toggleFavorito (@PathVariable Long id, HttpSession session){
+    public String toggleFavorito(@PathVariable Long id, HttpSession session) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente != null) {
-            //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
-            Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
-            if (restauranteOpt.isPresent()) {
-                Restaurante restaurante = restauranteOpt.get();
-                if (cliente.getFavoritos().contains(restaurante)) {
-                    cliente.getFavoritos().remove(restaurante);
+            Optional<Restaurante> opt = restauranteDAO.findById(id);
+            if (opt.isPresent()) {
+                Restaurante r = opt.get();
+                if (cliente.getFavoritos().contains(r)) {
+                    cliente.getFavoritos().remove(r);
                 } else {
-                    cliente.getFavoritos().add(restaurante);
+                    cliente.getFavoritos().add(r);
                 }
                 usuarioDAO.save(cliente);
             }
         }
-        return "redirect:/";
+        return "redirect:/restaurante/home";
     }
-    @GetMapping("/restaurantes/favoritos")
-    public String verFavoritos (HttpSession session, Model model){
+
+    /**
+     * Ver favoritos del cliente
+     */
+    @GetMapping("/favoritos")
+    public String verFavoritos(HttpSession session, Model model) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
-
         if (cliente == null) {
-            return "redirect:/login"; // Si no hay sesión, redirigir a login
+            return "redirect:/login";
         }
-
         model.addAttribute("favoritos", cliente.getFavoritos());
-        return "favoritos"; // Página donde mostraremos la lista de favoritos
-
+        return "favoritos";
     }
-    @PostMapping("/eliminarRestaurante")
+
+    /**
+     * Eliminar restaurante autenticado
+     */
+    @PostMapping("/eliminar")
     public String eliminarRestaurante(HttpSession session) {
         Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
         if (restaurante != null) {
             restauranteDAO.delete(restaurante);
-            session.invalidate(); // Elimina la sesión
+            session.invalidate();
         }
-        return "redirect:/"; // Redirige a la página de inicio
+        return "redirect:/inicio";
     }
-    @GetMapping("/restaurante/{id}")
-    public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
-        Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
-        if (restauranteOpt.isEmpty()) {
-            return "redirect:/"; // Redirigir si el restaurante no existe
-        }
-        Restaurante restaurante = restauranteOpt.get();
-        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
 
-        for (CartaMenu carta : cartas) {
-            List<ItemMenu> items = itemMenuDAO.findByCartaMenu(carta);
-            carta.setItems(items);
+    /**
+     * Ver menús públicos de un restaurante
+     */
+    @GetMapping("/{id}")
+    public String verMenuRestaurante(@PathVariable Long id, Model model, HttpSession session) {
+        Optional<Restaurante> opt = restauranteDAO.findById(id);
+        if (opt.isEmpty()) {
+            return "redirect:/restaurante/home";
         }
+        Restaurante restaurante = opt.get();
+        model.addAttribute("restaurante", restaurante);
+
+        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+        for (CartaMenu c : cartas) {
+            c.setItems(itemMenuDAO.findByCartaMenu(c));
+        }
+        model.addAttribute("cartas", cartas);
 
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente != null) {
             model.addAttribute("direcciones", cliente.getDirecciones());
-        }
-
-        model.addAttribute("restaurante", restaurante);
-        model.addAttribute("cartas", cartas);
-        model.addAttribute("cliente", cliente);
-        //depurar:
-        System.out.println("Cartas encontradas: " + cartas.size());
-        for (CartaMenu carta : cartas) {
-            System.out.println("Carta: " + carta.getNombre());
-            List<ItemMenu> items = itemMenuDAO.findByCartaMenu(carta);
-            System.out.println("Items en " + carta.getNombre() + ": " + items.size());
-            for (ItemMenu item : items) {
-                System.out.println(" - " + item.getNombre() + ": " + item.getPrecio() + "€");
-            }
+            model.addAttribute("cliente", cliente);
         }
         return "verMenus";
     }

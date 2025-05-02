@@ -1,0 +1,105 @@
+:root {
+    --verde: #009688;
+    --verde-oscuro: #00796b;
+    --gris-claro: #f8f9fa;
+    --texto: #333;
+    --amarillo: #ffc107;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--gris-claro);
+    color: var(--texto);
+    margin: 0;
+}
+
+/* Header */
+.site-header {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+}
+.logo {
+    font-size: 1.5rem;
+    color: var(--verde-oscuro);
+    text-decoration: none;
+    font-weight: bold;
+}
+nav a {
+    text-decoration: none;
+    color: var(--texto);
+    font-weight: 500;
+    margin-left: 20px;
+}
+nav a:hover {
+    color: var(--verde-oscuro);
+}
+
+/* Formulario */
+.form-section {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 60px 20px;
+}
+
+.form-container {
+    background: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 500px;
+    width: 100%;
+    text-align: center;
+}
+
+.form-container h1 {
+    color: var(--verde-oscuro);
+    margin-bottom: 25px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+label {
+    font-weight: 500;
+    text-align: left;
+}
+
+input[type="text"] {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 10px;
+    background-color: var(--verde);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: var(--verde-oscuro);
+}
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: #555;
+    background: var(--gris-claro);
+}

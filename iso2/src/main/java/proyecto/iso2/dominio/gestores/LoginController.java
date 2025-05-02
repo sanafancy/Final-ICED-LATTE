@@ -44,7 +44,7 @@ public class LoginController {
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);
                 System.out.println("Sesión iniciada para Restaurante: " + usuario.getEmail());
-                return "redirect:/inicioRestaurante";
+                return "redirect:/restaurante/panel"; // ← Ruta correcta
             } else if (usuario instanceof Repartidor) {
                 sesion.setAttribute("repartidor", usuario);
                 System.out.println("Sesión iniciada para Repartidor: " + usuario.getEmail());

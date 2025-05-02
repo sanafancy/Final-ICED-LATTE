@@ -1,0 +1,144 @@
+:root {
+    --verde: #A8D5BA;
+    --verde-oscuro: #5DAE8B;
+    --gris-claro: #F1F1F1;
+    --texto: #333;
+}
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: var(--gris-claro);
+    color: var(--texto);
+    margin: 0;
+}
+
+/* Header */
+.site-header {
+    background: white;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    color: var(--verde-oscuro);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--texto);
+    font-weight: 500;
+    margin-left: 20px;
+}
+
+nav a:hover {
+    color: var(--verde-oscuro);
+}
+
+/* Hero section */
+.hero {
+    background-image: url('https://images.unsplash.com/photo-1604908177522-402d06f46e58');
+    background-size: cover;
+    background-position: center;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-overlay {
+    background-color: rgba(93, 174, 139, 0.7);
+    padding: 40px;
+    border-radius: 12px;
+}
+
+.hero h1 {
+    color: white;
+    font-size: 2.5rem;
+    margin: 0;
+}
+
+/* Cartas */
+.section {
+    padding: 40px 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.section h2 {
+    font-size: 1.8rem;
+    color: var(--verde-oscuro);
+    margin-bottom: 20px;
+}
+
+.restaurant-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.restaurant-list li {
+    background: white;
+    padding: 15px 20px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 10px;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+}
+
+.restaurant-list form {
+    display: inline;
+    margin-left: 10px;
+}
+
+.restaurant-list button {
+    background-color: var(--verde);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.restaurant-list button:hover {
+    background-color: var(--verde-oscuro);
+}
+
+/* Cerrar sesión */
+.logout-button {
+    text-align: center;
+    margin: 40px 0;
+}
+
+.logout-button a {
+    background-color: var(--verde);
+    color: white;
+    padding: 12px 24px;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.logout-button a:hover {
+    background-color: var(--verde-oscuro);
+}
+
+/* Footer */
+.site-footer {
+    text-align: center;
+    padding: 30px 20px;
+    color: #555;
+    background: var(--gris-claro);
+}

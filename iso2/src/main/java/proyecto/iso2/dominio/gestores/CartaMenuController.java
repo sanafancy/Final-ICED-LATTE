@@ -81,4 +81,16 @@ public class CartaMenuController {
         itemMenuDAO.deleteById(itemId);
         return "redirect:/cartas/editar/" + cartaId;
     }
+
+    @GetMapping("/{id}")
+    public String verItemsCarta(@PathVariable Long id, Model model) {
+        CartaMenu carta = cartaMenuDAO.findById(id).orElse(null);
+        if (carta == null) {
+            return "redirect:/inicioRestaurante";
+        }
+        model.addAttribute("carta", carta);
+        model.addAttribute("items", carta.getItems());
+        return "verCarta"; // nombre de la plantilla HTML que crearemos
+    }
+
 }

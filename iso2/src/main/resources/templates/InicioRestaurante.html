@@ -2,32 +2,48 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio Restaurante</title>
+    <title>Inicio Restaurante - ICED Latte</title>
+    <link rel="stylesheet" href="/css/inicioRestaurante.css">
 </head>
 <body>
-    <h1>Bienvenido al Inicio del Restaurante</h1>
 
-    <button onclick="location.href='/cartas/crear'">Crear Carta</button>
-    <button onclick="location.href='/direcciones'">Editar Dirección</button>
-    <form action="/eliminarRestaurante" method="post">
-        <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar este restaurante?')">Eliminar Restaurante</button>
-    </form>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="#" class="logo">🍔 ICED Latte</a>
+        <nav>
+            <a href="/formCarta">Crear Carta</a>
+            <a href="/editarDireccion">Editar Dirección</a>
+            <a href="/eliminarRestaurante">Eliminar Restaurante</a>
+        </nav>
+    </div>
+</header>
+
+<section class="hero">
+    <div class="hero-overlay">
+        <h1>Bienvenido al Inicio del Restaurante</h1>
+    </div>
+</section>
+
+<section class="section">
     <h2>Cartas Existentes</h2>
-    <ul>
-        <li th:each="carta : ${cartas}">
-            <span th:text="${carta.nombre}"></span>
-            <!--a th:href="@{/cartas/editar/{id}(id=${carta.id})}">Ver y Editar</a>
-            <a th:href="@{/eliminarCarta/{id}(id=${carta.id})}" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</a-->
-            <form th:action="@{/cartas/editar/{id}(id=${carta.id})}" method="get" style="display:inline;">
-                <button type="submit">Ver y Editar</button>
-            </form>
-            <form th:action="@{/cartas/eliminar/{id}(id=${carta.id})}" method="post" style="display:inline;">
-                <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</button>
-            </form>
-        </li>
+    <ul class="restaurant-list">
+        <th:block th:each="carta : ${cartas}">
+            <li>
+                <a th:href="@{'/cartas/' + ${carta.id}}" style="text-decoration: none; color: inherit;">
+                    <span th:text="${carta.nombre}">Carta</span>
+                </a>
+            </li>
+        </th:block>
     </ul>
-    <th:block th:if="${restaurante != null}">
-        <button onclick="location.href='/logout'">Cerrar Sesión</button>
-    </th:block>
+</section>
+
+<div class="logout-button">
+    <a href="/logout">Cerrar sesión</a>
+</div>
+
+<footer class="site-footer">
+    &copy; 2025 ICED Latte. Todos los derechos reservados.
+</footer>
+
 </body>
 </html>

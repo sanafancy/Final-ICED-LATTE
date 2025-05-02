@@ -1,18 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <title>Crear carta</title>
+    <link rel="stylesheet" href="/css/crearCarta.css">
 </head>
 <body>
-    <h1>Crear Nueva Carta</h1>
 
-    <form action="/cartas/crear" method="post">
-        <label>Nombre de la Carta:</label>
-        <input type="text" name="nombre" required>
-        <button type="submit">Crear</button>
-    </form>
+<header class="site-header">
+    <div class="header-inner">
+        <a href="#" class="logo">🍔 ICED Latte</a>
+        <nav>
+            <a href="/inicioRestaurante">Volver</a>
+        </nav>
+    </div>
+</header>
 
-    <a href="/inicioRestaurante">Volver</a>
+<section class="form-section">
+    <div class="form-container">
+        <h1>Crear Nueva Carta</h1>
+
+        <form action="/cartas/crear" method="post">
+            <label for="nombre">Nombre de la Carta:</label>
+            <input type="text" id="nombre" name="nombre" required>
+
+            <button type="submit">Crear</button>
+        </form>
+    </div>
+</section>
+
+<footer class="site-footer">
+    <p>&copy; 2025 ICED Latte. Todos los derechos reservados.</p>
+</footer>
+
 </body>
 </html>
