@@ -11,6 +11,9 @@ public class CartaMenu {
     @Column(nullable = false)
     private String nombre;
     @ManyToOne
+    @JoinColumn(name = "carta_padre_id")
+    private CartaMenu cartaPadre;
+    @ManyToOne
     @JoinColumn(name = "restaurante_id", nullable = false)
     private Restaurante restaurante;
     @OneToMany(mappedBy = "cartaMenu", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
@@ -47,6 +50,14 @@ public class CartaMenu {
     public void setItems(List<ItemMenu> items) {
         this.items = items;
     }
+    public CartaMenu getCartaPadre() {
+        return cartaPadre;
+    }
+
+    public void setCartaPadre(CartaMenu cartaPadre) {
+        this.cartaPadre = cartaPadre;
+    }
+
 
     @Override
     public String toString() {

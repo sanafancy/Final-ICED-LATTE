@@ -1,37 +1,20 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Crear carta</title>
+    <title>Crear Carta</title>
     <link rel="stylesheet" href="/css/crearCarta.css">
 </head>
 <body>
+<h1>Crear Nueva Carta</h1>
 
-<header class="site-header">
-    <div class="header-inner">
-        <a href="#" class="logo">🍔 ICED Latte</a>
-        <nav>
-            <a href="/inicioRestaurante">Volver</a>
-        </nav>
-    </div>
-</header>
+<form action="#" th:action="@{/restaurante/crearCarta}" th:object="${carta}" method="post">
+    <label for="nombre">Nombre de la Carta:</label>
+    <input type="text" id="nombre" th:field="*{nombre}" required="required"/>
 
-<section class="form-section">
-    <div class="form-container">
-        <h1>Crear Nueva Carta</h1>
+    <button type="submit">Crear Carta</button>
+</form>
 
-        <form action="/cartas/crear" method="post">
-            <label for="nombre">Nombre de la Carta:</label>
-            <input type="text" id="nombre" name="nombre" required>
-
-            <button type="submit">Crear</button>
-        </form>
-    </div>
-</section>
-
-<footer class="site-footer">
-    <p>&copy; 2025 ICED Latte. Todos los derechos reservados.</p>
-</footer>
 
 </body>
 </html>

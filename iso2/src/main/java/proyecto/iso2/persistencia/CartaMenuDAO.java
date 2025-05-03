@@ -1,13 +1,12 @@
 package proyecto.iso2.persistencia;
 
-import proyecto.iso2.dominio.entidades.*;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
+import proyecto.iso2.dominio.entidades.CartaMenu;
+import proyecto.iso2.dominio.entidades.Restaurante;
 import java.util.List;
 
-
-@Repository
 public interface CartaMenuDAO extends JpaRepository<CartaMenu, Long> {
+    /** Busca todas las cartas que pertenecen al restaurante dado */
+    List<CartaMenu> findByCartaPadre(CartaMenu cartaPadre);
     List<CartaMenu> findByRestaurante(Restaurante restaurante);
 }

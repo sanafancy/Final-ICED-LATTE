@@ -1,15 +1,18 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Añadir Menú</title>
+    <link rel="stylesheet" href="/css/añadirMenu.css">
 </head>
 <body>
 <h1>Añadir Menú</h1>
-<form action="/añadirMenu" method="POST">
-    <label for="nombre">Nombre del Menú:</label>
-    <input type="text" id="nombre" name="nombre" required>
-    <button type="submit">Añadir</button>
+
+<form th:action="@{/cartas/{id}/añadirMenu(id=${cartaId})}" method="post">
+    <input type="text" name="nombre" placeholder="Nombre del menú" required/>
+    <button type="submit">Añadir Menú</button>
 </form>
+
+
 </body>
 </html>

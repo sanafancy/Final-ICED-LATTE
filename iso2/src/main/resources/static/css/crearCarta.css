@@ -1,105 +1,74 @@
+/* Reset básico */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+/* Colores base */
 :root {
     --verde: #009688;
     --verde-oscuro: #00796b;
     --gris-claro: #f8f9fa;
+    --gris: #ccc;
     --texto: #333;
-    --amarillo: #ffc107;
 }
 
 body {
     font-family: 'Segoe UI', sans-serif;
     background-color: var(--gris-claro);
     color: var(--texto);
-    margin: 0;
+    padding: 40px 20px;
 }
 
-/* Header */
-.site-header {
-    background: white;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-}
-.header-inner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 15px 30px;
-}
-.logo {
-    font-size: 1.5rem;
-    color: var(--verde-oscuro);
-    text-decoration: none;
-    font-weight: bold;
-}
-nav a {
-    text-decoration: none;
-    color: var(--texto);
-    font-weight: 500;
-    margin-left: 20px;
-}
-nav a:hover {
-    color: var(--verde-oscuro);
-}
-
-/* Formulario */
-.form-section {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 60px 20px;
-}
-
-.form-container {
-    background: white;
-    padding: 40px;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    max-width: 500px;
-    width: 100%;
+/* Encabezado */
+h1 {
     text-align: center;
-}
-
-.form-container h1 {
     color: var(--verde-oscuro);
-    margin-bottom: 25px;
+    margin-bottom: 30px;
 }
 
+/* Formulario centrado */
 form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
+    max-width: 500px;
+    background: white;
+    padding: 30px;
+    margin: 0 auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Etiquetas */
 label {
+    display: block;
+    margin-bottom: 8px;
     font-weight: 500;
-    text-align: left;
+    color: var(--texto);
 }
 
+/* Campos de entrada */
 input[type="text"] {
+    width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--gris);
     border-radius: 6px;
+    margin-bottom: 20px;
     font-size: 1rem;
 }
 
-button {
-    padding: 10px;
+/* Botón */
+button[type="submit"] {
     background-color: var(--verde);
     color: white;
     border: none;
+    padding: 12px 20px;
     border-radius: 6px;
     font-size: 1rem;
     cursor: pointer;
-    transition: background 0.3s;
+    width: 100%;
+    transition: background 0.3s ease;
 }
 
-button:hover {
+button[type="submit"]:hover {
     background-color: var(--verde-oscuro);
-}
-
-/* Footer */
-.site-footer {
-    text-align: center;
-    padding: 30px 20px;
-    color: #555;
-    background: var(--gris-claro);
 }

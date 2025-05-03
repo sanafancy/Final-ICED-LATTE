@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'Carta: ' + ${carta.nombre}">Carta</title>
+    <link rel="stylesheet" href="/css/verCarta.css">
+</head>
+<body>
+
+<div class="container">
+    <h1 th:text="'Carta: Restaurante ' + ${carta.restaurante.nombre} + ' - ' + ${carta.nombre}"></h1>
+
+    <div class="acciones">
+        <a th:href="@{/cartas/editar/{id}(id=${carta.id})}" class="btn btn-editar">✏️ Editar Carta</a>
+        <a th:href="@{/cartas/{id}/añadirMenu(id=${carta.id})}" class="btn">➕ Añadir Menú</a>
+    </div>
+
+    <h2>Menús de esta carta</h2>
+
+    <ul>
+        <li th:each="menu : ${submenus}">
+            <a th:href="@{/cartas/{id}(id=${menu.id})}" th:text="${menu.nombre}"></a>
+        </li>
+    </ul>
+
+</div>
+
+</body>
+</html>
