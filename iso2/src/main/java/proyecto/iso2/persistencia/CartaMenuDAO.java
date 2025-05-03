@@ -9,4 +9,6 @@ public interface CartaMenuDAO extends JpaRepository<CartaMenu, Long> {
     /** Busca todas las cartas que pertenecen al restaurante dado */
     List<CartaMenu> findByCartaPadre(CartaMenu cartaPadre);
     List<CartaMenu> findByRestaurante(Restaurante restaurante);
+    List<CartaMenu> findByRestauranteAndCartaPadreIsNull(Restaurante restaurante);
+
 }

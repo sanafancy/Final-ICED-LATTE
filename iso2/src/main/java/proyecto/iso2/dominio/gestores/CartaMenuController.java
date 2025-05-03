@@ -41,6 +41,8 @@ public class CartaMenuController {
         return "redirect:/inicioRestaurante";
     }
 
+
+
     // Mostrar formulario para editar una carta existente
     @GetMapping("/editar/{id}")
     public String editarCarta(@PathVariable Long id, Model model) {
@@ -110,6 +112,7 @@ public class CartaMenuController {
         return "verCarta";
     }
 
+
     // Mostrar el formulario para agregar un nuevo menú (subcarta) a una carta
     @GetMapping("/{id}/añadirMenu")
     public String mostrarFormularioMenu(@PathVariable Long id, Model model) {
@@ -134,5 +137,54 @@ public class CartaMenuController {
         cartaMenuDAO.save(menu);
 
         return "redirect:/restaurante/panel";
+    }
+    @GetMapping("/menu/{id}")
+    public String verMenu(@PathVariable Long id, Model model) {
+        CartaMenu menu = cartaMenuDAO.findById(id).orElse(null);
+        if (menu == null) return "redirect:/inicioRestaurante";
+        List<ItemMenu> items = itemMenuDAO.findByCartaMenu(menu);
+        model.addAttribute("menu", menu);
+        model.addAttribute("items", items);
+        model.addAttribute("itemNuevo", new ItemMenu());
+        return "verMenu";
+    }
+
+
+    @PostMapping("/menu/{id}/agregarItem")
+    public String agregarItemAMenu(@PathVariable Long id, @ModelAttribute ItemMenu item) {
+        CartaMenu menu = cartaMenuDAO.findById(id).orElse(null);
+        if (menu == null) return "redirect:/inicioRestaurante";
+
+        item.setCartaMenu(menu);  // Asociar el ítem con el menú
+        itemMenuDAO.save(item);
+        return "redirect:/cartas/menu/" + id; // Redirigir al mismo menú
+    }
+    // Mostrar formulario de edición
+    @GetMapping("/menu/{menuId}/editarItem/{itemId}")
+    public String mostrarFormularioEdicionItem(@PathVariable Long menuId, @PathVariable Long itemId, Model model) {
+        ItemMenu item = itemMenuDAO.findById(itemId).orElse(null);
+        if (item == null) return "redirect:/cartas/menu/" + menuId;
+
+        model.addAttribute("item", item);
+        model.addAttribute("menuId", menuId);
+        return "editarItem"; // HTML con el formulario
+    }
+
+    @PostMapping("/menu/{menuId}/editarItem/{itemId}")
+    public String procesarEdicionItem(@PathVariable Long menuId, @PathVariable Long itemId, @ModelAttribute ItemMenu itemActualizado) {
+        ItemMenu item = itemMenuDAO.findById(itemId).orElse(null);
+        if (item == null) return "redirect:/cartas/menu/" + menuId;
+
+        item.setNombre(itemActualizado.getNombre());
+        item.setPrecio(itemActualizado.getPrecio());
+        item.setTipo(itemActualizado.getTipo());
+        itemMenuDAO.save(item);
+
+        return "redirect:/cartas/menu/" + menuId;
+    }
+    @PostMapping("/menu/{menuId}/eliminarItem/{itemId}")
+    public String eliminarItemMenu(@PathVariable Long menuId, @PathVariable Long itemId) {
+        itemMenuDAO.deleteById(itemId);
+        return "redirect:/cartas/menu/" + menuId;
     }
 }

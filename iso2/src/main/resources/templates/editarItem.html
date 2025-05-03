@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Item</title>
+    <link rel="stylesheet" href="/css/editarItem.css">
+</head>
+<body>
+<h1>Editar Item</h1>
+
+<form th:action="@{/cartas/menu/{menuId}/editarItem/{itemId}(menuId=${menuId}, itemId=${item.id})}" method="post">
+    <label>Nombre:</label>
+    <input type="text" name="nombre" th:value="${item.nombre}" required>
+
+    <label>Precio:</label>
+    <input type="number" name="precio" step="0.01" th:value="${item.precio}" required>
+
+    <label>Tipo:</label>
+    <input type="text" name="tipo" th:value="${item.tipo}" required>
+
+    <button type="submit">Guardar Cambios</button>
+</form>
+
+<a th:href="@{/cartas/menu/{menuId}(menuId=${menuId})}">Cancelar</a>
+</body>
+</html>

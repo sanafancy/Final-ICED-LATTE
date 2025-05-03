@@ -84,7 +84,7 @@ public class RestauranteController {
         model.addAttribute("restauranteNombre", restaurante.getNombre());  // Asumiendo que el restaurante tiene un campo "nombre"
 
         model.addAttribute("restaurante", restaurante);
-        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+        List<CartaMenu> cartas = cartaMenuDAO.findByRestauranteAndCartaPadreIsNull(restaurante);
         cartas.forEach(c -> c.setItems(itemMenuDAO.findByCartaMenu(c)));
         model.addAttribute("cartas", cartas);
 
@@ -120,6 +120,25 @@ public class RestauranteController {
         }
         return "redirect:/restaurante/home";
     }
+    @GetMapping("/crearCarta")
+    public String formCrearCarta(Model model, HttpSession session) {
+        if (session.getAttribute("restaurante")==null) return "redirect:/login";
+        model.addAttribute("carta", new CartaMenu());
+        return "crearCarta";
+    }
+
+    @PostMapping("/crearCarta")
+    public String crearCarta(@ModelAttribute CartaMenu carta, HttpSession session) {
+        Restaurante r = (Restaurante) session.getAttribute("restaurante");
+        if (r == null) return "redirect:/login";
+
+        carta.setRestaurante(r);
+        cartaMenuDAO.save(carta);
+
+        return "redirect:/restaurante/panel";
+    }
+
+
 
     /**
      * Ver favoritos del cliente
@@ -172,23 +191,7 @@ public class RestauranteController {
         }
         return "verMenus";
     }
-    @GetMapping("/crearCarta")
-    public String formCrearCarta(Model model, HttpSession session) {
-        if (session.getAttribute("restaurante")==null) return "redirect:/login";
-        model.addAttribute("carta", new CartaMenu());
-        return "crearCarta";
-    }
 
-    @PostMapping("/crearCarta")
-    public String crearCarta(@ModelAttribute CartaMenu carta, HttpSession session) {
-        Restaurante r = (Restaurante) session.getAttribute("restaurante");
-        if (r == null) return "redirect:/login";  // Si no hay restaurante en la sesión, redirigir al login
-
-        carta.setRestaurante(r);  // Asociar la carta al restaurante
-        cartaMenuDAO.save(carta);  // Guardar la carta en la base de datos
-
-        return "redirect:/restaurante/panel";  // Redirigir al panel del restaurante
-    }
 
 
     @GetMapping("/editarDireccion")
