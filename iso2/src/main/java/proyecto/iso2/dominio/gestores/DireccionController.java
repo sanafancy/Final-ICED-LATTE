@@ -70,7 +70,25 @@ public class DireccionController {
         }
 
         model.addAttribute("direccion", direccion);
-        return "direcciones";
+        return "editarDireccion";
+    }
+
+    @GetMapping("/editar")
+    public String mostrarFormularioEditar(HttpSession session, Model model) {
+        Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
+
+        if (restaurante == null) {
+            return "redirect:/login";
+        }
+
+        // Verificamos si la dirección existe
+        Direccion direccion = restaurante.getDireccion();
+        if (direccion == null) {
+            direccion = new Direccion(); // Creamos dirección vacía
+        }
+
+        model.addAttribute("direccion", direccion);
+        return "editarDireccion";  // ← Este debe coincidir con el nombre del HTML
     }
 
     @PostMapping("/editar")
