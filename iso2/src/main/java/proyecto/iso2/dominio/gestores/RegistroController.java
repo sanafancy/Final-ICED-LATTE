@@ -65,6 +65,6 @@ public class RegistroController {
         Repartidor repartidor = new Repartidor(email, pass, nombre, apellidos, nif, 0);
         repartidorDAO.save(repartidor);
 
-        return "redirect:/";
+        return "redirect:/inicio";
     }
 }

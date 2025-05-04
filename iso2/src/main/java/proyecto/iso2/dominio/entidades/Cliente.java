@@ -32,6 +32,7 @@ public class Cliente extends Usuario{
     )
     private List<Direccion> direcciones = new ArrayList<>();
 
+
     public Cliente() {}
 
     public Cliente(String email, String pass,String nombre, String apellidos, String dni) {
