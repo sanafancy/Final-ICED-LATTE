@@ -112,7 +112,6 @@ public class CartaMenuController {
         return "verCarta";
     }
 
-
     // Mostrar el formulario para agregar un nuevo menú (subcarta) a una carta
     @GetMapping("/{id}/añadirMenu")
     public String mostrarFormularioMenu(@PathVariable Long id, Model model) {
@@ -148,7 +147,6 @@ public class CartaMenuController {
         model.addAttribute("itemNuevo", new ItemMenu());
         return "verMenu";
     }
-
 
     @PostMapping("/menu/{id}/agregarItem")
     public String agregarItemAMenu(@PathVariable Long id, @ModelAttribute ItemMenu item) {

@@ -6,6 +6,10 @@
     <link rel="stylesheet" href="/css/inicio.css">
 </head>
 <body>
+
+
+<p th:if="${session.cliente != null}">👤Cliente en sesión: <span th:text="${session.cliente.nombre}"></span></p>
+<p th:if="${session.cliente == null}">No hay cliente en sesión</p>
 <header class="site-header">
     <div class="container header-inner">
         <a href="/inicio" class="logo">🍔 ICED Latte</a>
@@ -17,6 +21,9 @@
             <th:block th:if="${session.restaurante != null}">
                 <a href="/restaurante/panel">Panel Restaurante</a>
             </th:block>
+            <th:block th:if="${session.cliente != null}">
+            </th:block>
+
         </nav>
 
     </div>
@@ -42,6 +49,20 @@
     </div>
 </section>
 
+<section class="section">
+    <div class="container" th:if="${session.cliente != null}">
+        <a href="/direcciones/ver">
+            <button>📍 Ver Mis Direcciones</button>
+        </a>
+    </div>
+</section>
+<section class="section">
+    <div class="container" th:if="${session.cliente != null}">
+        <a href="/direcciones/añadir">
+            <button>➕ Añadir Nueva Dirección</button>
+        </a>
+    </div>
+</section>
 <section class="section restaurants">
     <div class="container">
         <h2>🍽️ Restaurantes Registrados</h2>

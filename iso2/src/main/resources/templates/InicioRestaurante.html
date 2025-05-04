@@ -21,12 +21,25 @@
         <nav>
             <button onclick="location.href='/restaurante/crearCarta'">Crear Carta</button>
             <button onclick="location.href='/restaurante/editarDireccion'">Editar Dirección</button>
-            <button onclick="confirmarEliminacion()">Eliminar Restaurante</button>
+
+            <!-- Formulario para eliminar restaurante -->
+            <form id="formEliminar" th:action="@{/restaurante/eliminar}" method="post" style="display:inline;">
+                <button type="button" onclick="confirmarEliminacion()">Eliminar Restaurante</button>
+            </form>
+
+            <script>
+                function confirmarEliminacion() {
+                    if (confirm("¿Seguro que quieres eliminar tu restaurante? Esta acción no se puede deshacer.")) {
+                        document.getElementById('formEliminar').submit();
+                    }
+                }
+            </script>
+
+
             <button onclick="location.href='/logout'">Cerrar Sesión</button>
         </nav>
     </div>
 </header>
-
 
 <!-- Hero con fondo suave -->
 <!-- Hero Section (Bienvenida) -->

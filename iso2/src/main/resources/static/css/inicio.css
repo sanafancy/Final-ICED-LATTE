@@ -149,3 +149,20 @@ nav a:hover {
     display: inline-block;
     animation: slideRight 6s linear infinite;
 }
+.cliente-info {
+    background-color: #e8f5e9; /* verde muy claro */
+    border-left: 5px solid #4caf50;
+    padding: 10px 15px;
+    margin: 20px auto;
+    width: fit-content;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 16px;
+    border-radius: 8px;
+    color: #2e7d32;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.cliente-info strong {
+    margin-left: 8px;
+    color: #1b5e20;
+}

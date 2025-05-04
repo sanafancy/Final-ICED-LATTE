@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Mis Direcciones</title>
+    <link rel="stylesheet" href="/css/verDireccion.css">
+
 </head>
 <body>
 <h1>Mis Direcciones</h1>
@@ -11,7 +13,8 @@
     <ul>
         <li th:each="direccion : ${direcciones}">
             <span th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></span>
-            <span th:if="${direccion.complemento != null and not #strings.isEmpty(direccion.complemento)}" th:text="' (' + ${direccion.complemento} + ')'"></span>
+            <span th:if="${direccion.complemento != null and not #strings.isEmpty(direccion.complemento)}"
+                  th:text="' (' + ${direccion.complemento} + ')'"></span>
         </li>
     </ul>
 </div>
@@ -19,7 +22,6 @@
     <p>No tienes direcciones registradas.</p>
 </div>
 
-<button onclick="location.href='/direcciones/añadir'">Añadir Nueva Dirección</button>
 <a href="/">Volver al Inicio</a>
 </body>
 </html>

@@ -51,9 +51,11 @@ public class LoginController {
                 return "redirect:/inicioRepartidor";
             }
         }
+
         System.out.println("Error: Usuario no encontrado o credenciales incorrectas");
         return "redirect:/login?error=true";
     }
+
 
     @GetMapping("/inicioRepartidor")
     public String showInicioRepartidor() {

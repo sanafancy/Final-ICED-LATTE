@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.*;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
+import java.util.ArrayList;
+
 @Controller
 @RequestMapping("/direcciones")
 public class DireccionController {
@@ -36,9 +38,17 @@ public class DireccionController {
             return "redirect:/login";
         }
 
+        if (cliente.getDirecciones() == null) {
+            cliente.setDirecciones(new ArrayList<>());
+        }
+
+        // Solo si usas relación bidireccional:
+        direccion.setCliente(cliente);
+
         Direccion savedDireccion = direccionDAO.save(direccion);
         cliente.getDirecciones().add(savedDireccion);
         clienteDAO.save(cliente);
+
         return "redirect:/direcciones/ver";
     }
 
