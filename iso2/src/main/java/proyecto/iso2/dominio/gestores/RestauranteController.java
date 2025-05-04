@@ -138,11 +138,6 @@ public class RestauranteController {
         return "redirect:/restaurante/panel";
     }
 
-
-
-    /**
-     * Ver favoritos del cliente
-     */
     @GetMapping("/favoritos")
     public String verFavoritos(HttpSession session, Model model) {
         Cliente cliente = (Cliente) session.getAttribute("cliente");
@@ -158,12 +153,37 @@ public class RestauranteController {
      */
     @PostMapping("/eliminar")
     public String eliminarRestaurante(HttpSession session) {
-        Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
-        if (restaurante != null) {
-            restauranteDAO.delete(restaurante);
-            session.invalidate();
+        Long restauranteId = (Long) session.getAttribute("restauranteId");
+
+        if (restauranteId == null) {
+            System.out.println(">>> No hay ID de restaurante en sesión");
+            return "redirect:/login";
         }
-        return "redirect:/inicio";
+
+        Optional<Restaurante> opt = restauranteDAO.findById(restauranteId);
+        if (opt.isEmpty()) {
+            System.out.println(">>> Restaurante no encontrado con ID: " + restauranteId);
+            return "redirect:/login";
+        }
+
+        Restaurante restaurante = opt.get();
+
+        // Eliminar cartas asociadas
+        // List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+        // cartaMenuDAO.deleteAll(cartas);
+
+        // Eliminar dirección si existe
+        /*
+        if (restaurante.getDireccion() != null) {
+            direccionDAO.delete(restaurante.getDireccion());
+        }
+         */
+
+
+        // restauranteDAO.delete(restaurante);
+        session.invalidate();
+
+        return "redirect:/";
     }
 
     /**
@@ -192,8 +212,6 @@ public class RestauranteController {
         return "verMenus";
     }
 
-
-
     @GetMapping("/editarDireccion")
     public String formEditarDireccion(Model model, HttpSession session) {
         Restaurante r = (Restaurante) session.getAttribute("restaurante");
@@ -210,5 +228,26 @@ public class RestauranteController {
         restauranteDAO.save(r);
         return "redirect:/restaurante/panel";
     }
+
+    @Controller
+    @RequestMapping("/repartidor")
+    public class RepartidorController {
+
+        @Autowired
+        private RepartidorDAO repartidorDAO;
+
+        @GetMapping("/inicio")
+        public String inicioRepartidor(HttpSession session, Model model) {
+            Repartidor repartidor = (Repartidor) session.getAttribute("repartidor");
+
+            if (repartidor == null) {
+                return "redirect:/login";  // Redirigir al login si no hay repartidor en sesión
+            }
+
+            model.addAttribute("repartidor", repartidor);
+            return "inicioRepartidor";  // Vista que muestra los datos del repartidor
+        }
+    }
+
 
 }

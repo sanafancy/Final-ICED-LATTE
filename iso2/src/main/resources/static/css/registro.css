@@ -1,0 +1,47 @@
+/* Estilo general */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f9f9f9;
+    text-align: center;
+    padding-top: 100px;
+}
+
+/* Título */
+h1 {
+    font-size: 2.2em;
+    color: #333;
+    margin-bottom: 40px;
+}
+
+/* Botones */
+button {
+    display: block;
+    margin: 15px auto;
+    padding: 12px 25px;
+    font-size: 16px;
+    color: white;
+    background-color: #4CAF50; /* Verde suave */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 300px;
+    max-width: 90%;
+}
+
+/* Hover */
+button:hover {
+    background-color: #388e3c;
+    transform: scale(1.03);
+}
+
+/* Responsive */
+@media (max-width: 500px) {
+    h1 {
+        font-size: 1.8em;
+    }
+
+    button {
+        font-size: 15px;
+    }
+}
