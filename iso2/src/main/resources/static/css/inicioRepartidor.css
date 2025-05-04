@@ -1,0 +1,53 @@
+/* inicioRepartidor.css */
+
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    height: 100vh;
+}
+
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+p {
+    font-size: 1.2rem;
+    color: #666;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+button {
+    padding: 12px 20px;
+    background-color: #5cb85c;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #4cae4c;
+    transition: background-color 0.3s ease;
+}
+
+footer {
+    position: absolute;
+    bottom: 20px;
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+    width: 100%;
+}

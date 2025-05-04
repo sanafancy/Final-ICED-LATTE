@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Inicio Repartidor</title>
+    <link rel="stylesheet" href="/css/inicioRepartidor.css">
 </head>
 <body>
-<h1>Bienvenido al Inicio del Repartidor</h1>
+<h1>Bienvenido, <span th:text="${repartidor.nombre}"></span></h1>  <!-- Mostrar el nombre del repartidor -->
+
+<div class="datos-repartidor">
+    <p><strong>Nombre:</strong> <span th:text="${repartidor.nombre}"></span></p>
+    <p><strong>Apellidos:</strong> <span th:text="${repartidor.apellidos}"></span></p>
+    <p><strong>Email:</strong> <span th:text="${repartidor.email}"></span></p>
+    <p><strong>NIF:</strong> <span th:text="${repartidor.nif}"></span></p>
+</div>
+
+<footer>
+    <p>&copy; 2025 ICED Latte. Todos los derechos reservados.</p>
+</footer>
 </body>
 </html>
