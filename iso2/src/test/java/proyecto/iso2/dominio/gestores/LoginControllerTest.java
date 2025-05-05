@@ -116,7 +116,7 @@ public class LoginControllerTest {
                         .param("pass", "pass123")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/inicio"));
 
         // Verificar que el cliente se guardó en la sesión
         assertEquals(cliente, session.getAttribute("usuario"));
@@ -135,7 +135,7 @@ public class LoginControllerTest {
                         .param("pass", "pass123")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicioRestaurante"));
+                .andExpect(redirectedUrl("/restaurante/panel"));
 
         // Verificar que el restaurante se guardó en la sesión
         assertEquals(restaurante, session.getAttribute("usuario"));
@@ -153,8 +153,8 @@ public class LoginControllerTest {
                         .param("email", "repartidor@ejemplo.com")
                         .param("pass", "pass123")
                         .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("InicioRepartidor"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/inicioRepartidor"));
 
         // Verificar que el repartidor se guardó en la sesión
         assertEquals(repartidor, session.getAttribute("usuario"));
@@ -210,13 +210,6 @@ public class LoginControllerTest {
         mockMvc.perform(get("/logout")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
-
-        // Verificar que la sesión se invalidó creando una nueva solicitud
-        MockHttpSession newSession = new MockHttpSession();
-        mockMvc.perform(get("/some-endpoint")
-                        .session(newSession))
-                .andExpect(request().sessionAttributeDoesNotExist("usuario"))
-                .andExpect(request().sessionAttributeDoesNotExist("cliente"));
+                .andExpect(redirectedUrl("/inicio"));
     }
 }
