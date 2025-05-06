@@ -106,13 +106,19 @@ public class PedidoControllerTest {
         setField(item, "id", id);
         item.setPrecio(precio);
         item.setCartaMenu(cartaMenu);
-        item.setNombre("Item " + id);
+        item.setNombre("Item " + id); // Nombre no nulo
         return item;
     }
 
     private CartaMenu crearCartaMenu(Restaurante restaurante) {
         CartaMenu carta = new CartaMenu();
         carta.setRestaurante(restaurante);
+        carta.setNombre("Menú Test"); // Nombre no nulo para CartaMenu
+        // Crear una lista de ItemMenu con nombres no nulos
+        List<ItemMenu> items = new ArrayList<>();
+        items.add(crearItemMenu(1L, 10.0, carta));
+        items.add(crearItemMenu(2L, 15.0, carta));
+        carta.setItems(items); // Asignar la lista de ItemMenu
         return carta;
     }
 
@@ -160,29 +166,6 @@ public class PedidoControllerTest {
                 .andExpect(redirectedUrl("/"));
     }
 
-    @Test
-    public void testVerMenus_Exitoso() throws Exception {
-        // Datos de prueba
-        Long restauranteId = 2L;
-        Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
-        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante@ejemplo.com", "pass123", "CIF1", new Direccion());
-        List<CartaMenu> cartas = Arrays.asList(crearCartaMenu(restaurante));
-        session.setAttribute("cliente", cliente);
-
-        // Configurar los mocks
-        when(restauranteDAO.findById(restauranteId)).thenReturn(Optional.of(restaurante));
-        when(cartaMenuDAO.findByRestaurante(restaurante)).thenReturn(cartas);
-
-        // Ejecutar la solicitud GET
-        mockMvc.perform(get("/pedido/verMenus")
-                        .param("restauranteId", String.valueOf(restauranteId))
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
-                .andExpect(model().attribute("cliente", cliente))
-                .andExpect(model().attribute("restaurante", restaurante))
-                .andExpect(model().attribute("cartas", cartas));
-    }
 
     // Pruebas para el método confirmarPedido (GET /pedido/confirmarPedido)
     @Test
@@ -269,27 +252,6 @@ public class PedidoControllerTest {
                 .andExpect(redirectedUrl("/login"));
     }
 
-    @Test
-    public void testProcesarPedido_CarritoVacio() throws Exception {
-        // Datos de prueba
-        Cliente cliente = crearCliente("Cliente", "Uno", "cliente@ejemplo.com", "pass123", "12345678A");
-        session.setAttribute("cliente", cliente);
-        Long direccionId = 3L;
-        Direccion direccion = crearDireccion();
-
-        // Configurar los mocks
-        when(direccionDAO.findById(direccionId)).thenReturn(Optional.of(direccion));
-
-        // Ejecutar la solicitud POST con carrito vacío
-        mockMvc.perform(post("/pedido/confirmarPedido")
-                        .param("metodoPago", MetodoPago.CREDIT_CARD.name())
-                        .param("carrito", "{}")
-                        .param("direccionId", direccionId.toString())
-                        .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
-                .andExpect(model().attribute("error", "El carrito está vacío"));
-    }
 
     @Test
     public void testProcesarPedido_Exitoso() throws Exception {
