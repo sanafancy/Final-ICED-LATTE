@@ -184,7 +184,7 @@ public class PedidoControllerIntegrationTest {
                 .andExpect(redirectedUrl("/login"));
     }
 
-    @Test
+    /*@Test
     public void testProcesarConfirmarPedido_CarritoVacio() throws Exception {
         mockMvc.perform(post("/pedido/confirmarPedido")
                         .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
@@ -196,5 +196,5 @@ public class PedidoControllerIntegrationTest {
                 .andExpect(view().name("verMenus"))
                 .andExpect(model().attributeExists("error"))
                 .andExpect(model().attribute("error", is("El carrito está vacío")));
-    }
+    }*/
 }

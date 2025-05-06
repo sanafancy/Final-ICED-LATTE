@@ -157,7 +157,7 @@ public class RegistroControllerIntegrationTest {
                         .param("apellidos", "Apellido A")
                         .param("nif", "NIF123"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/inicio"));
 
         // Verificar que el repartidor se ha registrado correctamente
         List<Repartidor> repartidores = repartidorDAO.findAll();
@@ -166,6 +166,5 @@ public class RegistroControllerIntegrationTest {
         assertThat(repartidores.get(0).getNombre(), is("Repartidor A"));
         assertThat(repartidores.get(0).getApellidos(), is("Apellido A"));
         assertThat(repartidores.get(0).getNif(), is("NIF123"));
-
     }
 }
