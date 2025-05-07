@@ -40,7 +40,7 @@ public class LoginController {
 
                 sesion.setAttribute("cliente", usuario); //guardar sesion como cliente
                 //System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
-                return "redirect:/inicio";
+                return "redirect:inicio";
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);
                 System.out.println("Sesión iniciada para Restaurante: " + usuario.getEmail());
@@ -66,5 +66,13 @@ public class LoginController {
     public String logout(HttpSession sesion) {
         sesion.invalidate(); // 🔹 Elimina la sesión
         return "redirect:/inicio"; // Redirige a la página de inicio
+    }
+    @GetMapping("/cliente/inicio")
+    public String showInicioCliente(HttpSession sesion, Model model) {
+        Cliente cliente = (Cliente) sesion.getAttribute("cliente");
+        if (cliente == null) return "redirect:/login";
+
+        model.addAttribute("cliente", cliente);
+        return "cliente"; // Vista privada del cliente
     }
 }

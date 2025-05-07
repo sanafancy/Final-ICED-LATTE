@@ -8,16 +8,24 @@
 <body>
 
 
-<p th:if="${session.cliente != null}">👤Cliente en sesión: <span th:text="${session.cliente.nombre}"></span></p>
+<p th:if="${session.cliente != null}">👤Hola <span th:text="${session.cliente.nombre}"></span></p>
 <p th:if="${session.cliente == null}">No hay cliente en sesión</p>
 <header class="site-header">
     <div class="container header-inner">
         <a href="/inicio" class="logo">🍔 ICED Latte</a>
         <nav>
-            <a href="/restaurante/home">Inicio</a>
-            <a href="/registro">Registro</a>
-            <a href="/login">Login</a>
-            <a href="/restaurante/favoritos">Favoritos</a>
+            <!-- Mostrar solo si NO hay cliente en sesión -->
+            <div th:if="${session.cliente == null}">
+                <a href="/login">Iniciar Sesión</a>
+                <a href="/registro">Registrarse</a>
+            </div>
+
+            <div th:if="${session.cliente != null}">
+                <form th:action="@{/logout}" method="get">
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            </div>
+
             <th:block th:if="${session.restaurante != null}">
                 <a href="/restaurante/panel">Panel Restaurante</a>
             </th:block>
@@ -39,30 +47,39 @@
         </form>
     </div>
 </section>
-
-<section class="section favorites">
-    <div class="container">
-        <h2>⭐ Tus Favoritos</h2>
-        <div class="cards">
-            <div class="card">– No tienes favoritos aún –</div>
-        </div>
-    </div>
+<script>
+    function toggleFavoritos() {
+        const favSection = document.getElementById('favoritos-section');
+        favSection.style.display = (favSection.style.display === 'none') ? 'block' : 'none';
+    }
+</script>
+<section class="section" th:if="${session.cliente != null}">
+    <a href="/direcciones/ver">
+        <button>📍 Ver Mis Direcciones</button>
+    </a>
 </section>
-
-<section class="section">
-    <div class="container" th:if="${session.cliente != null}">
-        <a href="/direcciones/ver">
-            <button>📍 Ver Mis Direcciones</button>
+<section class="section" th:if="${session.cliente != null}">
+    <a href="/direcciones/añadir">
+        <button>➕ Añadir Nueva Dirección</button>
+    </a>
+</section>
+<section class="section" th:if="${session.cliente != null}">
+    <button onclick="toggleFavoritos()" style="margin-bottom: 10px;">⭐Favoritos</button>
+    <div id="favoritos-section" style="display: none;">
+        <a href="/restaurante/favoritos">
+            <button style="margin-top: 10px;">Ir a Favoritos</button>
         </a>
     </div>
 </section>
-<section class="section">
-    <div class="container" th:if="${session.cliente != null}">
-        <a href="/direcciones/añadir">
-            <button>➕ Añadir Nueva Dirección</button>
-        </a>
-    </div>
-</section>
+
+<script>
+    function toggleFavoritos() {
+        const favSection = document.getElementById('favoritos-section');
+        favSection.style.display = (favSection.style.display === 'none') ? 'block' : 'none';
+    }
+</script>
+
+
 <section class="section restaurants">
     <div class="container">
         <h2>🍽️ Restaurantes Registrados</h2>
