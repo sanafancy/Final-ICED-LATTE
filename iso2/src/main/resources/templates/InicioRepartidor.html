@@ -1,22 +1,29 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio Repartidor</title>
+    <title>Panel Repartidor</title>
     <link rel="stylesheet" href="/css/inicioRepartidor.css">
 </head>
 <body>
-<h1>Bienvenido, <span th:text="${repartidor.nombre}"></span></h1>  <!-- Mostrar el nombre del repartidor -->
+<div class="container">
+    <h1>Bienvenido a la Página del Repartidor</h1>
 
-<div class="datos-repartidor">
-    <p><strong>Nombre:</strong> <span th:text="${repartidor.nombre}"></span></p>
-    <p><strong>Apellidos:</strong> <span th:text="${repartidor.apellidos}"></span></p>
-    <p><strong>Email:</strong> <span th:text="${repartidor.email}"></span></p>
-    <p><strong>NIF:</strong> <span th:text="${repartidor.nif}"></span></p>
+    <div class="info-box" th:if="${session.repartidor != null}">
+        <h2>Resumen de tus datos</h2>
+        <p><strong>Nombre:</strong> <span th:text="${session.repartidor.nombre}">Nombre</span></p>
+        <p><strong>Apellidos:</strong> <span th:text="${session.repartidor.apellidos}">Apellidos</span></p>
+        <p><strong>Email:</strong> <span th:text="${session.repartidor.email}">Email</span></p>
+        <p><strong>NIF:</strong> <span th:text="${session.repartidor.nif}">NIF</span></p>
+        <p><strong>Eficiencia:</strong> <span th:text="${session.repartidor.eficiencia}">0</span></p>
+    </div>
+
+    <a class="logout-btn" href="/logout">Cerrar Sesión</a>
+    <form th:action="@{/repartidor/eliminar}" method="post" style="display:inline;">
+        <button type="submit" class="delete-btn">Eliminar Repartidor</button>
+    </form>
+
+
 </div>
-
-<footer>
-    <p>&copy; 2025 ICED Latte. Todos los derechos reservados.</p>
-</footer>
 </body>
 </html>

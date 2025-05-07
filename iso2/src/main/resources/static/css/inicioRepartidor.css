@@ -1,53 +1,87 @@
-/* inicioRepartidor.css */
-
 body {
-    font-family: 'Segoe UI', sans-serif;
-    background-color: #f0f4f8;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.container {
+    max-width: 700px;
+    margin: 80px auto;
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 h1 {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: #333;
-    text-align: center;
+    color: #4CAF50;
     margin-bottom: 30px;
+    font-size: 2rem;
 }
 
-p {
-    font-size: 1.2rem;
-    color: #666;
-    text-align: center;
+.info-box {
+    background-color: #e8f5e9;
+    border: 1px solid #c8e6c9;
+    padding: 25px;
+    border-radius: 15px;
+    text-align: left;
+}
+
+.info-box h2 {
+    color: #388e3c;
     margin-bottom: 20px;
+    font-size: 1.3rem;
 }
 
-button {
+.info-box p {
+    margin: 10px 0;
+    font-size: 1rem;
+}
+
+.logout-btn,
+.delete-btn {
+    display: inline-block;
+    margin: 25px 10px 0 10px;
     padding: 12px 20px;
-    background-color: #5cb85c;
-    color: white;
+    font-size: 1rem;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+.logout-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.logout-btn:hover {
+    background-color: #43a047;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 10px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-button:hover {
-    background-color: #4cae4c;
-    transition: background-color 0.3s ease;
-}
-
-footer {
-    position: absolute;
-    bottom: 20px;
-    font-size: 0.9rem;
-    color: #aaa;
-    text-align: center;
-    width: 100%;
+.delete-btn:hover {
+    background-color: #d32f2f;
 }
