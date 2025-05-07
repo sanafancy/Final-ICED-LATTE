@@ -21,6 +21,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.hasProperty;
+import static org.hamcrest.Matchers.is;
 
 public class CartaMenuControllerTest {
 
@@ -177,7 +179,7 @@ public class CartaMenuControllerTest {
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/cartas/editar/{id}", cartaId))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/cartas"));
+                .andExpect(redirectedUrl("/restaurante/panel"));
     }
 
     @Test
@@ -194,14 +196,16 @@ public class CartaMenuControllerTest {
 
         // Configurar los mocks
         when(cartaMenuDAO.findById(cartaId)).thenReturn(Optional.of(carta));
+        when(cartaMenuDAO.findByCartaPadre(carta)).thenReturn(new ArrayList<>());
 
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/cartas/editar/{id}", cartaId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editarCarta"))
                 .andExpect(model().attribute("carta", carta))
-                .andExpect(model().attribute("items", items))
-                .andExpect(model().attributeExists("itemNuevo"));
+                .andExpect(model().attribute("carta", hasProperty("items", is(items))))
+                .andExpect(model().attributeExists("menus"))
+                .andExpect(model().attributeExists("nuevoMenu"));
     }
 
     // Pruebas para el método actualizarCarta (POST /cartas/editar/{id})

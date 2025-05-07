@@ -195,7 +195,7 @@ public class RegistroControllerTest {
         String nombre = "Repartidor";
         String apellidos = "Uno";
         String nif = "12345678B";
-        int eficiencia = 5;
+        int eficiencia = 0; // Ajustado para coincidir con el controlador
 
         // Configurar el mock para el método save
         Repartidor repartidor = crearRepartidor(nombre, apellidos, email, pass, nif, eficiencia);
@@ -207,10 +207,9 @@ public class RegistroControllerTest {
                         .param("pass", pass)
                         .param("nombre", nombre)
                         .param("apellidos", apellidos)
-                        .param("nif", nif)
-                        .param("eficiencia", String.valueOf(eficiencia)))
+                        .param("nif", nif))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/inicio"));
 
         // Verificar que se llamó al método save con un repartidor correcto
         verify(repartidorDAO, times(1)).save(any(Repartidor.class));

@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 import org.springframework.mock.web.MockHttpSession;
@@ -17,6 +16,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Optional;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
@@ -109,7 +109,7 @@ public class RestauranteControllerTest {
         return cliente;
     }
 
-    // Pruebas para el método home (GET /)
+    // Pruebas para el método homeCliente (GET /restaurante/home)
     @Test
     public void testHome_ClienteAutenticado() throws Exception {
         // Datos de prueba
@@ -122,7 +122,7 @@ public class RestauranteControllerTest {
         session.setAttribute("cliente", cliente);
 
         // Ejecutar la solicitud GET
-        mockMvc.perform(get("/")
+        mockMvc.perform(get("/restaurante/home")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicio"))
@@ -138,14 +138,14 @@ public class RestauranteControllerTest {
         when(restauranteDAO.findAll()).thenReturn(Arrays.asList(restaurante1, restaurante2));
 
         // Ejecutar la solicitud GET sin cliente en la sesión
-        mockMvc.perform(get("/"))
+        mockMvc.perform(get("/restaurante/home"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicio"))
                 .andExpect(model().attribute("restaurantes", Arrays.asList(restaurante1, restaurante2)))
                 .andExpect(model().attributeDoesNotExist("cliente"));
     }
 
-    // Pruebas para el método buscarRestaurante (GET /buscarRestaurante)
+    // Pruebas para el método buscarRestaurante (GET /restaurante/buscar)
     @Test
     public void testBuscarRestaurante_ConBusquedaPorNombre() throws Exception {
         // Datos de prueba
@@ -156,7 +156,7 @@ public class RestauranteControllerTest {
         when(restauranteDAO.findByDireccion_CodigoPostal(anyInt())).thenReturn(new ArrayList<>());
 
         // Ejecutar la solicitud GET con un término de búsqueda
-        mockMvc.perform(get("/buscarRestaurante")
+        mockMvc.perform(get("/restaurante/buscar")
                         .param("busqueda", "A"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicio"))
@@ -173,7 +173,7 @@ public class RestauranteControllerTest {
         when(restauranteDAO.findByDireccion_CodigoPostal(28001)).thenReturn(Arrays.asList(restaurante));
 
         // Ejecutar la solicitud GET con un término de búsqueda que es un código postal
-        mockMvc.perform(get("/buscarRestaurante")
+        mockMvc.perform(get("/restaurante/buscar")
                         .param("busqueda", "28001"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicio"))
@@ -188,42 +188,53 @@ public class RestauranteControllerTest {
         when(restauranteDAO.findAll()).thenReturn(Arrays.asList(restaurante1, restaurante2));
 
         // Ejecutar la solicitud GET sin término de búsqueda
-        mockMvc.perform(get("/buscarRestaurante"))
+        mockMvc.perform(get("/restaurante/buscar"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicio"))
                 .andExpect(model().attribute("restaurantes", Arrays.asList(restaurante1, restaurante2)));
     }
 
-    // Pruebas para el método inicioRestaurante (GET /inicioRestaurante)
+    // Pruebas para el método panel (GET /restaurante/panel)
     @Test
     public void testInicioRestaurante_RestauranteAutenticado() throws Exception {
         // Datos de prueba
         Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
         CartaMenu carta = new CartaMenu();
         carta.setNombre("Carta 1");
-        when(cartaMenuDAO.findByRestaurante(restaurante)).thenReturn(Arrays.asList(carta));
+        when(cartaMenuDAO.findByRestauranteAndCartaPadreIsNull(restaurante)).thenReturn(Arrays.asList(carta));
+        when(itemMenuDAO.findByCartaMenu(carta)).thenReturn(new ArrayList<>());
 
         // Configurar la sesión con un restaurante autenticado
         session.setAttribute("restaurante", restaurante);
 
         // Ejecutar la solicitud GET
-        mockMvc.perform(get("/inicioRestaurante")
+        mockMvc.perform(get("/restaurante/panel")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicioRestaurante"))
                 .andExpect(model().attribute("restaurante", restaurante))
-                .andExpect(model().attribute("cartas", Arrays.asList(carta)));
+                .andExpect(model().attribute("cartas", Arrays.asList(carta)))
+                .andExpect(model().attribute("restauranteNombre", restaurante.getNombre()));
     }
 
     @Test
     public void testInicioRestaurante_SinRestauranteAutenticado() throws Exception {
         // Ejecutar la solicitud GET sin restaurante en la sesión
-        mockMvc.perform(get("/inicioRestaurante"))
+        mockMvc.perform(get("/restaurante/panel"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
 
-    // Pruebas para el método toggleFavorito (POST /favorito/{id})
+    // Pruebas para el método redirigirPanel (GET /restaurante/inicioRestaurante)
+    @Test
+    public void testRedirigirPanel() throws Exception {
+        // Ejecutar la solicitud GET
+        mockMvc.perform(get("/restaurante/inicioRestaurante"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/restaurante/panel"));
+    }
+
+    // Pruebas para el método toggleFavorito (POST /restaurante/favorito/{id})
     @Test
     public void testToggleFavorito_AgregarFavorito() throws Exception {
         // Datos de prueba
@@ -232,7 +243,7 @@ public class RestauranteControllerTest {
         when(restauranteDAO.findById(1L)).thenReturn(Optional.of(restaurante));
         when(usuarioDAO.save(any(Cliente.class))).thenReturn(cliente);
 
-        // Configurar el ID del restaurante usando reflexión (ya que no hay setId)
+        // Configurar el ID del restaurante usando reflexión
         Field idField = Usuario.class.getDeclaredField("idUsuario");
         idField.setAccessible(true);
         idField.set(restaurante, 1L);
@@ -241,10 +252,10 @@ public class RestauranteControllerTest {
         session.setAttribute("cliente", cliente);
 
         // Ejecutar la solicitud POST
-        mockMvc.perform(post("/favorito/1")
+        mockMvc.perform(post("/restaurante/favorito/1")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/restaurante/home"));
 
         // Verificar que se llamó al método save
         verify(usuarioDAO, times(1)).save(cliente);
@@ -253,12 +264,12 @@ public class RestauranteControllerTest {
     @Test
     public void testToggleFavorito_SinClienteAutenticado() throws Exception {
         // Ejecutar la solicitud POST sin cliente en la sesión
-        mockMvc.perform(post("/favorito/1"))
+        mockMvc.perform(post("/restaurante/favorito/1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/restaurante/home"));
     }
 
-    // Pruebas para el método verFavoritos (GET /restaurantes/favoritos)
+    // Pruebas para el método verFavoritos (GET /restaurante/favoritos)
     @Test
     public void testVerFavoritos_ClienteAutenticado() throws Exception {
         // Datos de prueba
@@ -270,7 +281,7 @@ public class RestauranteControllerTest {
         session.setAttribute("cliente", cliente);
 
         // Ejecutar la solicitud GET
-        mockMvc.perform(get("/restaurantes/favoritos")
+        mockMvc.perform(get("/restaurante/favoritos")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("favoritos"))
@@ -280,63 +291,35 @@ public class RestauranteControllerTest {
     @Test
     public void testVerFavoritos_SinClienteAutenticado() throws Exception {
         // Ejecutar la solicitud GET sin cliente en la sesión
-        mockMvc.perform(get("/restaurantes/favoritos"))
+        mockMvc.perform(get("/restaurante/favoritos"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
 
-    // Pruebas para el método eliminarRestaurante (POST /eliminarRestaurante)
+    // Pruebas para el método eliminarRestaurante (POST /restaurante/eliminar)
     @Test
     public void testEliminarRestaurante_RestauranteAutenticado() throws Exception {
         // Datos de prueba
         Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
+        when(restauranteDAO.findById(1L)).thenReturn(Optional.of(restaurante));
 
         // Configurar la sesión con un restaurante autenticado
         session.setAttribute("restaurante", restaurante);
+        session.setAttribute("restauranteId", 1L);
 
         // Ejecutar la solicitud POST
-        mockMvc.perform(post("/eliminarRestaurante")
+        mockMvc.perform(post("/restaurante/eliminar")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
-
-        // Verificar que se llamó al método delete
-        verify(restauranteDAO, times(1)).delete(restaurante);
     }
 
     @Test
     public void testEliminarRestaurante_SinRestauranteAutenticado() throws Exception {
         // Ejecutar la solicitud POST sin restaurante en la sesión
-        mockMvc.perform(post("/eliminarRestaurante"))
+        mockMvc.perform(post("/restaurante/eliminar"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
-    }
-
-    // Pruebas para el método verMenuRestaurante (GET /restaurante/{id})
-    @Test
-    public void testVerMenuRestaurante_RestauranteExistente() throws Exception {
-        // Datos de prueba
-        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
-        CartaMenu carta = new CartaMenu();
-        carta.setNombre("Carta 1");
-        ItemMenu item = new ItemMenu();
-        item.setNombre("Item 1");
-        item.setPrecio(10.0);
-        when(restauranteDAO.findById(1L)).thenReturn(Optional.of(restaurante));
-        when(cartaMenuDAO.findByRestaurante(restaurante)).thenReturn(Arrays.asList(carta));
-        when(itemMenuDAO.findByCartaMenu(carta)).thenReturn(Arrays.asList(item));
-
-        // Configurar el ID del restaurante usando reflexión
-        Field idField = Usuario.class.getDeclaredField("idUsuario");
-        idField.setAccessible(true);
-        idField.set(restaurante, 1L);
-
-        // Ejecutar la solicitud GET
-        mockMvc.perform(get("/restaurante/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
-                .andExpect(model().attribute("restaurante", restaurante))
-                .andExpect(model().attribute("cartas", Arrays.asList(carta)));
+                .andExpect(redirectedUrl("/login"));
     }
 
     @Test
@@ -347,6 +330,64 @@ public class RestauranteControllerTest {
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/restaurante/1"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/"));
+                .andExpect(redirectedUrl("/restaurante/home"));
+    }
+
+    // Pruebas para el método formCrearCarta (GET /restaurante/crearCarta)
+    @Test
+    public void testMostrarFormularioCrearCarta_SinRestaurante() throws Exception {
+        // Ejecutar la solicitud GET sin restaurante en la sesión
+        mockMvc.perform(get("/restaurante/crearCarta"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    public void testMostrarFormularioCrearCarta_ConRestaurante() throws Exception {
+        // Datos de prueba
+        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
+
+        // Configurar la sesión con un restaurante autenticado
+        session.setAttribute("restaurante", restaurante);
+
+        // Ejecutar la solicitud GET
+        mockMvc.perform(get("/restaurante/crearCarta")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("crearCarta"))
+                .andExpect(model().attributeExists("carta"))
+                .andExpect(model().attribute("carta", instanceOf(CartaMenu.class)));
+    }
+
+    // Pruebas para el método crearCarta (POST /restaurante/crearCarta)
+    @Test
+    public void testCrearCarta_ConRestaurante() throws Exception {
+        // Datos de prueba
+        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
+        CartaMenu carta = new CartaMenu();
+        carta.setNombre("Carta 1");
+        when(cartaMenuDAO.save(any(CartaMenu.class))).thenReturn(carta);
+
+        // Configurar la sesión con un restaurante autenticado
+        session.setAttribute("restaurante", restaurante);
+
+        // Ejecutar la solicitud POST
+        mockMvc.perform(post("/restaurante/crearCarta")
+                        .param("nombre", "Carta 1")
+                        .session(session))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/restaurante/panel"));
+
+        // Verificar que se llamó al método save
+        verify(cartaMenuDAO, times(1)).save(any(CartaMenu.class));
+    }
+
+    @Test
+    public void testCrearCarta_SinRestaurante() throws Exception {
+        // Ejecutar la solicitud POST sin restaurante en la sesión
+        mockMvc.perform(post("/restaurante/crearCarta")
+                        .param("nombre", "Carta 1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
     }
 }

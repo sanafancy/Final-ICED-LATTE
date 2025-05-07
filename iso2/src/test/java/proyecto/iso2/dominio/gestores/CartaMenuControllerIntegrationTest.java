@@ -106,7 +106,7 @@ public class CartaMenuControllerIntegrationTest {
                 .andExpect(view().name("editarCarta"))
                 .andExpect(model().attributeExists("carta"))
                 .andExpect(model().attribute("carta", hasProperty("nombre", is("Menú Principal"))))
-                .andExpect(model().attributeExists("items"))
-                .andExpect(model().attributeExists("itemNuevo"));
+                .andExpect(model().attributeExists("menus"))
+                .andExpect(model().attributeExists("nuevoMenu"));
     }
 }
