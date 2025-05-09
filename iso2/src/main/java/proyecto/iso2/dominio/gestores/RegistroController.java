@@ -34,10 +34,14 @@ public class RegistroController {
     @PostMapping("/cliente")
     public String registrarCliente(@RequestParam String email, @RequestParam String pass,
                                    @RequestParam String nombre, @RequestParam String apellidos,
-                                   @RequestParam String dni) {
+                                   @RequestParam String dni,
+                                   HttpSession sesion) {  // Añade HttpSession aquí
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
         clienteDAO.save(cliente);
-        return "redirect:/";
+
+        sesion.setAttribute("cliente", cliente); // Guardar en sesión
+
+        return "redirect:/inicio"; // redirigir al inicio directamente
     }
 
     @GetMapping("/restaurante")
@@ -47,11 +51,17 @@ public class RegistroController {
 
     @PostMapping("/restaurante")
     public String registrarRestaurante(@RequestParam String email, @RequestParam String pass,
-                                       @RequestParam String nombre, @RequestParam String cif) {
+                                       @RequestParam String nombre, @RequestParam String cif,
+                                       HttpSession sesion) { // Añade HttpSession
+
         Restaurante restaurante = new Restaurante(email, pass, nombre, cif, new Direccion());
         restauranteDAO.save(restaurante);
-        return "redirect:/login";
+
+        sesion.setAttribute("restaurante", restaurante); // Guardar en sesión
+
+        return "redirect:/inicio"; // Redirigir al inicio
     }
+
 
     @GetMapping("/repartidor")
     public String showRegistroRepartidorPage() {
@@ -69,6 +79,7 @@ public class RegistroController {
 
         // Guardar en sesión para mostrar datos en /inicioRepartidor
         sesion.setAttribute("repartidor", repartidor);
+
 
         return "redirect:/login";
     }

@@ -40,7 +40,7 @@ public class LoginController {
 
                 sesion.setAttribute("cliente", usuario); //guardar sesion como cliente
                 //System.out.println("Sesión iniciada para Cliente: " + usuario.getEmail());
-                return "redirect:inicio";
+                return "redirect:/inicio";
             } else if (usuario instanceof Restaurante) {
                 sesion.setAttribute("restaurante", usuario);
                 System.out.println("Sesión iniciada para Restaurante: " + usuario.getEmail());
@@ -75,4 +75,16 @@ public class LoginController {
         model.addAttribute("cliente", cliente);
         return "cliente"; // Vista privada del cliente
     }
+    @GetMapping("/autologin/restaurante/{id}")
+    public String autoLoginRestaurante(@PathVariable Long id, HttpSession sesion) {
+        Optional<Usuario> usuarioOpt = usuarioDAO.findById(id);
+        if (usuarioOpt.isPresent() && usuarioOpt.get() instanceof Restaurante) {
+            Restaurante restaurante = (Restaurante) usuarioOpt.get();
+            sesion.setAttribute("usuario", restaurante);
+            sesion.setAttribute("restaurante", restaurante);
+            return "redirect:/restaurante/panel";
+        }
+        return "redirect:/inicio?error=restaurante_no_encontrado";
+    }
+
 }

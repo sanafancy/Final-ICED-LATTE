@@ -82,13 +82,14 @@
 
 <section class="section restaurants">
     <div class="container">
-        <h2>🍽️ Restaurantes Registrados</h2>
+        <h2>🍽️ Restaurantes</h2>
         <ul class="restaurant-list">
             <li th:each="restaurante : ${restaurantes}">
-                <strong th:text="${restaurante.nombre}">Nombre del Restaurante</strong><br>
+                <a th:href="@{'/autologin/restaurante/' + ${restaurante.idUsuario}}"
+                   th:text="${restaurante.nombre}">Nombre del Restaurante</a><br>
                 <span th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.municipio + ' (' + restaurante.direccion.codigoPostal + ')'}">
-                Dirección completa aquí
-                </span>
+            Dirección completa aquí
+        </span>
             </li>
         </ul>
         <p th:if="${restaurantes != null and #lists.isEmpty(restaurantes)}">No se encontraron restaurantes.</p>
@@ -102,3 +103,5 @@
 </footer>
 </body>
 </html>
+
+

@@ -30,8 +30,8 @@ public class RestauranteController {
     /**
      * Home público: lista todos los restaurantes (cliente)
      */
-    @GetMapping("/home")
-    public String homeCliente(HttpSession session, Model model) {
+    @GetMapping("/inicio")
+    public String inicio(Model model, HttpSession session) {
         List<Restaurante> restaurantes = restauranteDAO.findAll();
         model.addAttribute("restaurantes", restaurantes);
 
@@ -39,8 +39,10 @@ public class RestauranteController {
         if (cliente != null) {
             model.addAttribute("cliente", cliente);
         }
+
         return "inicio";
     }
+
     /**
      * Búsqueda de restaurantes
      */
@@ -218,6 +220,7 @@ public class RestauranteController {
             return "inicioRepartidor";  // Vista que muestra los datos del repartidor
         }
     }
+
 
 
 }
