@@ -10,20 +10,19 @@
 <div class="container">
     <h1 th:text="'Carta: Restaurante ' + ${carta.restaurante.nombre} + ' - ' + ${carta.nombre}"></h1>
 
-    <div class="acciones">
-        <a th:href="@{/cartas/editar/{id}(id=${carta.id})}" class="btn btn-editar">✏️ Editar Carta</a>
-        <a th:href="@{/cartas/{id}/añadirMenu(id=${carta.id})}" class="btn">➕ Añadir Menú</a>
-    </div>
-
-    <h2>Menús de esta carta</h2>
-
+    <h2>Items de esta carta</h2>
     <ul>
-        <li th:each="menu : ${submenus}">
-            <a th:href="@{/cartas/{id}(id=${menu.id})}" th:text="${menu.nombre}"></a>
+        <li th:each="item : ${carta.items}">
+            <span th:text="${item.nombre} + ' - ' + ${item.tipo} + ' - €' + ${item.precio}"></span>
         </li>
     </ul>
-
 </div>
+<a th:href="@{/restaurante/panel}" style="text-decoration: none;">
+    <button style="padding: 8px 16px; border-radius: 8px; background-color: lightgray; border: none;">
+        ← Volver al Panel
+    </button>
+</a>
+
 
 </body>
 </html>

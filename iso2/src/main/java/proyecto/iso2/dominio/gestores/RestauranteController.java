@@ -5,13 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/restaurante")
@@ -100,21 +98,64 @@ public class RestauranteController {
      * Alternar favorito (cliente)
      */
     @PostMapping("/favoritos/{id}")
-    public String toggleFavorito(@PathVariable Long id, HttpSession session) {
+    @ResponseBody
+    public Map<String, Object> toggleFavorito(@PathVariable Long id, HttpSession session) {
+        Map<String, Object> response = new HashMap<>();
         Cliente cliente = (Cliente) session.getAttribute("cliente");
+
         if (cliente != null) {
             Optional<Restaurante> opt = restauranteDAO.findById(id);
             if (opt.isPresent()) {
                 Restaurante r = opt.get();
+                boolean added;
                 if (cliente.getFavoritos().contains(r)) {
                     cliente.getFavoritos().remove(r);
+                    response.put("status", "removed");
+                    added = false;
                 } else {
                     cliente.getFavoritos().add(r);
+                    response.put("status", "added");
+                    added = true;
                 }
                 usuarioDAO.save(cliente);
+                response.put("nombre", r.getNombre());
+                response.put("id", r.getIdUsuario());
+            } else {
+                response.put("status", "not_found");
             }
+        } else {
+            response.put("status", "unauthorized");
         }
-        return "redirect:/restaurante/home";
+
+        return response;
+    }
+    @GetMapping("/favoritos")
+    public String verFavoritos(HttpSession session, Model model) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        if (cliente == null) return "redirect:/login";
+
+        model.addAttribute("favoritos", cliente.getFavoritos());
+        return "favoritos";
+    }
+    @RequestMapping("/favoritos/{idRestaurante}")
+    public String alternarFavorito(@PathVariable Long idRestaurante, HttpSession session, RedirectAttributes redirectAttributes) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
+        Restaurante restaurante = restauranteDAO.findById(idRestaurante).orElse(null);
+
+        if (cliente != null && restaurante != null) {
+            if (cliente.getFavoritos().contains(restaurante)) {
+                cliente.getFavoritos().remove(restaurante);
+                redirectAttributes.addFlashAttribute("mensaje", "Restaurante eliminado de favoritos");
+            } else {
+                cliente.getFavoritos().add(restaurante);
+                redirectAttributes.addFlashAttribute("mensaje", "Restaurante añadido a favoritos");
+            }
+
+            usuarioDAO.save(cliente);  // Guarda cambios
+            session.setAttribute("cliente", usuarioDAO.findById(cliente.getIdUsuario()).get());  // Refresca sesión
+        }
+
+        return "redirect:/favoritos";
     }
     @GetMapping("/crearCarta")
     public String formCrearCarta(Model model, HttpSession session) {
@@ -132,15 +173,73 @@ public class RestauranteController {
 
         return "redirect:/restaurante/panel";
     }
-    @GetMapping("/favoritos")
-    public String verFavoritos(HttpSession session, Model model) {
-        Cliente cliente = (Cliente) session.getAttribute("cliente");
-        if (cliente == null) {
-            return "redirect:/login";
-        }
-        model.addAttribute("favoritos", cliente.getFavoritos());
-        return "favoritos";
+    @GetMapping("/editarCarta/{id}")
+    public String editarCarta(@PathVariable Long id, Model model, HttpSession session) {
+        Restaurante r = (Restaurante) session.getAttribute("restaurante");
+        if (r == null) return "redirect:/login";
+
+        Optional<CartaMenu> optCarta = cartaMenuDAO.findById(id);
+        if (optCarta.isEmpty()) return "redirect:/restaurante/panel";
+
+        CartaMenu carta = optCarta.get();
+        model.addAttribute("carta", carta);
+        model.addAttribute("items", itemMenuDAO.findByCartaMenu(carta));
+        return "editarCarta"; // Crea esta vista para editar nombre y añadir items
     }
+    @PostMapping("/eliminarCarta/{id}")
+    public String eliminarCarta(@PathVariable Long id, HttpSession session) {
+        Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
+        if (restaurante == null) return "redirect:/login";
+
+        Optional<CartaMenu> optCarta = cartaMenuDAO.findById(id);
+        optCarta.ifPresent(cartaMenuDAO::delete);
+
+        return "redirect:/restaurante/panel";
+    }
+
+    @GetMapping("/carta/{id}")
+    public String verCarta(@PathVariable Long id, Model model) {
+        Optional<CartaMenu> opt = cartaMenuDAO.findById(id);
+        if (opt.isEmpty()) return "redirect:/restaurante/panel";
+
+        CartaMenu carta = opt.get();
+        List<CartaMenu> submenus = cartaMenuDAO.findByCartaPadre(carta); // solo si los menús están estructurados como hijos
+        model.addAttribute("carta", carta);
+        model.addAttribute("submenus", submenus);
+
+        return "verCarta";
+    }
+
+    @PostMapping("/restaurante/actualizarNombreCarta")
+    public String actualizarNombreCarta(@RequestParam Long cartaId, @RequestParam String nuevoNombre) {
+        Optional<CartaMenu> optCarta = cartaMenuDAO.findById(cartaId);
+        if (optCarta.isPresent()) {
+            CartaMenu carta = optCarta.get();
+            carta.setNombre(nuevoNombre);
+            cartaMenuDAO.save(carta);
+        }
+        return "redirect:/restaurante/editarCarta/" + cartaId;
+    }
+
+    @PostMapping("/anadirItem")
+    public String anadirItem(@RequestParam Long cartaId,
+                             @RequestParam String nombre,
+                             @RequestParam String tipo,
+                             @RequestParam double precio) {
+        Optional<CartaMenu> optCarta = cartaMenuDAO.findById(cartaId);
+        if (optCarta.isPresent()) {
+            CartaMenu carta = optCarta.get();
+            ItemMenu item = new ItemMenu();
+            item.setNombre(nombre);
+            item.setTipo(tipo);
+            item.setPrecio(precio);
+            item.setCartaMenu(carta); // <-- ASOCIACIÓN NECESARIA
+
+            itemMenuDAO.save(item);   // <-- GUARDAR
+        }
+        return "redirect:/restaurante/editarCarta/" + cartaId;
+    }
+
     /**
      * Eliminar restaurante autenticado
      */

@@ -2,16 +2,16 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Restaurantes Favoritos</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/favoritos.css}">
 </head>
 <body>
-<h1>Mis Restaurantes Favoritos</h1>
-
+<h2>⭐ Restaurantes Favoritos</h2>
 <ul>
     <li th:each="restaurante : ${favoritos}">
-        <span th:text="${restaurante.nombre}"></span>
+        <p th:text="${restaurante.nombre}">Nombre restaurante</p>
+        <p th:text="${restaurante.direccion.calle}">Calle</p>
     </li>
 </ul>
-
-<a href="/">Volver a Inicio</a>
+<p th:if="${#lists.isEmpty(favoritos)}">No tienes restaurantes favoritos.</p>
 </body>
 </html>

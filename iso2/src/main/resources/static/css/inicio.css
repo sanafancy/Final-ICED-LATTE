@@ -166,3 +166,68 @@ nav a:hover {
     margin-left: 8px;
     color: #1b5e20;
 }
+.fav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.fa-heart {
+    color: #27ae60; /* Verde */
+}
+
+.fa-heart-broken {
+    color: #c0392b; /* Rojo */
+}
+
+.restaurant-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.favorite-button {
+    background-color: #ffd700;  /* Amarillo dorado */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.favorite-button:hover {
+    background-color: #ffcc00;  /* Amarillo más oscuro al pasar el ratón */
+}
+.heart {
+    font-size: 1.5rem;
+    color: white;
+    transition: color 0.3s;
+}
+
+.heart.active {
+    color: red;
+}
+.heart-button {
+    font-size: 1.5rem;
+    color: white;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.heart-button.active {
+    color: red;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    z-index: 9999;
+}

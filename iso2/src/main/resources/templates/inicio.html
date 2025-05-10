@@ -6,15 +6,17 @@
     <link rel="stylesheet" href="/css/inicio.css">
 </head>
 <body>
-
+<div th:if="${mensaje}" class="mensaje-flotante">
+    <p th:text="${mensaje}"></p>
+</div>
 
 <p th:if="${session.cliente != null}">👤Hola <span th:text="${session.cliente.nombre}"></span></p>
 <p th:if="${session.cliente == null}">No hay cliente en sesión</p>
+
 <header class="site-header">
     <div class="container header-inner">
         <a href="/inicio" class="logo">🍔 ICED Latte</a>
         <nav>
-            <!-- Mostrar solo si NO hay cliente en sesión -->
             <div th:if="${session.cliente == null}">
                 <a href="/login">Iniciar Sesión</a>
                 <a href="/registro">Registrarse</a>
@@ -29,11 +31,7 @@
             <th:block th:if="${session.restaurante != null}">
                 <a href="/restaurante/panel">Panel Restaurante</a>
             </th:block>
-            <th:block th:if="${session.cliente != null}">
-            </th:block>
-
         </nav>
-
     </div>
 </header>
 
@@ -47,24 +45,28 @@
         </form>
     </div>
 </section>
+
 <script>
     function toggleFavoritos() {
         const favSection = document.getElementById('favoritos-section');
         favSection.style.display = (favSection.style.display === 'none') ? 'block' : 'none';
     }
 </script>
+
 <section class="section" th:if="${session.cliente != null}">
     <a href="/direcciones/ver">
         <button>📍 Ver Mis Direcciones</button>
     </a>
 </section>
+
 <section class="section" th:if="${session.cliente != null}">
     <a href="/direcciones/añadir">
         <button>➕ Añadir Nueva Dirección</button>
     </a>
 </section>
+
 <section class="section" th:if="${session.cliente != null}">
-    <button onclick="toggleFavoritos()" style="margin-bottom: 10px;">⭐Favoritos</button>
+    <button onclick="toggleFavoritos()" style="margin-bottom: 10px;">⭐ Favoritos</button>
     <div id="favoritos-section" style="display: none;">
         <a href="/restaurante/favoritos">
             <button style="margin-top: 10px;">Ir a Favoritos</button>
@@ -72,25 +74,32 @@
     </div>
 </section>
 
-<script>
-    function toggleFavoritos() {
-        const favSection = document.getElementById('favoritos-section');
-        favSection.style.display = (favSection.style.display === 'none') ? 'block' : 'none';
-    }
-</script>
-
-
 <section class="section restaurants">
     <div class="container">
         <h2>🍽️ Restaurantes</h2>
         <ul class="restaurant-list">
-            <li th:each="restaurante : ${restaurantes}">
-                <a th:href="@{'/autologin/restaurante/' + ${restaurante.idUsuario}}"
-                   th:text="${restaurante.nombre}">Nombre del Restaurante</a><br>
+            <li th:each="restaurante : ${restaurantes}" class="restaurant-item">
+                <div class="restaurant-header">
+                    <a th:href="@{'/autologin/restaurante/' + ${restaurante.idUsuario}}"
+                       th:text="${restaurante.nombre}">Nombre del Restaurante</a>
+                    <button
+                            type="button"
+                            class="heart-button"
+                            th:if="${session.cliente != null}"
+                            th:data-id="${restaurante.idUsuario}"
+                            th:onclick="'toggleFavorito(' + ${restaurante.idUsuario} + ', this)'"
+                            th:classappend="${session.cliente.favoritos.contains(restaurante)} ? ' active' : ''">
+                        ❤
+                    </button>
+
+                </div>
+
                 <span th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.municipio + ' (' + restaurante.direccion.codigoPostal + ')'}">
-            Dirección completa aquí
-        </span>
+        Dirección completa aquí
+    </span>
             </li>
+
+
         </ul>
         <p th:if="${restaurantes != null and #lists.isEmpty(restaurantes)}">No se encontraron restaurantes.</p>
     </div>
@@ -101,7 +110,43 @@
         <small>© 2025 FastFresh • Gestión de pedidos y entregas</small>
     </div>
 </footer>
+<script>
+    function toggleFavorito(id, iconElement) {
+        fetch(`/restaurante/favoritos/${id}`, {
+            method: 'POST'
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'added') {
+                    iconElement.classList.remove('text-white');
+                    iconElement.classList.add('text-red-500');
+                    mostrarMensaje(`Añadido a favoritos: ${data.nombre}`);
+                } else if (data.status === 'removed') {
+                    iconElement.classList.remove('text-red-500');
+                    iconElement.classList.add('text-white');
+                    mostrarMensaje(`Eliminado de favoritos: ${data.nombre}`);
+                } else {
+                    mostrarMensaje("Error al actualizar favoritos");
+                }
+            })
+            .catch(() => mostrarMensaje("Error en la petición"));
+    }
+
+    function mostrarMensaje(mensaje) {
+        const div = document.createElement("div");
+        div.innerText = mensaje;
+        div.style.position = "fixed";
+        div.style.bottom = "20px";
+        div.style.right = "20px";
+        div.style.backgroundColor = "#333";
+        div.style.color = "white";
+        div.style.padding = "10px 20px";
+        div.style.borderRadius = "8px";
+        div.style.zIndex = "9999";
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 3000);
+    }
+</script>
+
 </body>
 </html>
-
-

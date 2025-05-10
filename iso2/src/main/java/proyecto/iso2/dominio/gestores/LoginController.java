@@ -12,6 +12,7 @@ import proyecto.iso2.dominio.entidades.Repartidor;
 import proyecto.iso2.persistencia.UsuarioDAO;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 @Controller
@@ -34,7 +35,7 @@ public class LoginController {
                 System.out.println("Cliente autenticado: " + cliente.getEmail());
                 if (cliente.getFavoritos() == null) {
                     System.out.println("Favoritos es NULL. Inicializando...");
-                    cliente.setFavoritos(new ArrayList<>());
+                    cliente.setFavoritos(new HashSet<>());
                 }
                 System.out.println("Favoritos del cliente: " + cliente.getFavoritos());
 

@@ -5,16 +5,15 @@
     <title>Inicio Restaurante – ICED Latte</title>
     <link rel="stylesheet" href="/css/inicioRestaurante.css">
     <script>
-        function confirmarEliminacion() {
-            if (confirm("¿Seguro que quieres eliminar tu restaurante? Esta acción no se puede deshacer.")) {
-                document.getElementById('formEliminar').submit();
+        function confirmarEliminacion(id) {
+            if (confirm("¿Seguro que quieres eliminar esta carta? Esta acción no se puede deshacer.")) {
+                document.getElementById('formEliminar' + id).submit();
             }
         }
     </script>
 </head>
 <body>
 
-<!-- Header -->
 <header class="site-header">
     <div class="header-inner">
         <a href="/" class="logo">🍔 ICED Latte</a>
@@ -22,27 +21,18 @@
             <button onclick="location.href='/restaurante/crearCarta'">Crear Carta</button>
             <button onclick="location.href='/restaurante/editarDireccion'">Editar Dirección</button>
 
-            <!-- Formulario para eliminar restaurante -->
-            <form id="formEliminar" th:action="@{/restaurante/eliminar}" method="post" style="display:inline;">
-                <button type="button" onclick="confirmarEliminacion()">Eliminar Restaurante</button>
+            <!-- Eliminar restaurante -->
+            <form id="formEliminarRestaurante" th:action="@{/restaurante/eliminar}" method="post" style="display:inline;">
+                <button type="button" onclick="if(confirm('¿Eliminar restaurante?')) document.getElementById('formEliminarRestaurante').submit();">
+                    Eliminar Restaurante
+                </button>
             </form>
-
-            <script>
-                function confirmarEliminacion() {
-                    if (confirm("¿Seguro que quieres eliminar tu restaurante? Esta acción no se puede deshacer.")) {
-                        document.getElementById('formEliminar').submit();
-                    }
-                }
-            </script>
-
 
             <button onclick="location.href='/logout'">Cerrar Sesión</button>
         </nav>
     </div>
 </header>
 
-<!-- Hero con fondo suave -->
-<!-- Hero Section (Bienvenida) -->
 <section class="hero">
     <div class="hero-overlay">
         <div class="hero-content">
@@ -54,23 +44,27 @@
     </div>
 </section>
 
-
-<!-- Cartas existentes -->
 <section class="section">
     <h2>Cartas Existentes</h2>
     <ul class="restaurant-list">
-        <li th:each="carta : ${cartas}">
-            <a th:href="@{/cartas/{id}(id=${carta.id})}"
-               th:text="${carta.nombre}"
-               class="card-link">
-                Carta Principal
+        <li th:each="carta : ${cartas}" class="carta-item">
+            <a th:href="@{/restaurante/carta/{id}(id=${carta.id})}" th:text="${carta.nombre}" class="btn btn-secondary"></a>
+
+            <!-- Botón Editar -->
+            <a th:href="@{/restaurante/editarCarta/{id}(id=${carta.id})}">
+                <button>Editar Carta</button>
             </a>
+
+            <!-- Botón Eliminar (form con POST) -->
+            <form th:action="@{/restaurante/eliminarCarta/{id}(id=${carta.id})}" method="post" style="display:inline;">
+                <button type="submit">Eliminar Carta</button>
+            </form>
         </li>
     </ul>
     <p th:if="${#lists.isEmpty(cartas)}">No tienes cartas aún.</p>
 </section>
 
-<!-- Footer -->
+
 <footer class="site-footer">
     &copy; 2025 ICED Latte. Todos los derechos reservados.
 </footer>

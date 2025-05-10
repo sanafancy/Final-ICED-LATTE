@@ -12,7 +12,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/inicio")
-public class InicioController {
+public class    InicioController {
 
     @Autowired
     private RestauranteDAO restauranteDAO;
