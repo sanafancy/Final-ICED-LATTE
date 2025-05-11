@@ -8,21 +8,27 @@
 <body>
 
 <div class="container">
-    <h1 th:text="'Carta: Restaurante ' + ${carta.restaurante.nombre} + ' - ' + ${carta.nombre}"></h1>
+    <h1 th:text="'Restaurante ' + ${carta.restaurante.nombre} + ' - ' + ${carta.nombre}"></h1>
 
     <h2>Items de esta carta</h2>
     <ul>
         <li th:each="item : ${carta.items}">
             <span th:text="${item.nombre} + ' - ' + ${item.tipo} + ' - €' + ${item.precio}"></span>
+
+            <!-- Botón Editar -->
+            <a th:href="@{/cartas/menu/{menuId}/editarItem/{itemId}(menuId=${carta.id}, itemId=${item.id})}">
+                <button class="btn-editar">Editar</button>
+            </a>
+            <form th:action="@{/cartas/menu/{menuId}/eliminarItem/{itemId}(menuId=${carta.id}, itemId=${item.id})}" method="post">
+            <button type="submit" class="btn-eliminar">Eliminar</button>
+            </form>
         </li>
     </ul>
 </div>
-<a th:href="@{/restaurante/panel}" style="text-decoration: none;">
-    <button style="padding: 8px 16px; border-radius: 8px; background-color: lightgray; border: none;">
-        ← Volver al Panel
-    </button>
-</a>
 
+<a th:href="@{/restaurante/panel}" style="text-decoration: none;">
+    <button class="back-btn">← Volver al Panel</button>
+</a>
 
 </body>
 </html>

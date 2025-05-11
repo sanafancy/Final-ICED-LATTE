@@ -9,6 +9,7 @@
 <h1>Editar Item</h1>
 
 <form th:action="@{/cartas/menu/{menuId}/editarItem/{itemId}(menuId=${menuId}, itemId=${item.id})}" method="post">
+
     <label>Nombre:</label>
     <input type="text" name="nombre" th:value="${item.nombre}" required>
 
@@ -21,6 +22,8 @@
     <button type="submit">Guardar Cambios</button>
 </form>
 
-<a th:href="@{/cartas/menu/{menuId}(menuId=${menuId})}">Cancelar</a>
+<a th:href="@{/restaurante/panel}" style="text-decoration: none;">
+    <button class="back-btn">cancelar</button>
+</a>
 </body>
 </html>
