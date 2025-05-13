@@ -1,16 +1,10 @@
 package proyecto.iso2.dominio.entidades;
 
 public enum CodigoPostal {
-    CP_28001,
-    CP_08001,
-    CP_35001,
     CP_12300,
     CP_23400,
-    CP_34500,
     CP_45600,
-    CP_56700,
-    CP_67800,
-    CP_78900;
+    CP_56700;
 
     @Override
     public String toString() {
