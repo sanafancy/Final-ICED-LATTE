@@ -18,13 +18,15 @@
     <table>
         <tr>
             <th>ID Pedido</th>
-            <th>Dirección</th>
+            <th>Dirección de Recogida (Restaurante)</th>
+            <th>Dirección de Entrega (Cliente)</th>
             <th>Recogido</th>
             <th>Entregado</th>
             <th>Acciones</th>
         </tr>
         <tr th:each="servicio : ${serviciosEntrega}">
             <td th:text="${servicio.pedido.id}"></td>
+            <td th:text="${servicio.pedido.restaurante.direccion.calle} + ', ' + ${servicio.pedido.restaurante.direccion.codigoPostal}"></td>
             <td th:text="${servicio.direccion.calle} + ', ' + ${servicio.direccion.codigoPostal}"></td>
             <td th:text="${servicio.fechaRecepcion != null ? 'Sí' : 'No'}"></td>
             <td th:text="${servicio.fechaEntrega != null ? 'Sí' : 'No'}"></td>
