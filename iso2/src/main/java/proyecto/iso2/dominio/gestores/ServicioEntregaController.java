@@ -125,13 +125,21 @@ public class ServicioEntregaController {
             }
             System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());
 
+            //compruebo si ya existe un servicioEntrega
+            Optional<ServicioEntrega> servicioExistente = servicioEntregaDAO
+                    .findByDireccionIdAndFechaEntregaIsNull(direccion.getId());
+            if (servicioExistente.isPresent()) {
+                model.addAttribute("error", "Ya existe un pedido activo para esta dirección. Finalízalo antes de crear uno nuevo.");
+                return "confirmarPedido";
+            }
+
             // Crear y guardar el servicio de entrega
             System.out.println("Creando servicio de entrega...");
             ServicioEntrega servicioEntrega = new ServicioEntrega();
             servicioEntrega.setPedido(pedido);
             servicioEntrega.setDireccion(direccion);
             servicioEntrega.setRepartidor(repartidorAsignado);
-            servicioEntrega.setFechaRecepcion(LocalDateTime.now());
+            servicioEntrega.setFechaRecepcion(null);
             servicioEntrega.setFechaEntrega(null);
             servicioEntregaDAO.save(servicioEntrega);
             System.out.println("Servicio de entrega guardado");

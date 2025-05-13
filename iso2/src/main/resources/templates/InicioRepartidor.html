@@ -4,15 +4,42 @@
     <meta charset="UTF-8">
     <title>Inicio Repartidor</title>
 </head>
-<body>
-<h1>Bienvenido al Inicio del Repartidor</h1>
-<div th:if="${repartidor != null}">
-    <p>Bienvenido, <span th:text="${repartidor.nombre}"></span></p>
-</div>
-<div th:if="${repartidor == null}">
-    <p>No hay información de repartidor disponible.</p>
-</div>
-<button onclick="location.href='/repartidor/seleccionar-codigo-postal'">Seleccionar Código Postal</button>
-<button onclick="location.href='/logout'">Cerrar Sesión</button>
-</body>
+    <body>
+    <h1>Bienvenido al Inicio del Repartidor</h1>
+    <div th:if="${repartidor != null}">
+        <p>Bienvenido, <span th:text="${repartidor.nombre}"></span></p>
+    </div>
+    <div th:if="${repartidor == null}">
+        <p>No hay información de repartidor disponible.</p>
+    </div>
+    <p>Tu código postal actual: <span th:text="${repartidor.codigoPostal}"></span></p>
+    <button onclick="location.href='/repartidor/seleccionar-codigo-postal'">Seleccionar Código Postal</button>
+    <h2>Pedidos asignados</h2>
+    <table>
+        <tr>
+            <th>ID Pedido</th>
+            <th>Dirección</th>
+            <th>Recogido</th>
+            <th>Entregado</th>
+            <th>Acciones</th>
+        </tr>
+        <tr th:each="servicio : ${serviciosEntrega}">
+            <td th:text="${servicio.pedido.id}"></td>
+            <td th:text="${servicio.direccion.calle} + ', ' + ${servicio.direccion.codigoPostal}"></td>
+            <td th:text="${servicio.fechaRecepcion != null ? 'Sí' : 'No'}"></td>
+            <td th:text="${servicio.fechaEntrega != null ? 'Sí' : 'No'}"></td>
+            <td>
+                <form th:if="${servicio.fechaRecepcion == null}" method="post" action="/repartidor/marcar-recogido">
+                    <input type="hidden" name="servicioId" th:value="${servicio.id}" />
+                    <button type="submit">Marcar Recogido</button>
+                </form>
+                <form th:if="${servicio.fechaRecepcion != null and servicio.fechaEntrega == null}" method="post" action="/repartidor/marcar-entregado">
+                    <input type="hidden" name="servicioId" th:value="${servicio.id}" />
+                    <button type="submit">Marcar Entregado</button>
+                </form>
+            </td>
+        </tr>
+    </table>
+    <button onclick="location.href='/logout'">Cerrar Sesión</button>
+    </body>
 </html>

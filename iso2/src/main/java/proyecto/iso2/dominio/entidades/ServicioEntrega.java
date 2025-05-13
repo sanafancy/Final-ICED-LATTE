@@ -25,6 +25,7 @@ public class ServicioEntrega {
     @Column
     private LocalDateTime fechaEntrega;
 
+
     public ServicioEntrega(Long id, Pedido pedido, Direccion direccion, Repartidor repartidor, LocalDateTime fechaRecepcion, LocalDateTime fechaEntrega) {
         this.id = id;
         this.pedido = pedido;
