@@ -181,18 +181,19 @@ public class ServicioEntregaController {
         }
 
         // buscar repartidores disponibles
-        //List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostal(direccionCliente.getCodigoPostal());
         CodigoPostal codigo = CodigoPostal.fromInt(direccionCliente.getCodigoPostal());
-        List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostal(codigo);
+        List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostalOrderByEficienciaAsc(codigo);
+        //List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostalOrderByEficienciaAsc(
+                //direccionCliente.getCodigoPostal()); //listar los repartidores de la zona ordenado de menor eficiencia a mayor
         if (repartidoresZona.isEmpty()) {
             return Optional.empty();
         }
 
-        // el menor eficiencia es el menos ocupado
-        return repartidoresZona.stream()
-                .filter(r -> r.getEficiencia() != null)
-                .sorted(Comparator.comparing(Repartidor::getEficiencia)) // menor eficiencia = menos entregas
-                .findFirst();
+        Repartidor repartidor = repartidoresZona.get(0);
+        repartidor.incrementarEficiencia();
+        repartidorDAO.save(repartidor);
+        return Optional.of(repartidor);
+
     }
 
 }

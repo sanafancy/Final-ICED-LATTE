@@ -65,6 +65,11 @@ public class Repartidor extends Usuario {
     public void setCodigoPostal(CodigoPostal codigoPostal) {
         this.codigoPostal = codigoPostal;
     }
+
+    public void incrementarEficiencia() {
+        this.eficiencia += 1;
+    }
+
     @Override
     public String toString() {
         return String.format("Repartidor [idUsuario=%s, pass=%s, nombre=%s, apellidos=%s, nif=%s, eficiencia=%s, codigoPostal=%s]", getIdUsuario(), getPass(), nombre, apellidos, nif, eficiencia, codigoPostal);
