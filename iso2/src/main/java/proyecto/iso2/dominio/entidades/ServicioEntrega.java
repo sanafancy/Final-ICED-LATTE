@@ -14,7 +14,7 @@ public class ServicioEntrega {
     @OneToOne
     @JoinColumn(name = "pedido_id", nullable = false, unique = true)
     private Pedido pedido;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "direccion_id", nullable = false)
     private Direccion direccion;
     @ManyToOne

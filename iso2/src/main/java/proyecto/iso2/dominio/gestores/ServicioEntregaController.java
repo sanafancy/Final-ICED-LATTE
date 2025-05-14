@@ -11,10 +11,7 @@ import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Controller
 public class ServicioEntregaController {
@@ -59,7 +56,7 @@ public class ServicioEntregaController {
         Pedido pedido = pedidoOpt.get();
         Direccion direccion = direccionOpt.get();
 
-        // Validar método de pago
+        // Validar metodo de pago
         MetodoPago metodoPagoEnum;
         try {
             metodoPagoEnum = MetodoPago.valueOf(metodoPago);
@@ -109,9 +106,30 @@ public class ServicioEntregaController {
             pedidoDAO.save(pedido);
             System.out.println("Pedido actualizado");
 
+            //Optional<ServicioEntrega> servicioExistente = servicioEntregaDAO
+                    //.findByDireccionIdAndFechaEntregaIsNull(direccion);
+            List<ServicioEntrega> serviciosActivos = servicioEntregaDAO.findByDireccionAndFechaEntregaIsNull(direccion);
+            if (!serviciosActivos.isEmpty()) {
+                model.addAttribute("error", "Ya existe un pedido activo para esta dirección. Finalízalo antes de crear uno nuevo.");
+                System.out.println("servicio ya activo para esta direccion.");
+                return "confirmarPedido";
+            }
+
             // Asignar repartidor
             System.out.println("Buscando repartidor...");
-            List<Repartidor> repartidores = repartidorDAO.findAll();
+            Optional<Repartidor> repartidorOpt = asignarRepartidor(direccion, pedido);
+            //comprobar restaurante en la zona
+            if (direccion.getCodigoPostal()!=pedido.getRestaurante().getDireccion().getCodigoPostal()) {
+                model.addAttribute("error", "El restaurante y el cliente no están en la misma zona. No se puede asignar un repartidor.");
+                return "confirmarPedido";
+            }
+            if (repartidorOpt.isEmpty()) { //error no hay repartidor
+                model.addAttribute("error", "No hay repartidores disponibles en esta zona.");
+                return "confirmarPedido";
+            }
+            Repartidor repartidorAsignado = repartidorOpt.get();
+            System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());
+            /*List<Repartidor> repartidores = repartidorDAO.findAll();
             Repartidor repartidorAsignado = null;
             for (Repartidor repartidor : repartidores) {
                 if (repartidor.getEficiencia() != null) {
@@ -123,15 +141,9 @@ public class ServicioEntregaController {
                 model.addAttribute("error", "No hay repartidores disponibles con eficiencia definida");
                 return "confirmarPedido";
             }
-            System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());
+            System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());*/
 
             //compruebo si ya existe un servicioEntrega
-            Optional<ServicioEntrega> servicioExistente = servicioEntregaDAO
-                    .findByDireccionIdAndFechaEntregaIsNull(direccion.getId());
-            if (servicioExistente.isPresent()) {
-                model.addAttribute("error", "Ya existe un pedido activo para esta dirección. Finalízalo antes de crear uno nuevo.");
-                return "confirmarPedido";
-            }
 
             // Crear y guardar el servicio de entrega
             System.out.println("Creando servicio de entrega...");
@@ -160,4 +172,27 @@ public class ServicioEntregaController {
             return "confirmarPedido";
         }
     }
+
+    private Optional<Repartidor> asignarRepartidor(Direccion direccionCliente, Pedido pedido) {
+        Direccion direccionRestaurante = pedido.getRestaurante().getDireccion();
+        // restaurante y cliente en el mismo cp
+        if (direccionCliente.getCodigoPostal()!=direccionRestaurante.getCodigoPostal()) {
+            return Optional.empty();
+        }
+
+        // buscar repartidores disponibles
+        //List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostal(direccionCliente.getCodigoPostal());
+        CodigoPostal codigo = CodigoPostal.fromInt(direccionCliente.getCodigoPostal());
+        List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostal(codigo);
+        if (repartidoresZona.isEmpty()) {
+            return Optional.empty();
+        }
+
+        // el menor eficiencia es el menos ocupado
+        return repartidoresZona.stream()
+                .filter(r -> r.getEficiencia() != null)
+                .sorted(Comparator.comparing(Repartidor::getEficiencia)) // menor eficiencia = menos entregas
+                .findFirst();
+    }
+
 }

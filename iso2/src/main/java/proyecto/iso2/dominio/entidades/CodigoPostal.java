@@ -10,4 +10,7 @@ public enum CodigoPostal {
     public String toString() {
         return name().substring(3); // Devuelve el código postal sin el prefijo "CP_"
     }
+    public static CodigoPostal fromInt(int codigo) {
+        return CodigoPostal.valueOf("CP_" + codigo);
+    }
 }
