@@ -14,6 +14,16 @@
     <button type="submit">Actualizar</button>
 </form>
 
+<h2>Items en esta Carta</h2>
+<ul>
+    <li th:each="item : ${items}">
+        <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (' + ${item.tipo} + ')'"></span>
+        <form th:action="@{/cartas/editar/{cartaId}/eliminarItem/{itemId}(cartaId=${carta.id}, itemId=${item.id})}" method="post">
+            <button type="submit">Eliminar</button>
+        </form>
+    </li>
+</ul>
+
 <h2>Agregar Nuevo Item</h2>
 <form th:action="@{/cartas/editar/{cartaId}/agregarItem(cartaId=${carta.id})}" method="post">
     <label>Nombre:</label>
@@ -25,9 +35,6 @@
     <button type="submit">Añadir Item</button>
 </form>
 
-<a th:href="@{/restaurante/panel}" style="text-decoration: none;">
-    <button class="back-btn">← Volver al Panel</button>
-</a>
-
+<a href="/inicioRestaurante">Volver</a>
 </body>
 </html>

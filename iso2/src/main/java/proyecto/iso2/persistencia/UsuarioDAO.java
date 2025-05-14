@@ -10,7 +10,5 @@ import java.util.Optional;
 @Repository
 public interface UsuarioDAO extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmailAndPass(String email, String pass);
-
-    // ✅ Añadir este método si no existe:
     List<Usuario> findAll();
 }

@@ -9,7 +9,5 @@ import java.util.List;
 
 @Repository
 public interface RepartidorDAO extends JpaRepository<Repartidor, Long> {
-    List<Repartidor> findByCodigoPostal(CodigoPostal codigoPostal);
-
     List<Repartidor> findByCodigoPostalOrderByEficienciaAsc(CodigoPostal codigoPostal);
 }

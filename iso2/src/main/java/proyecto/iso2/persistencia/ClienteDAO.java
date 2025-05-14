@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ClienteDAO extends JpaRepository<Cliente, Long> {
-    //Cliente buscarPorId(Long clienteId);
+
 }

@@ -196,7 +196,7 @@ public class CartaMenuControllerTest {
 
         // Configurar los mocks
         when(cartaMenuDAO.findById(cartaId)).thenReturn(Optional.of(carta));
-        when(cartaMenuDAO.findByCartaPadre(carta)).thenReturn(new ArrayList<>());
+        //when(cartaMenuDAO.findByCartaPadre(carta)).thenReturn(new ArrayList<>());
 
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/cartas/editar/{id}", cartaId))

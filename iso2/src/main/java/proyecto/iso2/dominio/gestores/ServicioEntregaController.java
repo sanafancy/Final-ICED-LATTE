@@ -10,17 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
 public class ServicioEntregaController {
-
-    private static final Logger logger = LoggerFactory.getLogger(ServicioEntregaController.class);
-
     @Autowired
     private ServicioEntregaDAO servicioEntregaDAO;
     @Autowired
@@ -42,7 +36,7 @@ public class ServicioEntregaController {
             @RequestParam String metodoPago,
             HttpSession session,
             Model model) {
-        logger.info("Entrando a método finalizarPedido");
+        System.out.println("Entrando a método finalizarPedido");
 
         // Verificar cliente en sesión
         Cliente cliente = (Cliente) session.getAttribute("cliente");
@@ -113,7 +107,7 @@ public class ServicioEntregaController {
             System.out.println("Pedido actualizado");
 
             //Optional<ServicioEntrega> servicioExistente = servicioEntregaDAO
-                    //.findByDireccionIdAndFechaEntregaIsNull(direccion);
+            //.findByDireccionIdAndFechaEntregaIsNull(direccion);
             List<ServicioEntrega> serviciosActivos = servicioEntregaDAO.findByDireccionAndFechaEntregaIsNull(direccion);
             if (!serviciosActivos.isEmpty()) {
                 model.addAttribute("error", "Ya existe un pedido activo para esta dirección. Finalízalo antes de crear uno nuevo.");
@@ -135,21 +129,6 @@ public class ServicioEntregaController {
             }
             Repartidor repartidorAsignado = repartidorOpt.get();
             System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());
-            /*List<Repartidor> repartidores = repartidorDAO.findAll();
-            Repartidor repartidorAsignado = null;
-            for (Repartidor repartidor : repartidores) {
-                if (repartidor.getEficiencia() != null) {
-                    repartidorAsignado = repartidor;
-                    break;
-                }
-            }
-            if (repartidorAsignado == null) {
-                model.addAttribute("error", "No hay repartidores disponibles con eficiencia definida");
-                return "confirmarPedido";
-            }
-            System.out.println("Repartidor asignado: " + repartidorAsignado.getNombre());*/
-
-            //compruebo si ya existe un servicioEntrega
 
             // Crear y guardar el servicio de entrega
             System.out.println("Creando servicio de entrega...");
@@ -172,7 +151,8 @@ public class ServicioEntregaController {
             model.addAttribute("success", "Pedido confirmado y pago realizado con éxito.");
             return "pagoExitoso"; // Redirige a pagoExitoso.html
         } catch (Exception e) {
-            logger.error("Error al procesar el pago", e);
+            System.err.println("Error al procesar el pago: " + e.getMessage());
+            e.printStackTrace();
             model.addAttribute("error", "Error al procesar el pago: " + e.getMessage());
             return "confirmarPedido";
         }
@@ -188,8 +168,6 @@ public class ServicioEntregaController {
         // buscar repartidores disponibles
         CodigoPostal codigo = CodigoPostal.fromInt(direccionCliente.getCodigoPostal());
         List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostalOrderByEficienciaAsc(codigo);
-        //List<Repartidor> repartidoresZona = repartidorDAO.findByCodigoPostalOrderByEficienciaAsc(
-                //direccionCliente.getCodigoPostal()); //listar los repartidores de la zona ordenado de menor eficiencia a mayor
         if (repartidoresZona.isEmpty()) {
             return Optional.empty();
         }

@@ -8,13 +8,12 @@
 <body>
 <h1>Crear Nueva Carta</h1>
 
-<form action="#" th:action="@{/restaurante/crearCarta}" th:object="${carta}" method="post">
-    <label for="nombre">Nombre de la Carta:</label>
-    <input type="text" id="nombre" th:field="*{nombre}" required="required"/>
-
-    <button type="submit">Crear Carta</button>
+<form action="/cartas/crear" method="post">
+    <label>Nombre de la Carta:</label>
+    <input type="text" name="nombre" required>
+    <button type="submit">Crear</button>
 </form>
 
-
+<a href="/inicioRestaurante">Volver</a>
 </body>
 </html>

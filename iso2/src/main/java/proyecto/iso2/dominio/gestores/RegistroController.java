@@ -1,6 +1,5 @@
 package proyecto.iso2.dominio.gestores;
 
-import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,14 +33,10 @@ public class RegistroController {
     @PostMapping("/cliente")
     public String registrarCliente(@RequestParam String email, @RequestParam String pass,
                                    @RequestParam String nombre, @RequestParam String apellidos,
-                                   @RequestParam String dni,
-                                   HttpSession sesion) {  // Añade HttpSession aquí
+                                   @RequestParam String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
         clienteDAO.save(cliente);
-
-        sesion.setAttribute("cliente", cliente); // Guardar en sesión
-
-        return "redirect:/inicio"; // redirigir al inicio directamente
+        return "redirect:/";
     }
 
     @GetMapping("/restaurante")
@@ -51,17 +46,11 @@ public class RegistroController {
 
     @PostMapping("/restaurante")
     public String registrarRestaurante(@RequestParam String email, @RequestParam String pass,
-                                       @RequestParam String nombre, @RequestParam String cif,
-                                       HttpSession sesion) { // Añade HttpSession
-
+                                       @RequestParam String nombre, @RequestParam String cif) {
         Restaurante restaurante = new Restaurante(email, pass, nombre, cif, new Direccion());
         restauranteDAO.save(restaurante);
-
-        sesion.setAttribute("restaurante", restaurante); // Guardar en sesión
-
-        return "redirect:/inicio"; // Redirigir al inicio
+        return "redirect:/";
     }
-
 
     @GetMapping("/repartidor")
     public String showRegistroRepartidorPage() {
@@ -71,19 +60,11 @@ public class RegistroController {
     @PostMapping("/repartidor")
     public String registrarRepartidor(@RequestParam String email, @RequestParam String pass,
                                       @RequestParam String nombre, @RequestParam String apellidos,
-                                      @RequestParam String nif,
-                                      HttpSession sesion) {
+                                      @RequestParam String nif) {
 
         Repartidor repartidor = new Repartidor(email, pass, nombre, apellidos, nif, 0);
         repartidorDAO.save(repartidor);
 
-        // Guardar en sesión para mostrar datos en /inicioRepartidor
-        sesion.setAttribute("repartidor", repartidor);
-
-
-        return "redirect:/login";
+        return "redirect:/";
     }
-
-
-
 }

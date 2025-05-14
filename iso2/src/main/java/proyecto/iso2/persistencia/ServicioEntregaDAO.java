@@ -10,9 +10,6 @@ import java.util.Optional;
 
 @Repository
 public interface ServicioEntregaDAO extends JpaRepository<ServicioEntrega, Long> {
-    Optional<ServicioEntrega> findByDireccionIdAndFechaEntregaIsNull(Direccion direccion);
     List<ServicioEntrega> findByDireccionAndFechaEntregaIsNull(Direccion direccion);
-
-    //List<ServicioEntrega> findByRepartidorId(Long idUsuario);
     List<ServicioEntrega> findByRepartidor_IdUsuario(Long idUsuario);
 }

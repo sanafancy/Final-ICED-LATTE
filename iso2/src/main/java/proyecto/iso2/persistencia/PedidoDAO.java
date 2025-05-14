@@ -9,5 +9,4 @@ import java.util.List;
 public interface PedidoDAO extends JpaRepository<Pedido, Long> {
     List<Pedido> findByCliente(Cliente cliente);
     List<Pedido> findByRestaurante(Restaurante restaurante);
-
 }
