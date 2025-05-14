@@ -14,7 +14,7 @@ public class ServicioEntrega {
     @OneToOne
     @JoinColumn(name = "pedido_id", nullable = false, unique = true)
     private Pedido pedido;
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "direccion_id", nullable = false)
     private Direccion direccion;
     @ManyToOne
@@ -24,6 +24,7 @@ public class ServicioEntrega {
     private LocalDateTime fechaRecepcion;
     @Column
     private LocalDateTime fechaEntrega;
+
 
     public ServicioEntrega(Long id, Pedido pedido, Direccion direccion, Repartidor repartidor, LocalDateTime fechaRecepcion, LocalDateTime fechaEntrega) {
         this.id = id;
