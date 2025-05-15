@@ -1,6 +1,7 @@
 package proyecto.iso2.dominio.gestores;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -124,11 +125,24 @@ public class RestauranteController {
 
     }
     @PostMapping("/eliminarRestaurante")
+    @Transactional //todas las operaciones seran exitosas o fallaran juntas
     public String eliminarRestaurante(HttpSession session) {
         Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
         if (restaurante != null) {
-            restauranteDAO.delete(restaurante);
-            session.invalidate(); // Elimina la sesión
+            try{
+                List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+                for (CartaMenu carta : cartas) { //borrar items de las cartas
+                    itemMenuDAO.deleteByCartaMenu(carta);
+                }
+                cartaMenuDAO.deleteByRestaurante(restaurante); //borrar las cartas
+                restauranteDAO.deleteById(restaurante.getIdUsuario()); //borrar el restaurante
+
+                session.invalidate();
+                return "redirect:/";
+            }catch (Exception e){
+                e.printStackTrace();
+                return "redirect:/error";
+            }
         }
         return "redirect:/"; // Redirige a la página de inicio
     }
