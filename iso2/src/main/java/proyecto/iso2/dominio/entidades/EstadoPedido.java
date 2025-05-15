@@ -5,5 +5,6 @@ public enum EstadoPedido {
     PAGADO,
     ASIGNADO,
     RECOGIDO,
-    ENTREGADO
+    ENTREGADO,
+    RECHAZADO
 }

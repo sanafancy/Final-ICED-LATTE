@@ -106,8 +106,6 @@ public class ServicioEntregaController {
             pedidoDAO.save(pedido);
             System.out.println("Pedido actualizado");
 
-            //Optional<ServicioEntrega> servicioExistente = servicioEntregaDAO
-            //.findByDireccionIdAndFechaEntregaIsNull(direccion);
             List<ServicioEntrega> serviciosActivos = servicioEntregaDAO.findByDireccionAndFechaEntregaIsNull(direccion);
             if (!serviciosActivos.isEmpty()) {
                 model.addAttribute("error", "Ya existe un pedido activo para esta dirección. Finalízalo antes de crear uno nuevo.");
@@ -120,6 +118,11 @@ public class ServicioEntregaController {
             Optional<Repartidor> repartidorOpt = asignarRepartidor(direccion, pedido);
             //comprobar restaurante en la zona
             if (direccion.getCodigoPostal()!=pedido.getRestaurante().getDireccion().getCodigoPostal()) {
+                pedido.setEstado(EstadoPedido.PEDIDO);
+                pedidoDAO.save(pedido);
+                pago.setMetodoPago(null);
+                pago.setPedido(null);
+                pagoDAO.save(pago);
                 model.addAttribute("error", "El restaurante y el cliente no están en la misma zona. No se puede asignar un repartidor.");
                 return "confirmarPedido";
             }
