@@ -98,7 +98,6 @@ public class RestauranteController {
     public String toggleFavorito (@PathVariable Long id, HttpSession session){
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente != null) {
-            //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
             Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
             if (restauranteOpt.isPresent()) {
                 Restaurante restaurante = restauranteOpt.get();
@@ -112,18 +111,23 @@ public class RestauranteController {
         }
         return "redirect:/";
     }
-    @GetMapping("/restaurantes/favoritos")
-    public String verFavoritos (HttpSession session, Model model){
-        Cliente cliente = (Cliente) session.getAttribute("cliente");
 
+    @GetMapping("/cliente/favoritos")
+    public String verFavoritos(Model model, HttpSession session) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
-            return "redirect:/login"; // Si no hay sesión, redirigir a login
+            return "redirect:/login";
+        }
+
+        cliente = (Cliente) usuarioDAO.findById(cliente.getIdUsuario()).orElse(null);
+        if (cliente == null) {
+            return "redirect:/login";
         }
 
         model.addAttribute("favoritos", cliente.getFavoritos());
-        return "favoritos"; // Página donde mostraremos la lista de favoritos
-
+        return "favoritos";  // Nombre de la plantilla favoritos.html
     }
+
     @PostMapping("/eliminarRestaurante")
     @Transactional //todas las operaciones seran exitosas o fallaran juntas
     public String eliminarRestaurante(HttpSession session) {

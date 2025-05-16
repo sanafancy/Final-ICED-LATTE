@@ -2,6 +2,7 @@ package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Restaurante extends Usuario{
@@ -14,6 +15,8 @@ public class Restaurante extends Usuario{
     private Direccion direccion;
     @OneToMany(mappedBy = "restaurante", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
+    @ManyToMany(mappedBy = "favoritos")
+    private Set<Cliente> clientesFavoritos;
 
     public Restaurante() {}
     // Constructor
@@ -52,6 +55,18 @@ public class Restaurante extends Usuario{
     @Override
     public String toString() {
         return String.format("Restaurante [idUsuario=%s, pass=%s, nombre=%s, cif=%s]", getIdUsuario(), getPass(), nombre, cif);
+    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Restaurante)) return false;
+        Restaurante that = (Restaurante) o;
+        return getIdUsuario().equals(that.getIdUsuario());
+    }
+
+    @Override
+    public int hashCode() {
+        return getIdUsuario().hashCode();
     }
 
 }
