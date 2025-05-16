@@ -84,7 +84,7 @@ public class LoginControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/panel"));
+                .andExpect(redirectedUrl("/inicioRestaurante"));
 
         // Verificar que el restaurante está en la sesión
         Restaurante restauranteEnSesion = (Restaurante) session.getAttribute("restaurante");
@@ -100,7 +100,7 @@ public class LoginControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicio"));
+                .andExpect(redirectedUrl("/"));
 
         // Verificar que el cliente está en la sesión
         Cliente clienteEnSesion = (Cliente) session.getAttribute("cliente");
@@ -116,7 +116,7 @@ public class LoginControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicioRepartidor"));
+                .andExpect(redirectedUrl("/repartidor/InicioRepartidor"));
 
         // Verificar que el repartidor está en la sesión
         Repartidor repartidorEnSesion = (Repartidor) session.getAttribute("repartidor");
@@ -155,6 +155,6 @@ public class LoginControllerIntegrationTest {
         mockMvc.perform(get("/logout")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicio"));
+                .andExpect(redirectedUrl("/"));
     }
 }
