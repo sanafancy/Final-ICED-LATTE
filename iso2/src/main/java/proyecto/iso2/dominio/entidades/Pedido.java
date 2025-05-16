@@ -1,11 +1,13 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-public class Pedido {
+public class Pedido implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

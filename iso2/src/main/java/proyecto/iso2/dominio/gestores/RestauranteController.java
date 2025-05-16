@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
@@ -15,6 +17,7 @@ import java.util.Optional;
 
 @Controller
 public class RestauranteController {
+    private static final Logger logger = LoggerFactory.getLogger(RestauranteController.class);
     @Autowired
     private RestauranteDAO restauranteDAO;
     @Autowired
@@ -143,8 +146,8 @@ public class RestauranteController {
 
                 session.invalidate();
                 return "redirect:/";
-            }catch (Exception e){
-                e.printStackTrace();
+            }catch (Exception e) {
+                logger.error("Error al eliminar el restaurante", e);
                 return "redirect:/error";
             }
         }

@@ -1,37 +1,18 @@
 <!DOCTYPE html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Restaurantes Favoritos • Iced Latte</title>
-    <link rel="stylesheet" href="/css/favoritos.css">
+    <title>Restaurantes Favoritos</title>
 </head>
 <body>
-<header>
-    <h1>Iced Latte</h1>
-    <div class="auth-buttons">
-        <button onclick="history.back()">Volver</button>
-    </div>
-</header>
-<div class="favorites-section">
-    <h2>Mis Restaurantes Favoritos</h2>
-    <div class="favorites-list" th:if="${favoritos != null and not #lists.isEmpty(favoritos)}">
-        <ul>
-            <li th:each="restaurante : ${favoritos}">
-                <div>
-                    <a th:href="@{/restaurante/{id}(id=${restaurante.idUsuario})}"
-                       th:text="${restaurante.nombre}">Nombre Restaurante</a>
-                    <ul>
-                        <li th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.numero + ', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</li>
-                    </ul>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="no-favorites" th:if="${favoritos == null or #lists.isEmpty(favoritos)}">
-        <p>No tienes restaurantes favoritos.</p>
-    </div>
-    <a class="back-button" href="/">Volver al Inicio</a>
-</div>
+<h1>Mis Restaurantes Favoritos</h1>
+
+<ul>
+    <li th:each="restaurante : ${favoritos}">
+        <a th:href="@{/restaurante/{id}(id=${restaurante.idUsuario})}"
+           th:text="${restaurante.nombre}">Nombre Restaurante</a>
+    </li>
+</ul>
+
+<a href="/" style="display:inline-block; margin-top:20px;">Volver al Inicio</a>
 </body>
 </html>
