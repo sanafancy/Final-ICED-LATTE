@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Restaurantes Favoritos • Iced Latte</title>
-    <link rel="stylesheet" href="/css/favoritos.css">
+    <link rel="stylesheet" th:href="@{/css/favoritos.css}" href="/css/favoritos.css">
 </head>
 <body>
 <header>
@@ -17,13 +17,13 @@
     <h2>Mis Restaurantes Favoritos</h2>
     <div class="favorites-list" th:if="${favoritos != null and not #lists.isEmpty(favoritos)}">
         <ul>
-            <li th:each="restaurante : ${favoritos}">
-                <div>
+            <li th:each="restaurante : ${favoritos}" class="favorite-entry">
+                <div class="favorite-item">
                     <a th:href="@{/restaurante/{id}(id=${restaurante.idUsuario})}"
-                       th:text="${restaurante.nombre}">Nombre Restaurante</a>
-                    <ul>
-                        <li th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.numero + ', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</li>
-                    </ul>
+                       th:text="${restaurante.nombre}"
+                       class="restaurant-name">Nombre Restaurante</a>
+                    <span class="restaurant-address"
+                          th:text="${restaurante.direccion.calle + ', ' + restaurante.direccion.numero + ', ' + restaurante.direccion.municipio + ', ' + restaurante.direccion.codigoPostal}">Dirección</span>
                 </div>
             </li>
         </ul>
@@ -31,7 +31,6 @@
     <div class="no-favorites" th:if="${favoritos == null or #lists.isEmpty(favoritos)}">
         <p>No tienes restaurantes favoritos.</p>
     </div>
-    <a class="back-button" href="/">Volver al Inicio</a>
 </div>
 </body>
 </html>
