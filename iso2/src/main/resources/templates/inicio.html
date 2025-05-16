@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
@@ -25,7 +24,9 @@
     <button type="submit">Buscar</button>
 </form>
 <div th:if="${cliente != null}">
-    <a th:href="@{/restaurantes/favoritos}" class="btn btn-primary">Ver Favoritos</a>
+    <form action="/cliente/favoritos" method="get" style="display:inline;">
+        <button type="submit">Ver Favoritos</button>
+    </form>
 </div>
 <h2>Restaurantes Registrados:</h2>
 <ul>
@@ -38,7 +39,7 @@
             </li>
         </ul>
         <!-- Boton para marcar favorito -->
-        <form th:action="@{/restaurantes/favorito/{id}(id=${restaurante.idUsuario})}" method="post">
+        <form th:action="@{/favorito/{id}(id=${restaurante.idUsuario})}" method="post">
             <button type="submit">
                 <span th:if="${cliente != null and cliente.favoritos != null and #lists.contains(cliente.favoritos, restaurante)}" th:text="'Favorito'"></span>
                 <span th:if="${cliente != null and cliente.favoritos != null and !#lists.contains(cliente.favoritos, restaurante)}" th:text="'Marcar favorito'"></span>
