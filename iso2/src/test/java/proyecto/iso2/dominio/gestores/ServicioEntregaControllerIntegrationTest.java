@@ -1,20 +1,24 @@
 package proyecto.iso2.dominio.gestores;
 
+import jakarta.persistence.EntityManager;
+import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.context.WebApplicationContext;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -30,13 +34,10 @@ public class ServicioEntregaControllerIntegrationTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private ServicioEntregaDAO servicioEntregaDAO;
+    private ClienteDAO clienteDAO;
 
     @Autowired
     private PedidoDAO pedidoDAO;
-
-    @Autowired
-    private ClienteDAO clienteDAO;
 
     @Autowired
     private DireccionDAO direccionDAO;
@@ -56,142 +57,211 @@ public class ServicioEntregaControllerIntegrationTest {
     @Autowired
     private CartaMenuDAO cartaMenuDAO;
 
+    @Autowired
+    private ServicioEntregaDAO servicioEntregaDAO;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private WebApplicationContext webApplicationContext;
+
+    @Autowired
+    private PlatformTransactionManager transactionManager;
+
+    private TransactionTemplate transactionTemplate;
+
     private MockHttpSession session;
-    private Cliente cliente;
-    private Restaurante restaurante;
-    private Direccion direccion;
-    private CartaMenu cartaMenu;
-    private ItemMenu itemMenu;
-    private Pedido pedido;
-    private Repartidor repartidor;
-    private Map<Long, Integer> carrito;
 
     @BeforeEach
     public void setUp() {
-        // Limpiar la base de datos en orden inverso para respetar las restricciones de clave foránea
-        pagoDAO.deleteAllInBatch(); // Elimina pagos primero (depende de pedido)
-        servicioEntregaDAO.deleteAllInBatch(); // Elimina servicios de entrega (depende de pedido)
-        pedidoDAO.deleteAllInBatch(); // Ahora elimina pedidos
-        itemMenuDAO.deleteAllInBatch();
-        cartaMenuDAO.deleteAllInBatch();
-        direccionDAO.deleteAllInBatch();
-        repartidorDAO.deleteAllInBatch();
-        clienteDAO.deleteAllInBatch();
-        restauranteDAO.deleteAllInBatch();
+        // Configuración manual de MockMvc como respaldo
+        if (mockMvc == null) {
+            mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+        }
 
-        // Crear un cliente
-        cliente = new Cliente();
-        cliente.setEmail("cliente@ejemplo.com");
-        cliente.setPass("pass123");
-        cliente.setNombre("Cliente A");
-        cliente.setApellidos("Apellido A");
-        cliente.setDni("12345678A");
-        cliente = clienteDAO.save(cliente);
+        // Inicializamos el TransactionTemplate
+        transactionTemplate = new TransactionTemplate(transactionManager);
 
-        // Crear un restaurante
-        restaurante = new Restaurante();
-        restaurante.setEmail("restaurante@ejemplo.com");
-        restaurante.setPass("pass123");
-        restaurante.setNombre("Restaurante A");
-        restaurante.setCif("CIF123");
-        restaurante = restauranteDAO.save(restaurante);
+        // Limpiamos la base de datos respetando las dependencias
+        transactionTemplate.execute(status -> {
+            entityManager.createNativeQuery("DELETE FROM servicio_entrega").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM pedido_items").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM pedido").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM pago").executeUpdate();
+            entityManager.createQuery("DELETE FROM ItemMenu").executeUpdate();
+            entityManager.createQuery("DELETE FROM CartaMenu").executeUpdate();
+            entityManager.createQuery("DELETE FROM Repartidor").executeUpdate();
+            entityManager.createQuery("DELETE FROM Restaurante").executeUpdate();
+            entityManager.createQuery("DELETE FROM Cliente").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM direccion_cliente").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM cliente_favoritos").executeUpdate();
+            entityManager.createQuery("DELETE FROM Direccion").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM usuario").executeUpdate();
+            entityManager.flush();
+            return null;
+        });
 
-        // Crear una dirección
-        direccion = new Direccion();
-        direccion.setCalle("Calle Principal");
-        direccion.setNumero(123);
-        direccion.setMunicipio("Ciudad");
-        direccion.setCodigoPostal(12345);
-        direccion = direccionDAO.save(direccion);
-
-        // Crear una carta de menú
-        cartaMenu = new CartaMenu();
-        cartaMenu.setNombre("Menú Principal");
-        cartaMenu.setRestaurante(restaurante);
-        cartaMenu = cartaMenuDAO.save(cartaMenu);
-
-        // Crear un ítem de menú
-        itemMenu = new ItemMenu();
-        itemMenu.setNombre("Pizza");
-        itemMenu.setPrecio(10.0);
-        itemMenu.setTipo("PLATO");
-        itemMenu.setCartaMenu(cartaMenu);
-        itemMenu = itemMenuDAO.save(itemMenu);
-
-        // Crear un pedido
-        pedido = new Pedido();
-        pedido.setCliente(cliente);
-        pedido.setRestaurante(restaurante);
-        pedido.setEstado(EstadoPedido.PEDIDO);
-        pedido.setFecha(LocalDateTime.now());
-        pedido.setMetodoPago(MetodoPago.CREDIT_CARD);
-        pedido.setTotal(20.0);
-        pedido = pedidoDAO.save(pedido);
-
-        // Crear un repartidor
-        repartidor = new Repartidor();
-        repartidor.setEmail("repartidor@ejemplo.com");
-        repartidor.setPass("pass123");
-        repartidor.setNombre("Repartidor A");
-        repartidor.setApellidos("Apellido A");
-        repartidor.setNif("87654321B");
-        repartidor.setEficiencia(90);
-        repartidor = repartidorDAO.save(repartidor);
-
-        // Configurar el carrito
-        carrito = new HashMap<>();
-        carrito.put(itemMenu.getId(), 2); // 2 unidades de la pizza
-
-        // Configurar la sesión
+        // Inicializamos la sesión
         session = new MockHttpSession();
-        session.setAttribute("cliente", cliente);
-        session.setAttribute("carrito", carrito);
-        session.setAttribute("pedido", pedido);
-        session.setAttribute("direccionId", direccion.getId());
-        session.setAttribute("metodoPago", MetodoPago.CREDIT_CARD.toString());
-        session.setAttribute("restauranteId", restaurante.getIdUsuario());
     }
 
     @Test
-    public void testFinalizarPedido_SinCliente() throws Exception {
-        MockHttpSession sessionSinCliente = new MockHttpSession();
-        sessionSinCliente.setAttribute("carrito", carrito);
+    public void testFinalizarPedidoSinClienteEnSesion() throws Exception {
+        // Preparar datos de prueba
+        Direccion direccion = transactionTemplate.execute(status -> {
+            Direccion d = new Direccion();
+            d.setCodigoPostal(12300);
+            d.setCalle("Calle Principal");
+            d.setNumero(1);
+            d.setMunicipio("Madrid");
+            return direccionDAO.save(d);
+        });
 
+        Pedido pedido = transactionTemplate.execute(status -> {
+            Pedido p = new Pedido();
+            p.setEstado(EstadoPedido.PEDIDO);
+            p.setFecha(LocalDateTime.now());
+            return pedidoDAO.save(p);
+        });
+
+        // Ejecutar la solicitud
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", direccion.getId().toString())
                         .param("pedidoId", pedido.getId().toString())
-                        .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                        .session(sessionSinCliente))
+                        .param("metodoPago", "CREDIT_CARD")
+                        .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
 
     @Test
-    public void testFinalizarPedido_SinRepartidoresConEficiencia() throws Exception {
-        // Eliminar repartidor existente
-        repartidorDAO.deleteAllInBatch();
+    public void testFinalizarPedidoConCarritoVacio() throws Exception {
+        // Preparar datos de prueba
+        Cliente cliente = transactionTemplate.execute(status -> {
+            Cliente c = new Cliente();
+            c.setEmail("cliente@ejemplo.com");
+            c.setNombre("Cliente A");
+            return clienteDAO.save(c);
+        });
 
-        // Crear repartidor sin eficiencia
-        Repartidor repartidorSinEficiencia = new Repartidor();
-        repartidorSinEficiencia.setEmail("repartidor2@ejemplo.com");
-        repartidorSinEficiencia.setPass("pass123");
-        repartidorSinEficiencia.setNombre("Repartidor B");
-        repartidorSinEficiencia.setApellidos("Apellido B");
-        repartidorSinEficiencia.setNif("98765432B");
-        repartidorSinEficiencia.setEficiencia(null);
-        repartidorDAO.save(repartidorSinEficiencia);
+        Direccion direccion = transactionTemplate.execute(status -> {
+            Direccion d = new Direccion();
+            d.setCodigoPostal(12300);
+            d.setCalle("Calle Principal");
+            d.setNumero(1);
+            d.setMunicipio("Madrid");
+            return direccionDAO.save(d);
+        });
+
+        Restaurante restaurante = transactionTemplate.execute(status -> {
+            Direccion direccionRestaurante = new Direccion();
+            direccionRestaurante.setCodigoPostal(12300);
+            direccionRestaurante.setCalle("Calle Restaurante");
+            direccionRestaurante.setNumero(10);
+            direccionRestaurante.setMunicipio("Madrid");
+            direccionRestaurante = direccionDAO.save(direccionRestaurante);
+            Restaurante r = new Restaurante();
+            r.setNombre("Restaurante A");
+            r.setCif("B12345678");
+            r.setDireccion(direccionRestaurante);
+            return restauranteDAO.save(r);
+        });
+
+        Pedido pedido = transactionTemplate.execute(status -> {
+            Pedido p = new Pedido();
+            p.setCliente(cliente);
+            p.setRestaurante(restaurante);
+            p.setEstado(EstadoPedido.PEDIDO);
+            p.setFecha(LocalDateTime.now());
+            return pedidoDAO.save(p);
+        });
+
+        session.setAttribute("cliente", cliente);
 
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", direccion.getId().toString())
                         .param("pedidoId", pedido.getId().toString())
-                        .param("metodoPago", MetodoPago.CREDIT_CARD.toString())
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("metodoPago", "CREDIT_CARD")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("confirmarPedido"))
-                .andExpect(model().attributeExists("error"))
-                .andExpect(model().attribute("error", is("No hay repartidores disponibles con eficiencia definida")));
+                .andExpect(model().attribute("error", "El carrito está vacío"));
     }
 
+
+    @Test
+    public void testFinalizarPedidoSinRepartidorDisponible() throws Exception {
+        // Preparar datos de prueba
+        Cliente cliente = transactionTemplate.execute(status -> {
+            Cliente c = new Cliente();
+            c.setEmail("cliente@ejemplo.com");
+            c.setNombre("Cliente A");
+            return clienteDAO.save(c);
+        });
+
+        Direccion direccion = transactionTemplate.execute(status -> {
+            Direccion d = new Direccion();
+            d.setCodigoPostal(12300);
+            d.setCalle("Calle Principal");
+            d.setNumero(1);
+            d.setMunicipio("Madrid");
+            return direccionDAO.save(d);
+        });
+
+        Restaurante restaurante = transactionTemplate.execute(status -> {
+            Direccion direccionRestaurante = new Direccion();
+            direccionRestaurante.setCodigoPostal(12300);
+            direccionRestaurante.setCalle("Calle Restaurante");
+            direccionRestaurante.setNumero(10);
+            direccionRestaurante.setMunicipio("Madrid");
+            direccionRestaurante = direccionDAO.save(direccionRestaurante);
+            Restaurante r = new Restaurante();
+            r.setNombre("Restaurante A");
+            r.setCif("B12345678");
+            r.setDireccion(direccionRestaurante);
+            return restauranteDAO.save(r);
+        });
+
+        CartaMenu carta = transactionTemplate.execute(status -> {
+            CartaMenu cm = new CartaMenu();
+            cm.setNombre("Carta Principal");
+            cm.setRestaurante(restaurante);
+            return cartaMenuDAO.save(cm);
+        });
+
+        ItemMenu item = transactionTemplate.execute(status -> {
+            ItemMenu i = new ItemMenu();
+            i.setNombre("Pizza");
+            i.setPrecio(10.0);
+            i.setTipo("Comida");
+            i.setCartaMenu(carta);
+            return itemMenuDAO.save(i);
+        });
+
+        Pedido pedido = transactionTemplate.execute(status -> {
+            Pedido p = new Pedido();
+            p.setCliente(cliente);
+            p.setRestaurante(restaurante);
+            p.setEstado(EstadoPedido.PEDIDO);
+            p.setFecha(LocalDateTime.now());
+            return pedidoDAO.save(p);
+        });
+
+        // No creamos repartidores para simular que no hay disponibles
+
+        Map<Long, Integer> carrito = new HashMap<>();
+        carrito.put(item.getId(), 2);
+        session.setAttribute("cliente", cliente);
+        session.setAttribute("carrito", carrito);
+
+        mockMvc.perform(post("/pedido/finalizar")
+                        .param("direccionId", direccion.getId().toString())
+                        .param("pedidoId", pedido.getId().toString())
+                        .param("metodoPago", "CREDIT_CARD")
+                        .session(session))
+                .andExpect(status().isOk())
+                .andExpect(view().name("confirmarPedido"))
+                .andExpect(model().attribute("error", "No hay repartidores disponibles en esta zona."));
+    }
 }
