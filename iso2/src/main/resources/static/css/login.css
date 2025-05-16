@@ -132,6 +132,26 @@ header h1::before {
     text-align: center;
 }
 
+/* Estilos para el enlace de registro */
+.register-link {
+    margin-top: 20px;
+    font-size: 0.95rem;
+    color: #333; /* --texto */
+    text-align: center;
+}
+
+.register-link a {
+    color: #009688; /* --verde */
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.register-link a:hover {
+    color: #00796b; /* --verde-oscuro */
+    text-decoration: underline;
+}
+
 /* Responsividad */
 @media (max-width: 768px) {
     header {

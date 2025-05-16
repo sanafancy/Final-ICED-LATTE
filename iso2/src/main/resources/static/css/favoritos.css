@@ -61,54 +61,62 @@ header h1::before {
     background: white;
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: center;
+    text-align: left; /* Alineación izquierda por defecto */
 }
 
 .favorites-section h2 {
     font-size: 1.5rem;
     color: #00796b; /* --verde-oscuro */
     margin: 0 0 20px;
+    text-align: center; /* Solo el título centrado */
 }
 
-/* Lista de favoritos (estilizada como restaurant-list de inicio.css) */
+/* Lista de favoritos */
 .favorites-section .favorites-list ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
-.favorites-section .favorites-list li {
+.favorites-section .favorites-list li.favorite-entry {
     background: #f8f9fa; /* --gris-claro */
     padding: 15px;
     margin-bottom: 15px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column; /* Apilado vertical */
+    align-items: flex-start; /* Alineación izquierda */
+    justify-content: flex-start; /* Alineación izquierda */
+    text-align: left;
 }
 
-.favorites-section .favorites-list li div ul {
-    list-style: none;
-    padding: 0;
-    margin: 5px 0 0 0;
+.favorites-section .favorites-list li.favorite-entry .favorite-item {
+    display: flex;
+    flex-direction: column; /* Asegura apilado vertical */
+    align-items: flex-start; /* Alineación izquierda */
+    width: 100%;
 }
 
-.favorites-section .favorites-list li div ul li {
-    box-shadow: none;
-    padding: 0;
-    margin: 0;
-    font-size: 0.9rem;
-    color: #666; /* Gris para detalles secundarios */
-}
-
-.favorites-section .favorites-list li a {
+.favorites-section .favorites-list li.favorite-entry .restaurant-name {
     text-decoration: none;
     color: #009688; /* --verde */
     font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 8px; /* Espacio entre nombre y dirección */
 }
 
-.favorites-section .favorites-list li a:hover {
+.favorites-section .favorites-list li.favorite-entry .restaurant-name:hover {
     color: #00796b; /* --verde-oscuro */
+}
+
+.favorites-section .favorites-list li.favorite-entry .restaurant-address {
+    font-size: 0.9rem;
+    color: #666; /* Gris para detalles secundarios */
+    margin: 0;
+    padding: 0;
 }
 
 /* Mensaje cuando no hay favoritos */
@@ -116,29 +124,7 @@ header h1::before {
     font-size: 1rem;
     color: #d32f2f; /* Rojo para advertencia */
     margin: 0 0 20px;
-}
-
-/* Botón para volver */
-.back-button {
-    display: inline-block;
-    padding: 8px 15px;
-    background-color: #3B5998; /* --azul oscuro */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 1rem;
-    text-align: center;
-    text-decoration: none;
-    margin: 10px auto;
-    transition: background-color 0.2s;
-    width: 100%;
-    max-width: 250px;
-}
-
-.back-button:hover {
-    background-color: #00796b; /* --verde-oscuro */
+    text-align: center; /* Centrado solo para este mensaje */
 }
 
 /* Responsividad */
@@ -159,22 +145,17 @@ header h1::before {
         padding: 20px;
     }
 
-    .favorites-section .favorites-list li {
+    .favorites-section .favorites-list li.favorite-entry {
+        flex-direction: column; /* Mantener apilado vertical */
+        align-items: flex-start;
+    }
+
+    .favorites-section .favorites-list li.favorite-entry .favorite-item {
         flex-direction: column;
         align-items: flex-start;
     }
 
-    .back-button {
-        max-width: 100%;
+    .favorites-section .favorites-list li.favorite-entry .restaurant-name {
+        margin-bottom: 8px; /* Espacio entre nombre y dirección en móviles */
     }
-}
-
-body::after {
-    content: "favoritos.css loaded";
-    position: fixed;
-    bottom: 10px;
-    right: 10px;
-    font-size: 12px;
-    color: #999;
-    opacity: 0.5;
 }
