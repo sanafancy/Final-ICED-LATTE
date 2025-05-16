@@ -2,26 +2,36 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Mis Direcciones</title>
-    <link rel="stylesheet" href="/css/verDireccion.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Direcciones • Iced Latte</title>
+    <link rel="stylesheet" href="/css/verDirecciones.css">
 </head>
 <body>
-<h1>Mis Direcciones</h1>
-
-<div th:if="${direcciones != null and not #lists.isEmpty(direcciones)}">
-    <ul>
-        <li th:each="direccion : ${direcciones}">
-            <span th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></span>
-            <span th:if="${direccion.complemento != null and not #strings.isEmpty(direccion.complemento)}" th:text="' (' + ${direccion.complemento} + ')'"></span>
-        </li>
-    </ul>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-buttons">
+        <button onclick="history.back()">Volver</button>
+    </div>
+</header>
+<div class="address-section">
+    <h2>Mis Direcciones</h2>
+    <div class="address-list" th:if="${direcciones != null and not #lists.isEmpty(direcciones)}">
+        <ul>
+            <li th:each="direccion : ${direcciones}">
+                <div>
+                    <span th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></span>
+                    <ul th:if="${direccion.complemento != null and not #strings.isEmpty(direccion.complemento)}">
+                        <li th:text="'Complemento: ' + ${direccion.complemento}"></li>
+                    </ul>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="no-addresses" th:if="${direcciones == null or #lists.isEmpty(direcciones)}">
+        <p>No tienes direcciones registradas.</p>
+    </div>
+    <button class="add-button" onclick="location.href='/direcciones/añadir'">Añadir Nueva Dirección</button>
+    <a class="back-button" href="/">Volver al Inicio</a>
 </div>
-<div th:if="${direcciones == null or #lists.isEmpty(direcciones)}">
-    <p>No tienes direcciones registradas.</p>
-</div>
-
-<button onclick="location.href='/direcciones/añadir'">Añadir Nueva Dirección</button>
-<a href="/">Volver al Inicio</a>
 </body>
 </html>
