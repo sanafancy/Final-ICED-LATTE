@@ -1,7 +1,6 @@
 package proyecto.iso2.dominio.gestores;
 
 import jakarta.persistence.EntityManager;
-import jakarta.servlet.http.HttpSession;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +19,6 @@ import proyecto.iso2.persistencia.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -247,8 +244,6 @@ public class ServicioEntregaControllerIntegrationTest {
             p.setFecha(LocalDateTime.now());
             return pedidoDAO.save(p);
         });
-
-        // No creamos repartidores para simular que no hay disponibles
 
         Map<Long, Integer> carrito = new HashMap<>();
         carrito.put(item.getId(), 2);

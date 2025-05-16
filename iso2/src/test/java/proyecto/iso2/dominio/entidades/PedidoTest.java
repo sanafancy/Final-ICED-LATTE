@@ -16,13 +16,7 @@ import java.util.List;
         public void setUp() {
             Restaurante restaurante = new Restaurante("rest@example.com", "pass123", "Restaurante Uno", "CIF123", null);
             Cliente cliente = new Cliente("cli@example.com", "pass456", "Juan", "12345678A", null);
-            //List<ItemMenu> items = new ArrayList<>();
             pedido = new Pedido(cliente, restaurante);
-        }
-
-        @Test
-        public void testEstadoInicial() {
-            //assertEquals(EstadoPedido.PENDIENTE, pedido.getEstado());
         }
 
         @Test

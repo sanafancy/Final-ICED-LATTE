@@ -20,7 +20,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.hamcrest.Matchers.hasProperty;
 import static org.hamcrest.Matchers.is;
 
 public class CartaMenuControllerTest {
@@ -81,7 +80,6 @@ public class CartaMenuControllerTest {
     // Métodos auxiliares para crear entidades
     private Restaurante crearRestaurante(String nombre, String email, String pass, String cif, Direccion direccion) {
         Restaurante restaurante = new Restaurante(email, pass, nombre, cif, direccion);
-        // Usar reflexión para establecer el ID, ya que no hay setIdUsuario
         try {
             // Buscar el campo "idUsuario" en la clase base (Usuario)
             Field idField = restaurante.getClass().getSuperclass().getDeclaredField("idUsuario");
@@ -99,7 +97,6 @@ public class CartaMenuControllerTest {
 
     private CartaMenu crearCartaMenu(Long id, String nombre, Restaurante restaurante) {
         CartaMenu carta = new CartaMenu(nombre, restaurante);
-        // Usar reflexión para establecer el ID, ya que no hay setId
         try {
             Field idField = CartaMenu.class.getDeclaredField("id");
             idField.setAccessible(true);
@@ -115,7 +112,6 @@ public class CartaMenuControllerTest {
         item.setNombre(nombre);
         item.setPrecio(precio);
         item.setCartaMenu(cartaMenu);
-        // Usar reflexión para establecer el ID, ya que no hay setId
         try {
             Field idField = ItemMenu.class.getDeclaredField("id");
             idField.setAccessible(true);

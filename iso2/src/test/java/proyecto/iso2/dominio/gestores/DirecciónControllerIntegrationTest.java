@@ -129,7 +129,6 @@ public class DirecciónControllerIntegrationTest {
 
     @Test
     public void testMostrarDireccion_ConRestauranteSinDireccion() throws Exception {
-        // El restaurante no tiene dirección asociada
         mockMvc.perform(get("/direcciones")
                         .session(session))
                 .andExpect(status().isOk())
@@ -203,7 +202,7 @@ public class DirecciónControllerIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/direcciones"));
 
-        // Verificar que no se creó una nueva dirección (ya que el controlador no la crea)
+        // Verificar que no se creó una nueva dirección
         assertThat(restaurante.getDireccion(), is(nullValue()));
         List<Direccion> direcciones = direccionDAO.findAll();
         assertThat(direcciones, hasSize(0));

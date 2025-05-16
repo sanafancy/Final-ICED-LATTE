@@ -78,8 +78,8 @@ public class LoginControllerTest {
     // Método auxiliar para crear un cliente con datos válidos
     private Cliente crearCliente(String nombre, String apellidos, String email, String pass, String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
-        cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones para evitar NullPointerException
-        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos para evitar NullPointerException
+        cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones
+        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos
         return cliente;
     }
 
