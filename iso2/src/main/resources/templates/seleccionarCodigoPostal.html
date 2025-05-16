@@ -2,27 +2,33 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Seleccionar Código Postal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seleccionar Código Postal • Iced Latte</title>
   <link rel="stylesheet" href="/css/seleccionarCodigoPostal.css">
 </head>
 <body>
-<h1>Seleccionar Código Postal</h1>
-
-<div th:if="${param.error}">
-  <p style="color: red;">Código postal no válido. Por favor, selecciona uno de la lista.</p>
+<header>
+  <h1>Iced Latte</h1>
+  <div class="auth-buttons">
+    <button onclick="history.back()">Volver</button>
+  </div>
+</header>
+<div class="selection-section">
+  <h2>Seleccionar Código Postal</h2>
+  <div th:if="${param.error}" class="error-message">
+    <p>Código postal no válido. Por favor, selecciona uno de la lista.</p>
+  </div>
+  <form th:action="@{/repartidor/seleccionar-codigo-postal}" method="post">
+    <label for="codigoPostal">Código Postal:</label>
+    <select id="codigoPostal" name="codigoPostal" required>
+      <option value="">Selecciona un código postal</option>
+      <option th:each="cp : ${codigosPostales}"
+              th:value="${cp.ordinal()}"
+              th:text="${cp.toString()}"></option>
+    </select>
+    <button type="submit">Guardar</button>
+  </form>
+  <a class="back-button" href="/repartidor/InicioRepartidor">Volver al Inicio</a>
 </div>
-
-<form th:action="@{/repartidor/seleccionar-codigo-postal}" method="post">
-  <label for="codigoPostal">Código Postal:</label>
-  <select id="codigoPostal" name="codigoPostal" required>
-    <option value="">Selecciona un código postal</option>
-    <option th:each="cp : ${codigosPostales}"
-            th:value="${cp.ordinal()}"
-            th:text="${cp.toString()}"></option>
-  </select>
-  <button type="submit">Guardar</button>
-</form>
-
-<a href="/repartidor/InicioRepartidor">Volver</a>
 </body>
 </html>

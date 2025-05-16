@@ -1,40 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Editar carta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Carta • Iced Latte</title>
     <link rel="stylesheet" href="/css/editarCarta.css">
 </head>
 <body>
-<h1>Editar Carta</h1>
-
-<form th:action="@{/cartas/editar/{id}(id=${carta.id})}" method="post">
-    <label>Nombre de la Carta:</label>
-    <input type="text" name="nombre" th:value="${carta.nombre}" required>
-    <button type="submit">Actualizar</button>
-</form>
-
-<h2>Items en esta Carta</h2>
-<ul>
-    <li th:each="item : ${items}">
-        <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (' + ${item.tipo} + ')'"></span>
-        <form th:action="@{/cartas/editar/{cartaId}/eliminarItem/{itemId}(cartaId=${carta.id}, itemId=${item.id})}" method="post">
-            <button type="submit">Eliminar</button>
-        </form>
-    </li>
-</ul>
-
-<h2>Agregar Nuevo Item</h2>
-<form th:action="@{/cartas/editar/{cartaId}/agregarItem(cartaId=${carta.id})}" method="post">
-    <label>Nombre:</label>
-    <input type="text" name="nombre" required>
-    <label>Precio:</label>
-    <input type="number" step="0.01" name="precio" required>
-    <label>Tipo:</label>
-    <input type="text" name="tipo" required>
-    <button type="submit">Añadir Item</button>
-</form>
-
-<a href="/inicioRestaurante">Volver</a>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-buttons">
+        <button onclick="history.back()">Volver</button>
+    </div>
+</header>
+<div class="edit-section">
+    <h2>Editar Carta</h2>
+    <form th:action="@{/cartas/editar/{id}(id=${carta.id})}" method="post">
+        <label for="nombre">Nombre de la Carta:</label>
+        <input type="text" id="nombre" name="nombre" th:value="${carta.nombre}" required>
+        <button type="submit">Actualizar</button>
+    </form>
+</div>
+<div class="items-section">
+    <h2>Items en esta Carta</h2>
+    <ul>
+        <li th:each="item : ${items}">
+            <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (' + ${item.tipo} + ')'"></span>
+            <form th:action="@{/cartas/editar/{cartaId}/eliminarItem/{itemId}(cartaId=${carta.id}, itemId=${item.id})}" method="post">
+                <button type="submit">Eliminar</button>
+            </form>
+        </li>
+    </ul>
+</div>
+<div class="add-item-section">
+    <h2>Agregar Nuevo Item</h2>
+    <form th:action="@{/cartas/editar/{cartaId}/agregarItem(cartaId=${carta.id})}" method="post">
+        <label for="item-nombre">Nombre:</label>
+        <input type="text" id="item-nombre" name="nombre" required>
+        <label for="precio">Precio:</label>
+        <input type="number" step="0.01" id="precio" name="precio" required>
+        <label for="tipo">Tipo:</label>
+        <input type="text" id="tipo" name="tipo" required>
+        <button type="submit">Añadir Item</button>
+    </form>
+</div>
+<a class="back-button" href="/inicioRestaurante">Volver al Inicio</a>
 </body>
 </html>
