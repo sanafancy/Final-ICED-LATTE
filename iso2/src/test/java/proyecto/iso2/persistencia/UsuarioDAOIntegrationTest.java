@@ -58,7 +58,7 @@ public class UsuarioDAOIntegrationTest {
 
     @Test
     public void testCrudUsuario() {
-        // Crear un usuario (usaremos Cliente como implementación concreta)
+        // Crear un usuario
         Cliente cliente = new Cliente();
         cliente.setEmail("cliente@ejemplo.com");
         cliente.setPass("pass123");

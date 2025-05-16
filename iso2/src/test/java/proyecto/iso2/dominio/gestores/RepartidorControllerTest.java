@@ -17,7 +17,6 @@ import proyecto.iso2.persistencia.*;
 import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Optional;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -101,7 +100,7 @@ public class RepartidorControllerTest {
         trySetId(servicio, 1L);
         servicio.setRepartidor(repartidor);
         servicio.setPedido(pedido);
-        servicio.setDireccion(crearDireccion()); // Establecer la dirección para evitar null en la plantilla
+        servicio.setDireccion(crearDireccion()); // Establecer la dirección
         return servicio;
     }
 

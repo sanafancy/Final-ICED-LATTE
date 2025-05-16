@@ -28,7 +28,7 @@ public class UsuarioDAOTest {
         // Inicializar los mocks
         MockitoAnnotations.openMocks(this);
 
-        // Crear un usuario (Restaurante) para las pruebas
+        // Crear un usuario para las pruebas
         Direccion direccion = new Direccion("Calle Falsa", 123, "", 28001, "Madrid");
         restaurante = new Restaurante("restaurante@ejemplo.com", "pass123", "Restaurante A", "CIF1", direccion);
         setField(restaurante, "idUsuario", 1L);

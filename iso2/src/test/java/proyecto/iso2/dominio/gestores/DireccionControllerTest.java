@@ -19,7 +19,6 @@ import proyecto.iso2.persistencia.ClienteDAO;
 import proyecto.iso2.persistencia.DireccionDAO;
 import proyecto.iso2.persistencia.RestauranteDAO;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.mockito.ArgumentMatchers.any;
@@ -96,12 +95,10 @@ public class DireccionControllerTest {
     // Método auxiliar para establecer el ID usando setters
     private void setIdUsuario(Object target, Long id) {
         try {
-            // Intentar usar el setter setIdUsuario
             Method setIdUsuario = target.getClass().getSuperclass().getDeclaredMethod("setIdUsuario", Long.class);
             setIdUsuario.invoke(target, id);
         } catch (NoSuchMethodException e) {
             try {
-                // Fallback: intentar usar setId
                 Method setId = target.getClass().getSuperclass().getDeclaredMethod("setId", Long.class);
                 setId.invoke(target, id);
             } catch (NoSuchMethodException | IllegalAccessException | java.lang.reflect.InvocationTargetException ex) {

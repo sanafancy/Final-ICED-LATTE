@@ -173,7 +173,7 @@ public class ServicioEntregaControllerTest {
     @Test
     public void testFinalizarPedido_DireccionNoValida() throws Exception {
         Cliente cliente = crearCliente();
-        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Restaurante restaurante = crearRestaurante(12300);
         Pedido pedido = crearPedido(restaurante);
         session.setAttribute("cliente", cliente);
 
@@ -193,9 +193,9 @@ public class ServicioEntregaControllerTest {
     @Test
     public void testFinalizarPedido_MetodoPagoNoValido() throws Exception {
         Cliente cliente = crearCliente();
-        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Restaurante restaurante = crearRestaurante(12300);
         Pedido pedido = crearPedido(restaurante);
-        Direccion direccion = crearDireccion(12300); // Usar código postal válido
+        Direccion direccion = crearDireccion(12300);
         session.setAttribute("cliente", cliente);
 
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
@@ -214,9 +214,9 @@ public class ServicioEntregaControllerTest {
     @Test
     public void testFinalizarPedido_CarritoVacio() throws Exception {
         Cliente cliente = crearCliente();
-        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Restaurante restaurante = crearRestaurante(12300);
         Pedido pedido = crearPedido(restaurante);
-        Direccion direccion = crearDireccion(12300); // Usar código postal válido
+        Direccion direccion = crearDireccion(12300);
         session.setAttribute("cliente", cliente);
         session.setAttribute("carrito", new HashMap<Long, Integer>());
 
@@ -236,9 +236,9 @@ public class ServicioEntregaControllerTest {
     @Test
     public void testFinalizarPedido_SinRepartidoresConEficiencia() throws Exception {
         Cliente cliente = crearCliente();
-        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Restaurante restaurante = crearRestaurante(12300);
         Pedido pedido = crearPedido(restaurante);
-        Direccion direccion = crearDireccion(12300); // Usar código postal válido
+        Direccion direccion = crearDireccion(12300);
         Map<Long, Integer> carrito = new HashMap<>();
         carrito.put(1L, 2);
         ItemMenu item = crearItemMenu(1L, 10.0);
@@ -268,9 +268,9 @@ public class ServicioEntregaControllerTest {
     @Test
     public void testFinalizarPedido_Exitoso() throws Exception {
         Cliente cliente = crearCliente();
-        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Restaurante restaurante = crearRestaurante(12300);
         Pedido pedido = crearPedido(restaurante);
-        Direccion direccion = crearDireccion(12300); // Usar código postal válido
+        Direccion direccion = crearDireccion(12300);
         Repartidor repartidor = crearRepartidor();
         Map<Long, Integer> carrito = new HashMap<>();
         carrito.put(1L, 2);
@@ -314,9 +314,9 @@ public class ServicioEntregaControllerTest {
     @Test
     public void testFinalizarPedido_ErrorProcesamiento() throws Exception {
         Cliente cliente = crearCliente();
-        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Restaurante restaurante = crearRestaurante(12300);
         Pedido pedido = crearPedido(restaurante);
-        Direccion direccion = crearDireccion(12300); // Usar código postal válido
+        Direccion direccion = crearDireccion(12300);
         Map<Long, Integer> carrito = new HashMap<>();
         carrito.put(1L, 2);
         ItemMenu item = crearItemMenu(1L, 10.0);

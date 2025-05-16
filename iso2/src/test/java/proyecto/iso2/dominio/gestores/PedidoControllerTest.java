@@ -106,14 +106,14 @@ public class PedidoControllerTest {
         setField(item, "id", id);
         item.setPrecio(precio);
         item.setCartaMenu(cartaMenu);
-        item.setNombre("Item " + id); // Nombre no nulo
+        item.setNombre("Item " + id);
         return item;
     }
 
     private CartaMenu crearCartaMenu(Restaurante restaurante) {
         CartaMenu carta = new CartaMenu();
         carta.setRestaurante(restaurante);
-        carta.setNombre("Menú Test"); // Nombre no nulo para CartaMenu
+        carta.setNombre("Menú Test");
         // Crear una lista de ItemMenu con nombres no nulos
         List<ItemMenu> items = new ArrayList<>();
         items.add(crearItemMenu(1L, 10.0, carta));
