@@ -1,48 +1,56 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio Repartidor</title>
+    <title>Inicio Repartidor • Iced Latte</title>
     <link rel="stylesheet" href="/css/inicioRepartidor.css">
 </head>
-    <body>
-    <h1>Bienvenido al Inicio del Repartidor</h1>
-    <div th:if="${repartidor != null}">
-        <p>Bienvenido, <span th:text="${repartidor.nombre}"></span></p>
+<body>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-container" th:if="${repartidor != null}">
+        <div class="auth-header">
+            <p>Bienvenido, <span th:text="${repartidor.nombre}"></span></p>
+            <div class="auth-buttons">
+                <button onclick="location.href='/logout'">Cerrar Sesión</button>
+                <button onclick="location.href='/repartidor/seleccionar-codigo-postal'">Seleccionar Código Postal</button>
+            </div>
+        </div>
+        <p class="code-postal">Tu código postal actual: <span th:text="${repartidor.codigoPostal}"></span></p>
     </div>
-    <div th:if="${repartidor == null}">
-        <p>No hay información de repartidor disponible.</p>
-    </div>
-    <p>Tu código postal actual: <span th:text="${repartidor.codigoPostal}"></span></p>
-    <button onclick="location.href='/repartidor/seleccionar-codigo-postal'">Seleccionar Código Postal</button>
-    <h2>Pedidos asignados</h2>
-    <table>
-        <tr>
-            <th>ID Pedido</th>
-            <th>Dirección de Recogida (Restaurante)</th>
-            <th>Dirección de Entrega (Cliente)</th>
-            <th>Recogido</th>
-            <th>Entregado</th>
-            <th>Acciones</th>
-        </tr>
-        <tr th:each="servicio : ${serviciosEntrega}">
-            <td th:text="${servicio.pedido.id}"></td>
-            <td th:text="${servicio.pedido.restaurante.direccion.calle} + ', ' + ${servicio.pedido.restaurante.direccion.codigoPostal}"></td>
-            <td th:text="${servicio.direccion.calle} + ', ' + ${servicio.direccion.codigoPostal}"></td>
-            <td th:text="${servicio.fechaRecepcion != null ? 'Sí' : 'No'}"></td>
-            <td th:text="${servicio.fechaEntrega != null ? 'Sí' : 'No'}"></td>
-            <td>
-                <form th:if="${servicio.fechaRecepcion == null}" method="post" action="/repartidor/marcar-recogido">
-                    <input type="hidden" name="servicioId" th:value="${servicio.id}" />
-                    <button type="submit">Marcar Recogido</button>
-                </form>
-                <form th:if="${servicio.fechaRecepcion != null and servicio.fechaEntrega == null}" method="post" action="/repartidor/marcar-entregado">
-                    <input type="hidden" name="servicioId" th:value="${servicio.id}" />
-                    <button type="submit">Marcar Entregado</button>
-                </form>
-            </td>
-        </tr>
-    </table>
-    <button onclick="location.href='/logout'">Cerrar Sesión</button>
-    </body>
+</header>
+
+<div th:if="${repartidor == null}">
+    <p>No hay información de repartidor disponible.</p>
+</div>
+
+<h2>Pedidos asignados</h2>
+<table>
+    <tr>
+        <th>ID Pedido</th>
+        <th>Dirección de Recogida (Restaurante)</th>
+        <th>Dirección de Entrega (Cliente)</th>
+        <th>Recogido</th>
+        <th>Entregado</th>
+        <th>Acciones</th>
+    </tr>
+    <tr th:each="servicio : ${serviciosEntrega}">
+        <td data-label="ID Pedido" th:text="${servicio.pedido.id}"></td>
+        <td data-label="Dirección de Recogida" th:text="${servicio.pedido.restaurante.direccion.calle} + ', ' + ${servicio.pedido.restaurante.direccion.codigoPostal}"></td>
+        <td data-label="Dirección de Entrega" th:text="${servicio.direccion.calle} + ', ' + ${servicio.direccion.codigoPostal}"></td>
+        <td data-label="Recogido" th:text="${servicio.fechaRecepcion != null ? 'Sí' : 'No'}"></td>
+        <td data-label="Entregado" th:text="${servicio.fechaEntrega != null ? 'Sí' : 'No'}"></td>
+        <td data-label="Acciones">
+            <form th:if="${servicio.fechaRecepcion == null}" method="post" action="/repartidor/marcar-recogido">
+                <input type="hidden" name="servicioId" th:value="${servicio.id}" />
+                <button type="submit">Marcar Recogido</button>
+            </form>
+            <form th:if="${servicio.fechaRecepcion != null and servicio.fechaEntrega == null}" method="post" action="/repartidor/marcar-entregado">
+                <input type="hidden" name="servicioId" th:value="${servicio.id}" />
+                <button type="submit">Marcar Entregado</button>
+            </form>
+        </td>
+    </tr>
+</table>
+</body>
 </html>

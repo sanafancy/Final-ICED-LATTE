@@ -33,12 +33,14 @@ header h1::before {
 
 .auth-buttons {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     gap: 10px;
 }
 
 .auth-buttons button {
     padding: 8px 15px;
-    background-color: #3B5998; /* --amarillo pastel */
+    background-color: #3B5998; /* --azul oscuro */
     color: white;
     border: none;
     border-radius: 5px;
@@ -105,27 +107,6 @@ header h1::before {
 }
 
 .search-section button:hover {
-    background-color: #00796b; /* --verde-oscuro */
-}
-
-/* Enlace a favoritos */
-.favorites-link {
-    text-align: center;
-    margin: 20px 0;
-}
-
-.favorites-link a {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #009688; /* --verde */
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.favorites-link a:hover {
     background-color: #00796b; /* --verde-oscuro */
 }
 

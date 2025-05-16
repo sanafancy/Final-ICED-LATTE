@@ -1,42 +1,189 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
 }
 
-h1, h2 {
-    color: #333;
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🚴‍♂️"; /* Ícono de repartidor (bicicleta) */
+    margin-right: 5px;
+}
+
+.auth-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.auth-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-header p {
+    margin: 0;
+    font-weight: 500;
+    color: #333; /* --texto */
+}
+
+.auth-header .auth-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.auth-header button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* Color de botones */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.auth-header button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+.code-postal {
+    margin-top: 5px;
+    font-weight: 500;
+    color: #333; /* --texto */
+}
+
+/* Contenido principal (tabla de pedidos) */
+h2 {
+    text-align: center;
+    color: #00796b; /* --verde-oscuro */
+    margin: 20px 0;
 }
 
 table {
-    width: 100%;
-    max-width: 800px;
+    width: 90%;
+    max-width: 1000px;
     margin: 20px auto;
     border-collapse: collapse;
     background: white;
+    border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 th, td {
-    padding: 10px;
+    padding: 12px;
     text-align: left;
     border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #007bff;
+    background-color: #009688; /* --verde */
     color: white;
 }
 
-button {
-    padding: 8px 15px;
-    background-color: #28a745;
+tr:nth-child(even) {
+    background-color: #f8f9fa; /* --gris-claro */
+}
+
+tr:hover {
+    background-color: #e9ecef;
+}
+
+form {
+    display: inline;
+    margin: 0 5px;
+}
+
+form button {
+    padding: 6px 10px;
+    background-color: #009688; /* --verde */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: #218838;
+form button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .auth-container {
+        align-items: center;
+    }
+
+    .auth-header {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .auth-header .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .code-postal {
+        margin-top: 10px;
+    }
+
+    table {
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    th, td {
+        padding: 8px;
+    }
+
+    tr {
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    td {
+        display: block;
+        text-align: right;
+    }
+
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        text-align: left;
+        display: inline-block;
+        width: 40%;
+    }
+
+    th {
+        display: none;
+    }
 }

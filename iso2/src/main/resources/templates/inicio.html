@@ -17,10 +17,9 @@
         <th:block th:if="${cliente != null}">
             <p>Bienvenido, <span th:text="${cliente.nombre}"></span></p>
             <button onclick="location.href='/logout'">Cerrar Sesión</button>
-            <!-- Botón de añadir dirección del cliente -->
             <button onclick="location.href='/direcciones/añadir'">Añadir Dirección</button>
-            <!-- Botón de ver direcciones -->
             <button onclick="location.href='/direcciones/ver'">Ver Direcciones</button>
+            <button onclick="location.href='/cliente/favoritos'">Ver favoritos</button>
         </th:block>
     </div>
 </header>
@@ -31,10 +30,6 @@
         <input type="text" name="busqueda" placeholder="Nombre, Dirección, Código Postal o Municipio">
         <button type="submit">Buscar</button>
     </form>
-</div>
-
-<div class="favorites-link" th:if="${cliente != null}">
-    <a th:href="@{/cliente/favoritos}">Ver Favoritos</a>
 </div>
 
 <div class="restaurant-list">
