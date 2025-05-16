@@ -131,7 +131,7 @@ public class RestauranteControllerIntegrationTest {
         restaurante.setDireccion(direccion);
         restauranteDAO.save(restaurante);
 
-        mockMvc.perform(get("/restaurante/buscar")
+        mockMvc.perform(get("/buscarRestaurante")
                         .param("busqueda", "Calle Principal")
                         .session(sessionCliente))
                 .andExpect(status().isOk())
@@ -149,34 +149,31 @@ public class RestauranteControllerIntegrationTest {
         carta.setRestaurante(restaurante);
         carta = cartaMenuDAO.save(carta);
 
-        mockMvc.perform(get("/restaurante/inicioRestaurante")
+        mockMvc.perform(get("/inicioRestaurante")
                         .session(sessionRestaurante))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/panel"));
+                .andExpect(status().isOk())
+                .andExpect(view().name("inicioRestaurante"))
+                .andExpect(model().attributeExists("restaurante"))
+                .andExpect(model().attributeExists("cartas"))
+                .andExpect(model().attribute("cartas", hasSize(1)))
+                .andExpect(model().attribute("cartas", contains(hasProperty("nombre", is("Carta Principal")))));
     }
 
     @Test
     public void testInicioRestaurante_SinRestaurante() throws Exception {
         MockHttpSession sessionSinRestaurante = new MockHttpSession();
-        mockMvc.perform(get("/restaurante/inicioRestaurante")
+        mockMvc.perform(get("/inicioRestaurante")
                         .session(sessionSinRestaurante))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/panel"))
-                .andDo(result -> {
-                    // Follow the redirect to /restaurante/panel
-                    mockMvc.perform(get("/restaurante/panel")
-                                    .session(sessionSinRestaurante))
-                            .andExpect(status().is3xxRedirection())
-                            .andExpect(redirectedUrl("/login"));
-                });
+                .andExpect(redirectedUrl("/login"));
     }
 
     @Test
     public void testToggleFavorito_AgregarFavorito() throws Exception {
-        mockMvc.perform(post("/restaurante/favorito/" + restaurante.getIdUsuario())
+        mockMvc.perform(post("/favorito/" + restaurante.getIdUsuario())
                         .session(sessionCliente))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/home"));
+                .andExpect(redirectedUrl("/"));
 
         // Verificar que el restaurante se añadió a los favoritos del cliente
         Cliente clienteActualizado = clienteDAO.findById(cliente.getIdUsuario()).orElse(null);
@@ -186,11 +183,24 @@ public class RestauranteControllerIntegrationTest {
 
     @Test
     public void testVerFavoritos_ConCliente() throws Exception {
-        // Añadir un restaurante a los favoritos del cliente
+        // Crear una dirección para el restaurante
+        Direccion direccion = new Direccion();
+        direccion.setCalle("Calle Restaurante");
+        direccion.setNumero(123);
+        direccion.setComplemento("Local 1");
+        direccion.setMunicipio("Ciudad");
+        direccion.setCodigoPostal(12345);
+        direccion = direccionDAO.save(direccion);
+
+        // Asignar la dirección al restaurante y guardar
+        restaurante.setDireccion(direccion);
+        restauranteDAO.save(restaurante);
+
+        // Añadir el restaurante a los favoritos del cliente
         cliente.getFavoritos().add(restaurante);
         clienteDAO.save(cliente);
 
-        mockMvc.perform(get("/restaurante/favoritos")
+        mockMvc.perform(get("/cliente/favoritos")
                         .session(sessionCliente))
                 .andExpect(status().isOk())
                 .andExpect(view().name("favoritos"))
@@ -202,7 +212,7 @@ public class RestauranteControllerIntegrationTest {
     @Test
     public void testVerFavoritos_SinCliente() throws Exception {
         MockHttpSession sessionSinCliente = new MockHttpSession();
-        mockMvc.perform(get("/restaurante/favoritos")
+        mockMvc.perform(get("/cliente/favoritos")
                         .session(sessionSinCliente))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
@@ -210,18 +220,35 @@ public class RestauranteControllerIntegrationTest {
 
     @Test
     public void testEliminarRestaurante() throws Exception {
-        mockMvc.perform(post("/restaurante/eliminar")
+        // Crear una carta de menú para el restaurante
+        CartaMenu carta = new CartaMenu();
+        carta.setNombre("Carta Principal");
+        carta.setRestaurante(restaurante);
+        carta = cartaMenuDAO.save(carta);
+
+        // Crear un ítem para la carta
+        ItemMenu item = new ItemMenu();
+        item.setNombre("Pizza");
+        item.setPrecio(10.0);
+        item.setTipo("Plato");
+        item.setCartaMenu(carta);
+        itemMenuDAO.save(item);
+
+        mockMvc.perform(post("/eliminarRestaurante")
                         .session(sessionRestaurante))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
 
-        // Verificar que el restaurante no fue eliminado (controller has commented-out delete)
+        // Verificar que el restaurante, cartas e ítems fueron eliminados
         List<Restaurante> restaurantes = restauranteDAO.findAll();
-        assertThat(restaurantes, hasSize(1));
-        assertThat(restaurantes, contains(hasProperty("nombre", is("Restaurante A"))));
+        List<CartaMenu> cartas = cartaMenuDAO.findAll();
+        List<ItemMenu> items = itemMenuDAO.findAll();
+        assertThat(restaurantes, hasSize(0));
+        assertThat(cartas, hasSize(0));
+        assertThat(items, hasSize(0));
     }
 
-    /*@Test
+    @Test
     public void testVerMenuRestaurante_RestauranteExistente() throws Exception {
         // Crear una carta de menú con ítems
         CartaMenu carta = new CartaMenu();
@@ -265,12 +292,12 @@ public class RestauranteControllerIntegrationTest {
                 .andExpect(model().attributeExists("direcciones"))
                 .andExpect(model().attribute("direcciones", hasSize(1)))
                 .andExpect(model().attribute("direcciones", contains(hasProperty("calle", is("Calle Cliente")))));
-    }*/
+    }
 
     @Test
     public void testVerMenuRestaurante_RestauranteNoExistente() throws Exception {
         mockMvc.perform(get("/restaurante/999"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/home"));
+                .andExpect(redirectedUrl("/"));
     }
 }
