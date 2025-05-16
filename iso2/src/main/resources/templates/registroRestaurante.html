@@ -2,26 +2,38 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro Restaurante</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro Restaurante • Iced Latte</title>
   <link rel="stylesheet" href="/css/registroRestaurante.css">
-
 </head>
 <body>
-<h1>Registro como Restaurante</h1>
-<form action="/registro/restaurante" method="POST">
-  <label for="email">Email:</label>
-  <input type="email" id="email" name="email" required><br>
-
-  <label for="pass">Contraseña:</label>
-  <input type="password" id="pass" name="pass" required><br>
-
-  <label for="nombre">Nombre del Restaurante:</label>
-  <input type="text" id="nombre" name="nombre" required><br>
-
-  <label for="cif">CIF del Restaurante:</label>
-  <input type="text" id="cif" name="cif" required><br>
-
-  <button type="submit">Registrar</button>
-</form>
+<header>
+  <h1>Iced Latte</h1>
+  <div class="auth-buttons">
+    <button onclick="history.back()">Volver</button>
+  </div>
+</header>
+<div class="register-section">
+  <h2>Registro como Restaurante</h2>
+  <form action="/registro/restaurante" method="POST">
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="pass">Contraseña:</label>
+      <input type="password" id="pass" name="pass" required>
+    </div>
+    <div class="form-group">
+      <label for="nombre">Nombre del Restaurante:</label>
+      <input type="text" id="nombre" name="nombre" required>
+    </div>
+    <div class="form-group">
+      <label for="cif">CIF del Restaurante:</label>
+      <input type="text" id="cif" name="cif" required>
+    </div>
+    <button type="submit">Registrar</button>
+  </form>
+</div>
 </body>
 </html>

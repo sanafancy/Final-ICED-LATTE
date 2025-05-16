@@ -2,29 +2,42 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Registro Repartidor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registro Repartidor • Iced Latte</title>
     <link rel="stylesheet" href="/css/registroRepartidor.css">
-
 </head>
 <body>
-<h1>Registro como Repartidor</h1>
-<form action="/registro/repartidor" method="POST">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required><br>
-
-    <label for="pass">Contraseña:</label>
-    <input type="password" id="pass" name="pass" required><br>
-
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" name="nombre" required><br>
-
-    <label for="apellidos">Apellidos:</label>
-    <input type="text" id="apellidos" name="apellidos" required><br>
-
-    <label for="nif">NIF:</label>
-    <input type="text" id="nif" name="nif" required><br>
-
-    <button type="submit">Registrar</button>
-</form>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-buttons">
+        <button onclick="history.back()">Volver</button>
+    </div>
+</header>
+<div class="register-section">
+    <h2>Registro como Repartidor</h2>
+    <form action="/registro/repartidor" method="POST">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="pass">Contraseña:</label>
+            <input type="password" id="pass" name="pass" required>
+        </div>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+        </div>
+        <div class="form-group">
+            <label for="apellidos">Apellidos:</label>
+            <input type="text" id="apellidos" name="apellidos" required>
+        </div>
+        <div class="form-group">
+            <label for="nif">NIF:</label>
+            <input type="text" id="nif" name="nif" required>
+        </div>
+        <button type="submit">Registrar</button>
+    </form>
+</div>
 </body>
 </html>
