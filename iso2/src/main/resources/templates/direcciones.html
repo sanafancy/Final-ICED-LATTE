@@ -1,32 +1,39 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Editar Dirección</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Editar Dirección • Iced Latte</title>
   <link rel="stylesheet" href="/css/direcciones.css">
 </head>
 <body>
-<h1>Editar Dirección del Restaurante</h1>
+<header>
+  <h1>Iced Latte</h1>
+  <div class="auth-buttons">
+    <button onclick="history.back()">Volver</button>
+  </div>
+</header>
+<div class="form-section">
+  <h2>Editar Dirección del Restaurante</h2>
+  <form th:action="@{/direcciones/editar}" method="post">
+    <label for="calle">Calle:</label>
+    <input type="text" id="calle" name="calle" th:value="${direccion.calle}" required>
 
-<form th:action="@{/direcciones/editar}" method="post">
-  <label>Calle:</label>
-  <input type="text" name="calle" th:value="${direccion.calle}" required>
+    <label for="numero">Número:</label>
+    <input type="text" id="numero" name="numero" th:value="${direccion.numero}" required>
 
-  <label>Número:</label>
-  <input type="text" name="numero" th:value="${direccion.numero}" required>
+    <label for="complemento">Complemento:</label>
+    <input type="text" id="complemento" name="complemento" th:value="${direccion.complemento}">
 
-  <label>Complemento:</label>
-  <input type="text" name="complemento" th:value="${direccion.complemento}" >
+    <label for="codigoPostal">Código Postal:</label>
+    <input type="text" id="codigoPostal" name="codigoPostal" th:value="${direccion.codigoPostal}" required>
 
-  <label>Código Postal:</label>
-  <input type="text" name="codigoPostal" th:value="${direccion.codigoPostal}" required>
+    <label for="municipio">Municipio:</label>
+    <input type="text" id="municipio" name="municipio" th:value="${direccion.municipio}" required>
 
-  <label>Municipio:</label>
-  <input type="text" name="municipio" th:value="${direccion.municipio}" required>
-
-  <button type="submit">Guardar Cambios</button>
-</form>
-
-<a href="/inicioRestaurante">Volver</a>
+    <button type="submit">Guardar Cambios</button>
+  </form>
+  <a class="back-button" href="/inicioRestaurante">Volver al Inicio</a>
+</div>
 </body>
 </html>
