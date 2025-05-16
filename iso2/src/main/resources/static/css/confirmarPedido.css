@@ -1,56 +1,220 @@
 body {
-    font-family: Arial, sans-serif;
-    padding: 20px;
-    background-color: #f4f4f4;
-}
-
-h1, h2 {
-    color: #333;
-}
-
-ul {
-    list-style: none;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
     padding: 0;
-    max-width: 600px;
-    margin: 0 auto;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
 }
 
-li {
-    background: white;
-    padding: 10px;
-    margin-bottom: 5px;
-    border-radius: 5px;
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #28a745;
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🍵"; /* Ícono saludable (té helado para "Iced Latte") */
+    margin-right: 5px;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
 }
 
-button:hover {
-    background-color: #218838;
+.auth-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
 }
 
-button:disabled {
+/* Sección de confirmación */
+.confirmation-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.confirmation-section h2 {
+    font-size: 1.5rem;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0 0 20px;
+}
+
+.confirmation-section h3 {
+    font-size: 1.2rem;
+    color: #009688; /* --verde */
+    margin: 20px 0 10px;
+}
+
+/* Estilos para subsecciones (cliente, pedido, dirección, pago) */
+.client-info,
+.order-details,
+.delivery-address,
+.payment-method {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa; /* --gris-claro */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left;
+}
+
+.client-info p,
+.order-details p,
+.delivery-address p,
+.payment-method p {
+    font-size: 1rem;
+    color: #333;
+    margin: 5px 0;
+}
+
+.order-details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.order-details ul li {
+    font-size: 1rem;
+    color: #333;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.order-details ul li:last-child {
+    border-bottom: none;
+}
+
+.order-details p.total {
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin-top: 10px;
+}
+
+/* Mensajes de error */
+.error-message {
+    font-size: 1rem;
+    color: #d32f2f; /* Rojo para errores */
+    margin: 10px 0;
+}
+
+/* Botón de confirmación */
+.confirmation-section form button {
+    padding: 12px 20px;
+    background-color: #009688; /* --verde */
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
+    margin: 20px auto;
+    display: block;
+}
+
+.confirmation-section form button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+.confirmation-section form button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-a {
-    display: block;
-    margin-top: 10px;
-    color: #007bff;
-    text-decoration: none;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-p[style="color: red;"] {
+/* Botón para volver */
+.back-button {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
     text-align: center;
+    text-decoration: none;
+    margin: 20px auto;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
+    display: block;
+}
+
+.back-button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .confirmation-section {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .client-info,
+    .order-details,
+    .delivery-address,
+    .payment-method {
+        padding: 10px;
+    }
+
+    .confirmation-section form button,
+    .back-button {
+        max-width: 100%;
+    }
+}
+
+/* Fallback para depuración */
+body::after {
+    content: "confirmarPedido.css loaded";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #999;
+    opacity: 0.5;
 }

@@ -2,63 +2,70 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Confirmar Pedido</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Pedido • Iced Latte</title>
   <link rel="stylesheet" href="/css/confirmarPedido.css">
 </head>
 <body>
-<h1>Confirmar Pedido</h1>
+<header>
+  <h1>Iced Latte</h1>
+  <div class="auth-buttons">
+    <button onclick="history.back()">Volver</button>
+  </div>
+</header>
+<div class="confirmation-section">
+  <h2>Confirmar Pedido</h2>
 
-<div th:if="${error != null}">
-  <p style="color: red;" th:text="${error}"></p>
-</div>
+  <div th:if="${error != null}" class="error-message">
+    <p th:text="${error}"></p>
+  </div>
 
-<div th:if="${cliente != null}">
-  <h2>Datos del Cliente</h2>
-  <p>Nombre: <span th:text="${cliente.nombre}"></span></p>
-  <p>Apellidos: <span th:text="${cliente.apellidos}"></span></p>
-</div>
-<div th:unless="${cliente != null}">
-  <p style="color: red;">Error: No se encontró información del cliente.</p>
-</div>
+  <div class="client-info" th:if="${cliente != null}">
+    <h3>Datos del Cliente</h3>
+    <p>Nombre: <span th:text="${cliente.nombre}"></span></p>
+    <p>Apellidos: <span th:text="${cliente.apellidos}"></span></p>
+  </div>
+  <div class="error-message" th:unless="${cliente != null}">
+    <p>Error: No se encontró información del cliente.</p>
+  </div>
 
-<div th:if="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
-  <h2>Detalles del Pedido</h2>
-  <ul>
-    <li th:each="item : ${itemsPedido}">
-      <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (Cantidad: ' + ${carrito[item.id] != null ? carrito[item.id] : 0} + ')'"></span>
-    </li>
-  </ul>
-  <p>Total: <span th:text="'€' + ${total}"></span></p>
-</div>
-<div th:unless="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
-  <p style="color: red;">Error: No hay ítems en el pedido.</p>
-</div>
+  <div class="order-details" th:if="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
+    <h3>Detalles del Pedido</h3>
+    <ul>
+      <li th:each="item : ${itemsPedido}">
+        <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (Cantidad: ' + ${carrito[item.id] != null ? carrito[item.id] : 0} + ')'"></span>
+      </li>
+    </ul>
+    <p class="total">Total: <span th:text="'€' + ${total}"></span></p>
+  </div>
+  <div class="error-message" th:unless="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
+    <p>Error: No hay ítems en el pedido.</p>
+  </div>
 
-<div th:if="${direccion != null}">
-  <h2>Dirección de Envío</h2>
-  <p th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></p>
-</div>
-<div th:unless="${direccion != null}">
-  <p style="color: red;">Error: No se seleccionó una dirección de envío.</p>
-</div>
+  <div class="delivery-address" th:if="${direccion != null}">
+    <h3>Dirección de Envío</h3>
+    <p th:text="${direccion.calle + ', ' + direccion.numero + ', ' + direccion.municipio + ', ' + direccion.codigoPostal}"></p>
+  </div>
+  <div class="error-message" th:unless="${direccion != null}">
+    <p>Error: No se seleccionó una dirección de envío.</p>
+  </div>
 
-<div th:if="${metodoPago != null}">
-  <h2>Método de Pago</h2>
-  <p th:text="${metodoPago}"></p>
+  <div class="payment-method" th:if="${metodoPago != null}">
+    <h3>Método de Pago</h3>
+    <p th:text="${metodoPago}"></p>
+  </div>
+  <div class="error-message" th:unless="${metodoPago != null}">
+    <p>Error: No se seleccionó un método de pago.</p>
+  </div>
+
+  <form th:action="@{/pedido/finalizar}" method="post" id="formConfirmarPedido">
+    <input type="hidden" name="pedidoId" th:value="${pedido?.id}"/>
+    <input type="hidden" name="direccionId" th:value="${direccion?.id}"/>
+    <input type="hidden" name="metodoPago" th:value="${metodoPago}"/>
+    <button type="submit" th:disabled="${pedido == null or itemsPedido == null or total == null or direccion == null or metodoPago == null}">Confirmar Pedido</button>
+  </form>
+  <a class="back-button" th:href="@{/verMenus(restauranteId=${pedido?.restaurante?.idUsuario})}">Volver a Menús</a>
 </div>
-<div th:unless="${metodoPago != null}">
-  <p style="color: red;">Error: No se seleccionó un método de pago.</p>
-</div>
-
-<form th:action="@{/pedido/finalizar}" method="post" id="formConfirmarPedido">
-  <input type="hidden" name="pedidoId" th:value="${pedido?.id}"/>
-  <input type="hidden" name="direccionId" th:value="${direccion?.id}"/>
-  <input type="hidden" name="metodoPago" th:value="${metodoPago}"/>
-  <button type="submit" th:disabled="${pedido == null or itemsPedido == null or total == null or direccion == null or metodoPago == null}">Confirmar Pedido</button>
-</form>
-
-<a th:href="@{/verMenus(restauranteId=${pedido?.restaurante?.idUsuario})}">Volver a Menús</a>
-
 <script>
   document.getElementById("formConfirmarPedido").addEventListener("submit", function (event) {
     const direccionId = document.querySelector("input[name='direccionId']").value;
