@@ -1,22 +1,32 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Iniciar Sesión • Iced Latte</title>
     <link rel="stylesheet" th:href="@{/css/login.css}">
 </head>
 <body>
-<h2>Iniciar Sesión</h2>
-<form action="/login" method="POST">
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required>
-    <br>
-    <label for="pass">Contraseña:</label>
-    <input type="password" id="pass" name="pass" required>
-    <br>
-    <button type="submit">Ingresar</button>
-</form>
-<p style="color: red;" th:if="${param.error}">Credenciales incorrectas</p>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-buttons">
+        <button onclick="history.back()">Volver</button>
+    </div>
+</header>
+<div class="login-section">
+    <h2>Iniciar Sesión</h2>
+    <form action="/login" method="POST">
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label for="pass">Contraseña:</label>
+            <input type="password" id="pass" name="pass" required>
+        </div>
+        <button type="submit">Ingresar</button>
+    </form>
+    <p class="error-message" th:if="${param.error}">Credenciales incorrectas</p>
+</div>
 </body>
 </html>
