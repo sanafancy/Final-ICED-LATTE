@@ -1,47 +1,193 @@
+/* /css/inicioRestaurante.css */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
+}
+
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🥗"; /* Ícono de té helado para "Iced Latte" */
+    margin-right: 5px;
+}
+
+/* Contenedor para botones y autenticación */
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.auth-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* Color de botones (mismo que Cerrar Sesión) */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.auth-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+.auth-buttons p {
+    margin: 0;
+    font-weight: 500;
+    color: #333; /* --texto */
+}
+
+/* Botones de acciones en el header */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* Cambiado a #3B5998 para igualar con Cerrar Sesión */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.action-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Lista de cartas (similar a restaurant-list) */
+.carta-list {
+    max-width: 800px;
+    margin: 0 auto;
     padding: 20px;
-    background-color: #f4f4f4;
+    background: white;
+    margin-top: 20px;
+    border-radius: 10px;
 }
 
-h1, h2 {
-    color: #333;
+.carta-list h2 {
+    text-align: center;
+    color: #00796b; /* --verde-oscuro */
+    font-size: 1.5rem;
+    margin-bottom: 20px;
 }
 
-ul {
+.carta-list ul {
     list-style: none;
     padding: 0;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
-li {
-    background: white;
+.carta-list li {
+    background: #f8f9fa; /* --gris-claro */
     padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     display: flex;
     justify-content: space-between;
     align-items: center;
 }
 
-button {
-    padding: 10px;
-    background-color: #28a745;
+.carta-list li div ul {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.carta-list li div ul li {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.carta-list li span {
+    color: #009688; /* --verde */
+    font-weight: bold;
+}
+
+.carta-list li form {
+    display: inline-block;
+}
+
+.carta-list li button {
+    padding: 8px 15px;
+    background-color: #009688; /* --verde */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+    margin-left: 5px;
 }
 
-button:hover {
-    background-color: #218838;
+.carta-list li button:hover {
+    background-color: #00796b; /* --verde-oscuro */
 }
 
-form button[type="submit"] {
-    background-color: #dc3545;
-}
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
 
-form button[type="submit"]:hover {
-    background-color: #c82333;
+    .header-right {
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .carta-list li {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .carta-list li form {
+        margin-top: 10px;
+    }
 }

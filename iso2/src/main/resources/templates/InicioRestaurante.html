@@ -1,34 +1,48 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Inicio Restaurante</title>
+    <title>Inicio Restaurante • Iced Latte</title>
     <link rel="stylesheet" href="/css/inicioRestaurante.css">
 </head>
 <body>
-<h1>Bienvenido al Inicio del Restaurante</h1>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="header-right">
+        <div class="auth-buttons" th:if="${restaurante != null}">
+            <p>Bienvenido, <span th:text="${restaurante.nombre}"></span></p>
+            <button onclick="location.href='/logout'">Cerrar Sesión</button>
+        </div>
+        <div class="action-buttons">
+            <button onclick="location.href='/cartas/crear'">Crear Carta</button>
+            <button onclick="location.href='/direcciones'">Editar Dirección</button>
+            <form action="/eliminarRestaurante" method="post" style="display:inline;">
+                <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar este restaurante?')">Eliminar Restaurante</button>
+            </form>
+        </div>
+    </div>
+</header>
 
-<button onclick="location.href='/cartas/crear'">Crear Carta</button>
-<button onclick="location.href='/direcciones'">Editar Dirección</button>
-<form action="/eliminarRestaurante" method="post">
-    <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar este restaurante?')">Eliminar Restaurante</button>
-</form>
-<h2>Cartas Existentes</h2>
-<ul>
-    <li th:each="carta : ${cartas}">
-        <span th:text="${carta.nombre}"></span>
-        <!--a th:href="@{/cartas/editar/{id}(id=${carta.id})}">Ver y Editar</a>
-        <a th:href="@{/eliminarCarta/{id}(id=${carta.id})}" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</a-->
-        <form th:action="@{/cartas/editar/{id}(id=${carta.id})}" method="get" style="display:inline;">
-            <button type="submit">Ver y Editar</button>
-        </form>
-        <form th:action="@{/cartas/eliminar/{id}(id=${carta.id})}" method="post" style="display:inline;">
-            <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</button>
-        </form>
-    </li>
-</ul>
-<th:block th:if="${restaurante != null}">
-    <button onclick="location.href='/logout'">Cerrar Sesión</button>
-</th:block>
+<div class="carta-list">
+    <h2>Cartas Existentes</h2>
+    <ul>
+        <li th:each="carta : ${cartas}">
+            <div>
+                <span th:text="${carta.nombre}"></span>
+                <ul>
+                    <li>Carta de productos del restaurante</li>
+                </ul>
+            </div>
+            <div>
+                <form th:action="@{/cartas/editar/{id}(id=${carta.id})}" method="get" style="display:inline;">
+                    <button type="submit">Ver y Editar</button>
+                </form>
+                <form th:action="@{/cartas/eliminar/{id}(id=${carta.id})}" method="post" style="display:inline;">
+                    <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar esta carta?')">Eliminar</button>
+                </form>
+            </div>
+        </li>
+    </ul>
+</div>
 </body>
 </html>
