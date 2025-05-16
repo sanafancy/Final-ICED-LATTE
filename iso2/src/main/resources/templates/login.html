@@ -27,6 +27,9 @@
         <button type="submit">Ingresar</button>
     </form>
     <p class="error-message" th:if="${param.error}">Credenciales incorrectas</p>
+    <p class="register-link">
+        ¿No tienes cuenta? <a th:href="@{/registro}" href="/registro">Regístrate</a>
+    </p>
 </div>
 </body>
 </html>
