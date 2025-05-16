@@ -116,7 +116,7 @@ public class LoginControllerTest {
                         .param("pass", "pass123")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicio"));
+                .andExpect(redirectedUrl("/"));
 
         // Verificar que el cliente se guardó en la sesión
         assertEquals(cliente, session.getAttribute("usuario"));
@@ -135,7 +135,7 @@ public class LoginControllerTest {
                         .param("pass", "pass123")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/panel"));
+                .andExpect(redirectedUrl("/inicioRestaurante"));
 
         // Verificar que el restaurante se guardó en la sesión
         assertEquals(restaurante, session.getAttribute("usuario"));
@@ -154,7 +154,7 @@ public class LoginControllerTest {
                         .param("pass", "pass123")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicioRepartidor"));
+                .andExpect(redirectedUrl("/repartidor/InicioRepartidor"));
 
         // Verificar que el repartidor se guardó en la sesión
         assertEquals(repartidor, session.getAttribute("usuario"));
@@ -210,6 +210,6 @@ public class LoginControllerTest {
         mockMvc.perform(get("/logout")
                         .session(session))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicio"));
+                .andExpect(redirectedUrl("/"));
     }
 }

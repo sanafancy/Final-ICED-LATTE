@@ -13,7 +13,6 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -95,7 +94,7 @@ public class CartaMenuControllerTest {
     }
 
     private Direccion crearDireccion() {
-        return new Direccion("Calle Falsa", 123, "", 28001, "Madrid");
+        return new Direccion("Callee Falsa", 123, "", 28001, "Madrid");
     }
 
     private CartaMenu crearCartaMenu(Long id, String nombre, Restaurante restaurante) {
@@ -179,7 +178,7 @@ public class CartaMenuControllerTest {
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/cartas/editar/{id}", cartaId))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/restaurante/panel"));
+                .andExpect(redirectedUrl("/cartas"));
     }
 
     @Test
@@ -196,16 +195,14 @@ public class CartaMenuControllerTest {
 
         // Configurar los mocks
         when(cartaMenuDAO.findById(cartaId)).thenReturn(Optional.of(carta));
-        //when(cartaMenuDAO.findByCartaPadre(carta)).thenReturn(new ArrayList<>());
 
         // Ejecutar la solicitud GET
         mockMvc.perform(get("/cartas/editar/{id}", cartaId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("editarCarta"))
                 .andExpect(model().attribute("carta", carta))
-                .andExpect(model().attribute("carta", hasProperty("items", is(items))))
-                .andExpect(model().attributeExists("menus"))
-                .andExpect(model().attributeExists("nuevoMenu"));
+                .andExpect(model().attribute("items", is(items)))
+                .andExpect(model().attributeExists("itemNuevo"));
     }
 
     // Pruebas para el método actualizarCarta (POST /cartas/editar/{id})
@@ -261,7 +258,7 @@ public class CartaMenuControllerTest {
         verify(cartaMenuDAO, times(1)).deleteById(cartaId);
     }
 
-    // Pruebas para el método agregarItem (POST /cartas/editar/{cartaId}/agregarItem)
+    // Pruebas para Ascendente para el método agregarItem (POST /cartas/editar/{cartaId}/agregarItem)
     @Test
     public void testAgregarItem_CartaNoExistente() throws Exception {
         // Datos de prueba

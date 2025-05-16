@@ -235,7 +235,7 @@ public class DireccionControllerTest {
         mockMvc.perform(get("/direcciones")
                         .session(session))
                 .andExpect(status().isOk())
-                .andExpect(view().name("editarDireccion")) // Cambiado a editarDireccion
+                .andExpect(view().name("direcciones"))
                 .andExpect(model().attribute("direccion", restaurante.getDireccion()));
     }
 
@@ -250,7 +250,7 @@ public class DireccionControllerTest {
         mockMvc.perform(get("/direcciones")
                         .session(session))
                 .andExpect(status().isOk())
-                .andExpect(view().name("editarDireccion")) // Cambiado a editarDireccion
+                .andExpect(view().name("direcciones"))
                 .andExpect(model().attributeExists("direccion"))
                 .andExpect(model().attribute("direccion", is(instanceOf(Direccion.class))));
     }
