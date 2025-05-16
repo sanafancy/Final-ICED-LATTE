@@ -28,7 +28,7 @@ header h1 {
 }
 
 header h1::before {
-    content: "🍵"; /* Ícono saludable (té helado para "Iced Latte") */
+    content: "🥗"; /* Ícono saludable (té helado para "Iced Latte") */
     margin-right: 5px;
 }
 
