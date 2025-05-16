@@ -19,8 +19,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import org.mockito.ArgumentMatchers;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -53,11 +53,9 @@ public class ServicioEntregaControllerTest {
 
     @BeforeEach
     public void setUp() {
-        // Inicializar los mocks y resetearlos
         MockitoAnnotations.openMocks(this);
         reset(servicioEntregaDAO, pedidoDAO, direccionDAO, repartidorDAO, pagoDAO, itemMenuDAO);
 
-        // Configurar Thymeleaf para las pruebas
         ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
         templateResolver.setPrefix("templates/");
         templateResolver.setSuffix(".html");
@@ -71,30 +69,36 @@ public class ServicioEntregaControllerTest {
         viewResolver.setTemplateEngine(templateEngine);
         viewResolver.setCharacterEncoding("UTF-8");
 
-        // Configurar MockMvc con el controlador y el ViewResolver
         mockMvc = MockMvcBuilders.standaloneSetup(servicioEntregaController)
                 .setViewResolvers(viewResolver)
                 .build();
 
-        // Inicializar la sesión
         session = new MockHttpSession();
     }
 
-    // Métodos auxiliares para crear entidades
     private Cliente crearCliente() {
         Cliente cliente = new Cliente("cliente@email.com", "pass123", "Juan", "Pérez", "12345678A");
         setIdUsuario(cliente, 1L);
         return cliente;
     }
 
-    private Pedido crearPedido() {
+    private Restaurante crearRestaurante(int codigoPostal) {
+        Direccion direccion = new Direccion("Calle Restaurante", 123, "Local 1", codigoPostal, "Madrid");
+        trySetId(direccion, 2L);
+        Restaurante restaurante = new Restaurante("restaurante@email.com", "pass123", "Restaurante A", "CIF123", direccion);
+        setIdUsuario(restaurante, 3L);
+        return restaurante;
+    }
+
+    private Pedido crearPedido(Restaurante restaurante) {
         Pedido pedido = new Pedido();
         trySetId(pedido, 1L);
+        pedido.setRestaurante(restaurante);
         return pedido;
     }
 
-    private Direccion crearDireccion() {
-        Direccion direccion = new Direccion("Calle Falsa", 123, "Piso 1", 28001, "Madrid");
+    private Direccion crearDireccion(int codigoPostal) {
+        Direccion direccion = new Direccion("Calle Falsa", 123, "Piso 1", codigoPostal, "Madrid");
         trySetId(direccion, 1L);
         return direccion;
     }
@@ -116,7 +120,6 @@ public class ServicioEntregaControllerTest {
         return new Pago(metodoPago, pedido, LocalDateTime.now());
     }
 
-    // Método auxiliar para establecer el ID usando setters (Usuario)
     private void setIdUsuario(Object target, Long id) {
         try {
             Method setIdUsuario = target.getClass().getSuperclass().getDeclaredMethod("setIdUsuario", Long.class);
@@ -126,7 +129,6 @@ public class ServicioEntregaControllerTest {
         }
     }
 
-    // Método auxiliar para intentar establecer el ID en otras entidades
     private void trySetId(Object target, Long id) {
         String[] possibleSetters = {"setId", "setIdPedido", "setIdDireccion", "setIdItem", "setIdItemMenu"};
         for (String setter : possibleSetters) {
@@ -135,17 +137,13 @@ public class ServicioEntregaControllerTest {
                 setId.invoke(target, id);
                 return;
             } catch (NoSuchMethodException | IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
-                // Continúa intentando otros setters
             }
         }
-        // Si no se encuentra ningún setter, no lanzar excepción para evitar fallos innecesarios
         System.out.println("No se encontró setter de ID para " + target.getClass().getSimpleName());
     }
 
-    // Pruebas para POST /pedido/finalizar
     @Test
     public void testFinalizarPedido_SinCliente() throws Exception {
-        // Ejecutar la solicitud POST sin cliente en la sesión
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -157,14 +155,11 @@ public class ServicioEntregaControllerTest {
 
     @Test
     public void testFinalizarPedido_PedidoNoValido() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
         session.setAttribute("cliente", cliente);
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.empty());
 
-        // Ejecutar la solicitud POST
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -177,16 +172,14 @@ public class ServicioEntregaControllerTest {
 
     @Test
     public void testFinalizarPedido_DireccionNoValida() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
-        Pedido pedido = crearPedido();
+        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Pedido pedido = crearPedido(restaurante);
         session.setAttribute("cliente", cliente);
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
         when(direccionDAO.findById(1L)).thenReturn(Optional.empty());
 
-        // Ejecutar la solicitud POST
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -199,17 +192,15 @@ public class ServicioEntregaControllerTest {
 
     @Test
     public void testFinalizarPedido_MetodoPagoNoValido() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
-        Pedido pedido = crearPedido();
-        Direccion direccion = crearDireccion();
+        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Pedido pedido = crearPedido(restaurante);
+        Direccion direccion = crearDireccion(12300); // Usar código postal válido
         session.setAttribute("cliente", cliente);
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
         when(direccionDAO.findById(1L)).thenReturn(Optional.of(direccion));
 
-        // Ejecutar la solicitud POST con método de pago inválido
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -222,18 +213,16 @@ public class ServicioEntregaControllerTest {
 
     @Test
     public void testFinalizarPedido_CarritoVacio() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
-        Pedido pedido = crearPedido();
-        Direccion direccion = crearDireccion();
+        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Pedido pedido = crearPedido(restaurante);
+        Direccion direccion = crearDireccion(12300); // Usar código postal válido
         session.setAttribute("cliente", cliente);
-        session.setAttribute("carrito", new HashMap<Long, Integer>()); // Carrito vacío
+        session.setAttribute("carrito", new HashMap<Long, Integer>());
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
         when(direccionDAO.findById(1L)).thenReturn(Optional.of(direccion));
 
-        // Ejecutar la solicitud POST
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -246,26 +235,26 @@ public class ServicioEntregaControllerTest {
 
     @Test
     public void testFinalizarPedido_SinRepartidoresConEficiencia() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
-        Pedido pedido = crearPedido();
-        Direccion direccion = crearDireccion();
+        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Pedido pedido = crearPedido(restaurante);
+        Direccion direccion = crearDireccion(12300); // Usar código postal válido
         Map<Long, Integer> carrito = new HashMap<>();
-        carrito.put(1L, 2); // 2 unidades del ítem 1
-        ItemMenu item = crearItemMenu(1L, 10.0); // Precio 10.0
-        Repartidor repartidor = crearRepartidor();
-        repartidor.setEficiencia(null); // Sin eficiencia
+        carrito.put(1L, 2);
+        ItemMenu item = crearItemMenu(1L, 10.0);
+        Pago pago = crearPago(pedido, MetodoPago.CREDIT_CARD);
         session.setAttribute("cliente", cliente);
         session.setAttribute("carrito", carrito);
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
         when(direccionDAO.findById(1L)).thenReturn(Optional.of(direccion));
         when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item));
-        when(repartidorDAO.findAll()).thenReturn(Arrays.asList(repartidor));
-        when(pagoDAO.save(any(Pago.class))).thenReturn(crearPago(pedido, MetodoPago.CREDIT_CARD));
+        when(servicioEntregaDAO.findByDireccionAndFechaEntregaIsNull(direccion)).thenReturn(new ArrayList<>());
+        // Devolver lista vacía para simular que no hay repartidores disponibles
+        when(repartidorDAO.findByCodigoPostalOrderByEficienciaAsc(ArgumentMatchers.any(CodigoPostal.class))).thenReturn(new ArrayList<>());
+        when(pagoDAO.save(ArgumentMatchers.any(Pago.class))).thenReturn(pago);
+        when(pedidoDAO.save(ArgumentMatchers.any(Pedido.class))).thenReturn(pedido);
 
-        // Ejecutar la solicitud POST
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -273,33 +262,33 @@ public class ServicioEntregaControllerTest {
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("confirmarPedido"))
-                .andExpect(model().attribute("error", "No hay repartidores disponibles con eficiencia definida"));
+                .andExpect(model().attribute("error", "No hay repartidores disponibles en esta zona."));
     }
 
     @Test
     public void testFinalizarPedido_Exitoso() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
-        Pedido pedido = crearPedido();
-        Direccion direccion = crearDireccion();
+        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Pedido pedido = crearPedido(restaurante);
+        Direccion direccion = crearDireccion(12300); // Usar código postal válido
         Repartidor repartidor = crearRepartidor();
         Map<Long, Integer> carrito = new HashMap<>();
-        carrito.put(1L, 2); // 2 unidades del ítem 1
-        ItemMenu item = crearItemMenu(1L, 10.0); // Precio 10.0
+        carrito.put(1L, 2);
+        ItemMenu item = crearItemMenu(1L, 10.0);
         Pago pago = crearPago(pedido, MetodoPago.CREDIT_CARD);
         session.setAttribute("cliente", cliente);
         session.setAttribute("carrito", carrito);
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
         when(direccionDAO.findById(1L)).thenReturn(Optional.of(direccion));
         when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item));
-        when(repartidorDAO.findAll()).thenReturn(Arrays.asList(repartidor));
-        when(pagoDAO.save(any(Pago.class))).thenReturn(pago);
-        when(pedidoDAO.save(any(Pedido.class))).thenReturn(pedido);
-        when(servicioEntregaDAO.save(any(ServicioEntrega.class))).thenReturn(new ServicioEntrega());
+        when(servicioEntregaDAO.findByDireccionAndFechaEntregaIsNull(direccion)).thenReturn(new ArrayList<>());
+        when(repartidorDAO.findByCodigoPostalOrderByEficienciaAsc(ArgumentMatchers.any(CodigoPostal.class))).thenReturn(Arrays.asList(repartidor));
+        when(pagoDAO.save(ArgumentMatchers.any(Pago.class))).thenReturn(pago);
+        when(pedidoDAO.save(ArgumentMatchers.any(Pedido.class))).thenReturn(pedido);
+        when(repartidorDAO.save(ArgumentMatchers.any(Repartidor.class))).thenReturn(repartidor);
+        when(servicioEntregaDAO.save(ArgumentMatchers.any(ServicioEntrega.class))).thenReturn(new ServicioEntrega());
 
-        // Ejecutar la solicitud POST
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")
@@ -309,13 +298,12 @@ public class ServicioEntregaControllerTest {
                 .andExpect(view().name("pagoExitoso"))
                 .andExpect(model().attribute("success", "Pedido confirmado y pago realizado con éxito."));
 
-        // Verificar interacciones
-        verify(pagoDAO, times(1)).save(any(Pago.class));
-        verify(pedidoDAO, times(1)).save(any(Pedido.class));
-        verify(servicioEntregaDAO, times(1)).save(any(ServicioEntrega.class));
-        verify(repartidorDAO, times(1)).findAll();
+        verify(pagoDAO, times(1)).save(ArgumentMatchers.any(Pago.class));
+        verify(pedidoDAO, times(1)).save(ArgumentMatchers.any(Pedido.class));
+        verify(servicioEntregaDAO, times(1)).save(ArgumentMatchers.any(ServicioEntrega.class));
+        verify(repartidorDAO, times(1)).findByCodigoPostalOrderByEficienciaAsc(ArgumentMatchers.any(CodigoPostal.class));
+        verify(repartidorDAO, times(1)).save(ArgumentMatchers.any(Repartidor.class));
 
-        // Verificar limpieza de sesión
         assertThat(session.getAttribute("carrito"), is(nullValue()));
         assertThat(session.getAttribute("pedido"), is(nullValue()));
         assertThat(session.getAttribute("direccionId"), is(nullValue()));
@@ -325,23 +313,21 @@ public class ServicioEntregaControllerTest {
 
     @Test
     public void testFinalizarPedido_ErrorProcesamiento() throws Exception {
-        // Datos de prueba
         Cliente cliente = crearCliente();
-        Pedido pedido = crearPedido();
-        Direccion direccion = crearDireccion();
+        Restaurante restaurante = crearRestaurante(12300); // Usar código postal válido
+        Pedido pedido = crearPedido(restaurante);
+        Direccion direccion = crearDireccion(12300); // Usar código postal válido
         Map<Long, Integer> carrito = new HashMap<>();
-        carrito.put(1L, 2); // 2 unidades del ítem 1
-        ItemMenu item = crearItemMenu(1L, 10.0); // Precio 10.0
+        carrito.put(1L, 2);
+        ItemMenu item = crearItemMenu(1L, 10.0);
         session.setAttribute("cliente", cliente);
         session.setAttribute("carrito", carrito);
 
-        // Configurar mocks
         when(pedidoDAO.findById(1L)).thenReturn(Optional.of(pedido));
         when(direccionDAO.findById(1L)).thenReturn(Optional.of(direccion));
         when(itemMenuDAO.findById(1L)).thenReturn(Optional.of(item));
-        when(pagoDAO.save(any(Pago.class))).thenThrow(new RuntimeException("Error de base de datos"));
+        when(pagoDAO.save(ArgumentMatchers.any(Pago.class))).thenThrow(new RuntimeException("Error de base de datos"));
 
-        // Ejecutar la solicitud POST
         mockMvc.perform(post("/pedido/finalizar")
                         .param("direccionId", "1")
                         .param("pedidoId", "1")

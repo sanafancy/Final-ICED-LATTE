@@ -111,8 +111,8 @@ public class RepartidorTest {
         repartidor.setNif("87654321B");
         repartidor.setEficiencia(95);
 
-        // Valor esperado de toString
-        String expected = "Repartidor [idUsuario=1, pass=pass123, nombre=Ana, apellidos=Gómez, nif=87654321B, eficiencia=95]";
+        // Valor esperado de toString, incluyendo codigoPostal=null
+        String expected = "Repartidor [idUsuario=1, pass=pass123, nombre=Ana, apellidos=Gómez, nif=87654321B, eficiencia=95, codigoPostal=null]";
         assertEquals(expected, repartidor.toString(), "El método toString no devuelve el formato esperado");
     }
 }
