@@ -22,6 +22,7 @@ import java.util.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -70,6 +71,7 @@ public class ServicioEntregaControllerIntegrationTest {
 
     private MockHttpSession session;
 
+
     @BeforeEach
     public void setUp() {
         // Configuración manual de MockMvc como respaldo
@@ -82,10 +84,13 @@ public class ServicioEntregaControllerIntegrationTest {
 
         // Limpiamos la base de datos respetando las dependencias
         transactionTemplate.execute(status -> {
+            // Eliminar en orden para evitar violaciones de claves foráneas
             entityManager.createNativeQuery("DELETE FROM servicio_entrega").executeUpdate();
             entityManager.createNativeQuery("DELETE FROM pedido_items").executeUpdate();
-            entityManager.createNativeQuery("DELETE FROM pedido").executeUpdate();
+            // Desvincular PAGO_ID en pedido para evitar violación de clave foránea
+            entityManager.createNativeQuery("UPDATE pedido SET pago_id = NULL").executeUpdate();
             entityManager.createNativeQuery("DELETE FROM pago").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM pedido").executeUpdate();
             entityManager.createQuery("DELETE FROM ItemMenu").executeUpdate();
             entityManager.createQuery("DELETE FROM CartaMenu").executeUpdate();
             entityManager.createQuery("DELETE FROM Repartidor").executeUpdate();
@@ -102,6 +107,7 @@ public class ServicioEntregaControllerIntegrationTest {
         // Inicializamos la sesión
         session = new MockHttpSession();
     }
+
 
     @Test
     public void testFinalizarPedidoSinClienteEnSesion() throws Exception {
@@ -131,6 +137,7 @@ public class ServicioEntregaControllerIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
+
 
     @Test
     public void testFinalizarPedidoConCarritoVacio() throws Exception {
