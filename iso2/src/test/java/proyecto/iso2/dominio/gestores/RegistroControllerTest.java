@@ -209,7 +209,7 @@ public class RegistroControllerTest {
                         .param("apellidos", apellidos)
                         .param("nif", nif))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/inicio"));
+                .andExpect(redirectedUrl("/"));
 
         // Verificar que se llamó al método save con un repartidor correcto
         verify(repartidorDAO, times(1)).save(any(Repartidor.class));
