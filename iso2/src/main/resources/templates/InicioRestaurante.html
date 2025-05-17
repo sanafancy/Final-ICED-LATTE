@@ -10,7 +10,7 @@
     <h1>Iced Latte</h1>
     <div class="header-right">
         <div class="auth-buttons" th:if="${restaurante != null}">
-            <p>Bienvenido, <span th:text="${restaurante.nombre}"></span></p>
+            <p>Bienvenido</p>
         </div>
         <div class="button-group">
             <button onclick="location.href='/cartas/crear'">Crear Carta</button>
@@ -22,6 +22,11 @@
         </div>
     </div>
 </header>
+
+<!-- Sección de banner con el nombre del restaurante -->
+<div class="search-section">
+    <h2 th:text="${restaurante.nombre}">Nombre del Restaurante</h2>
+</div>
 
 <div class="carta-list">
     <h2>Cartas Existentes</h2>

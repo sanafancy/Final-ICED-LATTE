@@ -98,9 +98,12 @@ header h1::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: none;
-    box-shadow: none;
-    padding: 10px 0;
+    background: #ffffff; /* Fondo blanco para cada caja */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra para efecto de relieve */
+    border: 1px solid #ddd; /* Borde sutil */
+    border-radius: 5px; /* Bordes redondeados */
+    padding: 8px 10px; /* Espaciado interno */
+    margin: 5px 0; /* Espaciado entre cajas */
     font-size: 1rem;
     color: #333;
 }
@@ -117,7 +120,7 @@ header h1::before {
     width: 80px;
     text-align: right;
     color: #666;
-    margin-right: 15px; /* Añadido para separar el precio del botón - */
+    margin-right: 10px;
 }
 
 .menu-section ul ul li button {
@@ -262,7 +265,12 @@ header h1::before {
         width: auto;
         text-align: left;
         margin-bottom: 5px;
-        margin-right: 0; /* Sin margen derecho en móvil */
+        margin-right: 0;
+    }
+
+    .menu-section ul ul li button {
+        width: 100%;
+        margin-top: 5px;
     }
 
     .order-summary select,

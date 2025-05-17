@@ -84,6 +84,32 @@ header h1::before {
     margin: 0;
 }
 
+/* Sección de banner */
+.search-section {
+    background: linear-gradient(rgba(0, 150, 136, 0.7), rgba(0, 150, 136, 0.7)), /* --verde con transparencia */
+    url('https://i.pinimg.com/originals/2d/b3/a6/2db3a64015ac847efd36ca7d7524be95.jpg') center/cover no-repeat;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.search-section h2 {
+    font-size: 2rem;
+    margin: 0 0 10px;
+    z-index: 1;
+}
+
+.search-section p {
+    font-size: 1.5rem;
+    margin: 0 0 20px;
+    z-index: 1;
+}
+
 /* Lista de cartas (similar a restaurant-list) */
 .carta-list {
     max-width: 800px;
@@ -190,5 +216,17 @@ header h1::before {
 
     .carta-list li form {
         margin-top: 10px;
+    }
+
+    .search-section {
+        height: 200px;
+    }
+
+    .search-section h2 {
+        font-size: 1.5rem;
+    }
+
+    .search-section p {
+        font-size: 1.2rem;
     }
 }
