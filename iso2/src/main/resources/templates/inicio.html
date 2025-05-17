@@ -16,10 +16,10 @@
         </th:block>
         <th:block th:if="${cliente != null}">
             <p>Bienvenido, <span th:text="${cliente.nombre}"></span></p>
-            <button onclick="location.href='/logout'">Cerrar Sesión</button>
             <button onclick="location.href='/direcciones/añadir'">Añadir Dirección</button>
             <button onclick="location.href='/direcciones/ver'">Ver Direcciones</button>
             <button onclick="location.href='/cliente/favoritos'">Ver favoritos</button>
+            <button onclick="location.href='/logout'" class="logout-button">Cerrar Sesión</button>
         </th:block>
     </div>
 </header>

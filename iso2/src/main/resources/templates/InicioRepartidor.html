@@ -12,8 +12,8 @@
         <div class="auth-header">
             <p>Bienvenido, <span th:text="${repartidor.nombre}"></span></p>
             <div class="auth-buttons">
-                <button onclick="location.href='/logout'">Cerrar Sesión</button>
                 <button onclick="location.href='/repartidor/seleccionar-codigo-postal'">Seleccionar Código Postal</button>
+                <button onclick="location.href='/logout'" class="logout-button">Cerrar Sesión</button>
             </div>
         </div>
         <p class="code-postal">Tu código postal actual: <span th:text="${repartidor.codigoPostal}"></span></p>

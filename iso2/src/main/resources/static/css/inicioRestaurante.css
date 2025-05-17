@@ -45,7 +45,21 @@ header h1::before {
     gap: 10px;
 }
 
-.auth-buttons button {
+.auth-buttons p {
+    margin: 0;
+    font-weight: 500;
+    color: #333; /* --texto */
+}
+
+/* Contenedor de todos los botones */
+.button-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.button-group button,
+.button-group form button {
     padding: 8px 15px;
     background-color: #3B5998; /* Color de botones (mismo que Cerrar Sesión) */
     color: white;
@@ -56,35 +70,18 @@ header h1::before {
     transition: background-color 0.2s;
 }
 
-.auth-buttons button:hover {
+.button-group button:hover,
+.button-group form button:hover {
     background-color: #00796b; /* --verde-oscuro */
 }
 
-.auth-buttons p {
+.button-group .logout-button {
+    margin-left: auto; /* Push the logout button to the far right */
+}
+
+.button-group form {
+    display: inline;
     margin: 0;
-    font-weight: 500;
-    color: #333; /* --texto */
-}
-
-/* Botones de acciones en el header */
-.action-buttons {
-    display: flex;
-    gap: 10px;
-}
-
-.action-buttons button {
-    padding: 8px 15px;
-    background-color: #3B5998; /* Cambiado a #3B5998 para igualar con Cerrar Sesión */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: background-color 0.2s;
-}
-
-.action-buttons button:hover {
-    background-color: #00796b; /* --verde-oscuro */
 }
 
 /* Lista de cartas (similar a restaurant-list) */
@@ -177,9 +174,13 @@ header h1::before {
         gap: 5px;
     }
 
-    .action-buttons {
+    .button-group {
         flex-direction: column;
         gap: 5px;
+    }
+
+    .button-group .logout-button {
+        margin-left: 0; /* Reset margin on mobile */
     }
 
     .carta-list li {

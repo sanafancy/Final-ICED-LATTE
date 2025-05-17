@@ -1,3 +1,4 @@
+/* /css/inicio.css */
 body {
     font-family: 'Segoe UI', sans-serif;
     margin: 0;
@@ -36,6 +37,10 @@ header h1::before {
     flex-wrap: wrap;
     align-items: center;
     gap: 10px;
+}
+
+.auth-buttons .logout-button {
+    margin-left: auto; /* Empuja el botón de cerrar sesión al extremo derecho */
 }
 
 .auth-buttons button {
@@ -193,6 +198,10 @@ header h1::before {
         flex-direction: column;
         gap: 5px;
         margin-top: 10px;
+    }
+
+    .auth-buttons .logout-button {
+        margin-left: 0; /* Evitar margen en disposición vertical */
     }
 
     .search-section form {

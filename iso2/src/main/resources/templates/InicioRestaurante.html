@@ -11,14 +11,14 @@
     <div class="header-right">
         <div class="auth-buttons" th:if="${restaurante != null}">
             <p>Bienvenido, <span th:text="${restaurante.nombre}"></span></p>
-            <button onclick="location.href='/logout'">Cerrar Sesión</button>
         </div>
-        <div class="action-buttons">
+        <div class="button-group">
             <button onclick="location.href='/cartas/crear'">Crear Carta</button>
             <button onclick="location.href='/direcciones'">Editar Dirección</button>
             <form action="/eliminarRestaurante" method="post" style="display:inline;">
                 <button type="submit" onclick="return confirm('¿Seguro que quieres eliminar este restaurante?')">Eliminar Restaurante</button>
             </form>
+            <button class="logout-button" onclick="location.href='/logout'">Cerrar Sesión</button>
         </div>
     </div>
 </header>
