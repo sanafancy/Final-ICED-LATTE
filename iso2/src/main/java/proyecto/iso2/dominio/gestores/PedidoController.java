@@ -178,6 +178,11 @@ public class PedidoController {
                 }
             }
         }
+        // Validación: asegurarte de que restaurante no sea null
+        if (restaurante == null) {
+            model.addAttribute("error", "No se pudo determinar el restaurante del pedido");
+            return "verMenus";
+        }
 
         pedido.setRestaurante(restaurante);
         pedido.setItems(itemsPedido);

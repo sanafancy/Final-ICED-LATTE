@@ -9,12 +9,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
 public class ServicioEntregaController {
+    private static final Logger logger = LoggerFactory.getLogger(ServicioEntregaController.class);
     @Autowired
     private ServicioEntregaDAO servicioEntregaDAO;
     @Autowired
@@ -154,8 +157,7 @@ public class ServicioEntregaController {
             model.addAttribute("success", "Pedido confirmado y pago realizado con éxito.");
             return "pagoExitoso"; // Redirige a pagoExitoso.html
         } catch (Exception e) {
-            System.err.println("Error al procesar el pago: " + e.getMessage());
-            e.printStackTrace();
+            logger.error("Error al procesar el pago", e);  // Corrección según SonarCloud
             model.addAttribute("error", "Error al procesar el pago: " + e.getMessage());
             return "confirmarPedido";
         }

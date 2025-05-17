@@ -39,7 +39,6 @@ public class Cliente extends Usuario{
         this.nombre = nombre;
         this.apellidos=apellidos;
         this.dni=dni;
-        this.direcciones=direcciones;
     }
 
     // Getters y Setters
