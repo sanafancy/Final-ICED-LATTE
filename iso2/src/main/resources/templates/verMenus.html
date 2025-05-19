@@ -21,8 +21,8 @@
                 <h3 th:text="${carta.nombre}">Nombre de la Carta</h3>
                 <ul th:if="${carta.items != null and not #lists.isEmpty(carta.items)}">
                     <li th:each="item : ${carta.items}">
-                        <span th:text="${item.nombre}"></span>
-                        <span th:text="'€' + ${item.precio}"></span>
+                        <span class="item-name" th:text="${item.nombre}"></span>
+                        <span class="price" th:text="${item.precio} + ' €'"></span>
                         <button type="button" th:attr="onclick='actualizarCarrito(-1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">-</button>
                         <span th:id="|cantidad-${item.id}|">0</span>
                         <button type="button" th:attr="onclick='actualizarCarrito(1, ' + ${item.id} + ', \'' + ${item.nombre} + '\', ' + ${item.precio} + ');'">+</button>
@@ -56,7 +56,7 @@
             <option value="CREDIT_CARD">Tarjeta de crédito</option>
         </select>
         <p id="metodoPagoTexto" style="display: none;"></p>
-        <p id="total-precio">Total: €0.00</p>
+        <p id="total-precio" class="price">Total: 0.00 €</p>
         <button id="continuarPedido" style="display: none;" type="submit">Continuar con el pedido</button>
     </form>
 </div>
@@ -84,7 +84,7 @@
         }
 
         let total = Object.values(carrito).reduce((acc, item) => acc + item.precio * item.cantidad, 0);
-        document.getElementById("total-precio").innerText = `Total: €${total.toFixed(2)}`;
+        document.getElementById("total-precio").innerText = `Total: ${total.toFixed(2)} €`;
         document.getElementById("totalPedido").value = total.toFixed(2);
 
         let hayItems = Object.values(carrito).some(item => item.cantidad > 0);
