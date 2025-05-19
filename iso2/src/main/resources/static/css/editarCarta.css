@@ -158,6 +158,22 @@ header h1::before {
     background-color: #b71c1c; /* Rojo oscuro */
 }
 
+.items-section ul li a button {
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.items-section ul li a button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
 /* Botón para volver */
 .back-button {
     display: inline-block;

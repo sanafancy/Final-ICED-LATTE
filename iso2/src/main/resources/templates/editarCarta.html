@@ -27,6 +27,9 @@
         <li th:each="item : ${items}">
             <span class="item-details" th:text="${item.nombre} + ' (' + ${item.tipo} + ')'"></span>
             <span class="price" th:text="${item.precio} + ' €'"></span>
+            <a th:href="@{/cartas/editar/{cartaId}/editarItem/{itemId}(cartaId=${carta.id}, itemId=${item.id})}">
+                <button>Editar</button>
+            </a>
             <form th:action="@{/cartas/editar/{cartaId}/eliminarItem/{itemId}(cartaId=${carta.id}, itemId=${item.id})}" method="post">
                 <button type="submit">Eliminar</button>
             </form>

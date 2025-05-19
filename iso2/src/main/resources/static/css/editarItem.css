@@ -1,54 +1,100 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
+}
+
+.contenedor {
+    max-width: 800px;
+    margin: 40px auto;
     padding: 20px;
-    background-color: #f4f4f4;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
 }
 
 h1 {
-    text-align: center;
-    color: #333;
+    font-size: 1.5rem;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0 0 20px;
 }
 
 form {
-    max-width: 400px;
-    margin: 0 auto;
-    background: white;
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 label {
-    display: block;
-    margin-bottom: 5px;
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: left;
 }
 
-input {
+input[type="text"],
+input[type="number"] {
     width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 12px 15px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 20px;
 }
 
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #28a745;
+    padding: 12px 20px;
+    background-color: #009688; /* --verde */
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px;
     cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
 }
 
 button:hover {
-    background-color: #218838;
+    background-color: #00796b; /* --verde-oscuro */
 }
 
 .back-btn {
-    background-color: #6c757d;
+    background-color: #3B5998; /* --azul oscuro */
+    margin-top: 10px;
 }
 
 .back-btn:hover {
-    background-color: #5a6268;
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .contenedor {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    button {
+        max-width: 100%;
+    }
+}
+
+/* Fallback para depuración */
+body::after {
+    content: "editarItem.css loaded";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #999;
+    opacity: 0.5;
 }
