@@ -1,5 +1,5 @@
 body {
-    font-family: 'Segoe UI', sans-serif;
+    font-family: 'Courier New', monospace;
     margin: 0;
     padding: 0;
     background-color: #f8f9fa; /* --gris-claro */
@@ -53,123 +53,145 @@ header h1::before {
     background-color: #00796b; /* --verde-oscuro */
 }
 
-/* Sección de confirmación */
-.confirmation-section {
-    max-width: 800px;
+/* Contenedor del recibo */
+.receipt-container {
+    max-width: 500px; /* Ancho estrecho para parecer recibo */
     margin: 40px auto;
     padding: 20px;
     background: white;
-    border-radius: 10px;
+    border: 1px solid #ccc; /* Borde sutil de recibo */
+    border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     text-align: center;
+    font-size: 0.9rem; /* Texto más pequeño para recibo */
 }
 
-.confirmation-section h2 {
-    font-size: 1.5rem;
-    color: #00796b; /* --verde-oscuro */
-    margin: 0 0 20px;
-}
-
-.confirmation-section h3 {
-    font-size: 1.2rem;
-    color: #009688; /* --verde */
-    margin: 20px 0 10px;
-}
-
-/* Estilos para subsecciones (cliente, pedido, dirección, pago) */
-.client-info,
-.order-details,
-.delivery-address,
-.payment-method {
+/* Encabezado del recibo */
+.receipt-header {
     margin-bottom: 20px;
-    padding: 15px;
-    background: #f8f9fa; /* --gris-claro */
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    text-align: left;
 }
 
-.client-info p,
-.order-details p,
-.delivery-address p,
-.payment-method p {
-    font-size: 1rem;
+.receipt-header h2 {
+    font-size: 1.2rem;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0 0 10px;
+}
+
+.receipt-header p {
+    font-size: 0.85rem;
     color: #333;
     margin: 5px 0;
 }
 
-.order-details ul {
-    list-style: none;
-    padding: 0;
-}
-
-.order-details ul li {
-    font-size: 1rem;
-    color: #333;
+/* Secciones del recibo */
+.client-info,
+.order-details,
+.delivery-address,
+.payment-method {
+    margin-bottom: 15px;
     padding: 10px 0;
-    border-bottom: 1px solid #eee;
+    border-top: 1px dashed #ccc; /* Líneas de separación */
+    border-bottom: 1px dashed #ccc;
+    text-align: left;
 }
 
-.order-details ul li:last-child {
+.client-info p,
+.delivery-address p,
+.payment-method p {
+    font-size: 0.9rem;
+    color: #333;
+    margin: 5px 0;
+}
+
+/* Detalles del pedido como tabla */
+.order-details .items-table {
+    width: 100%;
+    margin: 10px 0;
+}
+
+.order-details .items-table .item-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    border-bottom: 1px dotted #ccc;
+}
+
+.order-details .items-table .item-row:last-child {
     border-bottom: none;
 }
 
-.order-details p.total {
+.order-details .items-table .item-name {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.order-details .items-table .item-quantity,
+.order-details .items-table .item-price {
+    width: 80px; /* Ancho fijo para alineación */
+    text-align: right;
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.order-details .total {
     font-weight: bold;
+    font-size: 1rem;
     color: #00796b; /* --verde-oscuro */
     margin-top: 10px;
+    text-align: right;
 }
 
 /* Mensajes de error */
 .error-message {
-    font-size: 1rem;
+    font-size: 0.9rem;
     color: #d32f2f; /* Rojo para errores */
     margin: 10px 0;
+    text-align: center;
 }
 
 /* Botón de confirmación */
-.confirmation-section form button {
-    padding: 12px 20px;
+.receipt-container form button {
+    padding: 8px 15px; /* Más pequeño para recibo */
     background-color: #009688; /* --verde */
     color: white;
     border: none;
-    border-radius: 25px;
+    border-radius: 4px; /* Menos redondeado */
     cursor: pointer;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.9rem;
     transition: background-color 0.2s;
     width: 100%;
-    max-width: 250px;
+    max-width: 200px;
     margin: 20px auto;
     display: block;
 }
 
-.confirmation-section form button:hover {
+.receipt-container form button:hover {
     background-color: #00796b; /* --verde-oscuro */
 }
 
-.confirmation-section form button:disabled {
+.receipt-container form button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
 /* Botón para volver */
 .back-button {
-    display: inline-block;
     padding: 8px 15px;
     background-color: #3B5998; /* --azul oscuro */
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 4px; /* Menos redondeado */
     cursor: pointer;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 0.9rem;
     text-align: center;
     text-decoration: none;
     margin: 20px auto;
     transition: background-color 0.2s;
     width: 100%;
-    max-width: 250px;
+    max-width: 200px;
     display: block;
 }
 
@@ -190,19 +212,24 @@ header h1::before {
         margin-top: 10px;
     }
 
-    .confirmation-section {
+    .receipt-container {
         margin: 20px;
-        padding: 20px;
+        padding: 15px;
     }
 
     .client-info,
     .order-details,
     .delivery-address,
     .payment-method {
-        padding: 10px;
+        padding: 8px 0;
     }
 
-    .confirmation-section form button,
+    .order-details .items-table .item-quantity,
+    .order-details .items-table .item-price {
+        width: 60px; /* Menor en móviles */
+    }
+
+    .receipt-container form button,
     .back-button {
         max-width: 100%;
     }

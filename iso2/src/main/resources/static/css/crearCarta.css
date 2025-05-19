@@ -82,12 +82,14 @@ header h1::before {
     color: #333;
     margin-bottom: 10px;
     width: 100%;
+    max-width: 400px;
     text-align: left;
 }
 
 .form-section input[type="text"] {
     width: 100%;
-    padding: 12px 15px;
+    max-width: 400px;
+    padding: 10px 12px;
     border: 1px solid #ccc;
     border-radius: 5px;
     font-size: 1rem;
@@ -96,7 +98,7 @@ header h1::before {
 }
 
 .form-section button {
-    padding: 12px 20px;
+    padding: 8px 12px;
     background-color: #009688; /* --verde */
     color: white;
     border: none;
@@ -106,7 +108,7 @@ header h1::before {
     font-size: 1rem;
     transition: background-color 0.2s;
     width: 100%;
-    max-width: 250px;
+    max-width: 120px;
 }
 
 .form-section button:hover {
@@ -154,6 +156,7 @@ header h1::before {
         padding: 20px;
     }
 
+    .form-section label,
     .form-section input[type="text"],
     .form-section button,
     .back-button {

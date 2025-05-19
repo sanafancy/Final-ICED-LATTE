@@ -13,8 +13,12 @@
     <button onclick="history.back()">Volver</button>
   </div>
 </header>
-<div class="confirmation-section">
-  <h2>Confirmar Pedido</h2>
+<div class="receipt-container">
+  <div class="receipt-header">
+    <h2>Confirmar Pedido</h2>
+    <p th:text="${pedido?.restaurante?.nombre} ?: 'Iced Latte'"></p>
+    <p th:text="'Fecha: ' + ${#dates.format(#dates.createNow(), 'dd MMMM yyyy HH:mm')}"></p>
+  </div>
 
   <div th:if="${error != null}" class="error-message">
     <p th:text="${error}"></p>
@@ -31,12 +35,14 @@
 
   <div class="order-details" th:if="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
     <h3>Detalles del Pedido</h3>
-    <ul>
-      <li th:each="item : ${itemsPedido}">
-        <span th:text="${item.nombre} + ' - €' + ${item.precio} + ' (Cantidad: ' + ${carrito[item.id] != null ? carrito[item.id] : 0} + ')'"></span>
-      </li>
-    </ul>
-    <p class="total">Total: <span th:text="'€' + ${total}"></span></p>
+    <div class="items-table">
+      <div class="item-row" th:each="item : ${itemsPedido}">
+        <span class="item-name" th:text="${item.nombre}"></span>
+        <span class="item-quantity" th:text="'x' + ${carrito[item.id] != null ? carrito[item.id] : 0}"></span>
+        <span class="item-price" th:text="${item.precio} + ' €'"></span>
+      </div>
+    </div>
+    <p class="total">Total: <span th:text="${total} + ' €'"></span></p>
   </div>
   <div class="error-message" th:unless="${itemsPedido != null and not #lists.isEmpty(itemsPedido)}">
     <p>Error: No hay ítems en el pedido.</p>
