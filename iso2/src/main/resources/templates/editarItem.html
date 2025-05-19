@@ -6,6 +6,14 @@
     <link rel="stylesheet" href="/css/editarItem.css">
 </head>
 <body>
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-buttons">
+        <a th:href="@{/cartas/editar/{id}(id=${carta.id})}">
+            <button>Volver</button>
+        </a>
+    </div>
+</header>
 <div class="contenedor">
     <h1>Editar Item</h1>
     <form th:action="@{/cartas/editar/{cartaId}/editarItem/{itemId}(cartaId=${carta.id}, itemId=${item.id})}" method="post">
@@ -17,9 +25,6 @@
         <input type="text" id="tipo" name="tipo" th:value="${item.tipo}" required>
         <button type="submit">Guardar Cambios</button>
     </form>
-    <a th:href="@{/cartas/editar/{id}(id=${carta.id})}">
-        <button class="back-btn">Cancelar</button>
-    </a>
 </div>
 </body>
 </html>
