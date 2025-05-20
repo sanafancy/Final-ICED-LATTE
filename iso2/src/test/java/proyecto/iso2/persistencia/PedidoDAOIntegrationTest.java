@@ -103,8 +103,8 @@ public class PedidoDAOIntegrationTest {
         pedido.setCliente(cliente);
         pedido.setRestaurante(restaurante);
         pedido.setFecha(LocalDateTime.now());
-        pedido.setEstado(EstadoPedido.PEDIDO); // Usamos EstadoPedido.PEDIDO
-        pedido.setMetodoPago(MetodoPago.CREDIT_CARD); // Usamos MetodoPago.CREDIT_CARD
+        pedido.setEstado(EstadoPedido.PEDIDO);
+        pedido.setMetodoPago(MetodoPago.CREDIT_CARD);
 
         // Guardar el pedido
         pedidoDAO.save(pedido);
@@ -174,8 +174,8 @@ public class PedidoDAOIntegrationTest {
         pedido1.setCliente(cliente);
         pedido1.setRestaurante(restaurante);
         pedido1.setFecha(LocalDateTime.now());
-        pedido1.setEstado(EstadoPedido.PEDIDO); // Usamos EstadoPedido.PEDIDO
-        pedido1.setMetodoPago(MetodoPago.CREDIT_CARD); // Usamos MetodoPago.CREDIT_CARD
+        pedido1.setEstado(EstadoPedido.PEDIDO);
+        pedido1.setMetodoPago(MetodoPago.CREDIT_CARD);
         pedidoDAO.save(pedido1);
 
         Pedido pedido2 = new Pedido();
@@ -183,7 +183,7 @@ public class PedidoDAOIntegrationTest {
         pedido2.setRestaurante(restaurante);
         pedido2.setFecha(LocalDateTime.now());
         pedido2.setEstado(EstadoPedido.ENTREGADO);
-        pedido2.setMetodoPago(MetodoPago.PAYPAL); // Usamos MetodoPago.PAYPAL
+        pedido2.setMetodoPago(MetodoPago.PAYPAL);
         pedidoDAO.save(pedido2);
 
         entityManager.flush();
@@ -234,8 +234,8 @@ public class PedidoDAOIntegrationTest {
         pedido1.setCliente(cliente);
         pedido1.setRestaurante(restaurante);
         pedido1.setFecha(LocalDateTime.now());
-        pedido1.setEstado(EstadoPedido.PEDIDO); // Usamos EstadoPedido.PEDIDO
-        pedido1.setMetodoPago(MetodoPago.CREDIT_CARD); // Usamos MetodoPago.CREDIT_CARD
+        pedido1.setEstado(EstadoPedido.PEDIDO);
+        pedido1.setMetodoPago(MetodoPago.CREDIT_CARD);
         pedidoDAO.save(pedido1);
 
         Pedido pedido2 = new Pedido();
@@ -243,7 +243,7 @@ public class PedidoDAOIntegrationTest {
         pedido2.setRestaurante(restaurante);
         pedido2.setFecha(LocalDateTime.now());
         pedido2.setEstado(EstadoPedido.ENTREGADO);
-        pedido2.setMetodoPago(MetodoPago.PAYPAL); // Usamos MetodoPago.PAYPAL
+        pedido2.setMetodoPago(MetodoPago.PAYPAL);
         pedidoDAO.save(pedido2);
 
         entityManager.flush();

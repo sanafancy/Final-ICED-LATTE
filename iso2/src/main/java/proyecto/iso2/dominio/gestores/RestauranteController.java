@@ -1,10 +1,13 @@
 package proyecto.iso2.dominio.gestores;
 
 import jakarta.servlet.http.HttpSession;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.ui.Model;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
@@ -14,6 +17,7 @@ import java.util.Optional;
 
 @Controller
 public class RestauranteController {
+    private static final Logger logger = LoggerFactory.getLogger(RestauranteController.class);
     @Autowired
     private RestauranteDAO restauranteDAO;
     @Autowired
@@ -93,15 +97,10 @@ public class RestauranteController {
         return "inicioRestaurante";
     }
 
-    /*@GetMapping("/login")
-    public String login() {
-        return "login";
-    }*/
     @PostMapping("/favorito/{id}")
     public String toggleFavorito (@PathVariable Long id, HttpSession session){
         Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente != null) {
-            //Restaurante restaurante = restauranteDAO.findById(id).orElse(null);
             Optional<Restaurante> restauranteOpt = restauranteDAO.findById(id);
             if (restauranteOpt.isPresent()) {
                 Restaurante restaurante = restauranteOpt.get();
@@ -115,24 +114,42 @@ public class RestauranteController {
         }
         return "redirect:/";
     }
-    @GetMapping("/restaurantes/favoritos")
-    public String verFavoritos (HttpSession session, Model model){
-        Cliente cliente = (Cliente) session.getAttribute("cliente");
 
+    @GetMapping("/cliente/favoritos")
+    public String verFavoritos(Model model, HttpSession session) {
+        Cliente cliente = (Cliente) session.getAttribute("cliente");
         if (cliente == null) {
-            return "redirect:/login"; // Si no hay sesión, redirigir a login
+            return "redirect:/login";
+        }
+
+        cliente = (Cliente) usuarioDAO.findById(cliente.getIdUsuario()).orElse(null);
+        if (cliente == null) {
+            return "redirect:/login";
         }
 
         model.addAttribute("favoritos", cliente.getFavoritos());
-        return "favoritos"; // Página donde mostraremos la lista de favoritos
-
+        return "favoritos";  // Nombre de la plantilla favoritos.html
     }
+
     @PostMapping("/eliminarRestaurante")
+    @Transactional //todas las operaciones seran exitosas o fallaran juntas
     public String eliminarRestaurante(HttpSession session) {
         Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
         if (restaurante != null) {
-            restauranteDAO.delete(restaurante);
-            session.invalidate(); // Elimina la sesión
+            try{
+                List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+                for (CartaMenu carta : cartas) { //borrar items de las cartas
+                    itemMenuDAO.deleteByCartaMenu(carta);
+                }
+                cartaMenuDAO.deleteByRestaurante(restaurante); //borrar las cartas
+                restauranteDAO.deleteById(restaurante.getIdUsuario()); //borrar el restaurante
+
+                session.invalidate();
+                return "redirect:/";
+            }catch (Exception e) {
+                logger.error("Error al eliminar el restaurante", e);
+                return "redirect:/error";
+            }
         }
         return "redirect:/"; // Redirige a la página de inicio
     }

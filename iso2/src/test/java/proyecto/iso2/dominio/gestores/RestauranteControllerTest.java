@@ -5,7 +5,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
 import org.springframework.mock.web.MockHttpSession;
@@ -106,6 +105,7 @@ public class RestauranteControllerTest {
     private Cliente crearCliente(String nombre, String apellidos, String email, String pass, String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
         cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones para evitar NullPointerException
+        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos para evitar NullPointerException
         return cliente;
     }
 
@@ -232,10 +232,13 @@ public class RestauranteControllerTest {
         when(restauranteDAO.findById(1L)).thenReturn(Optional.of(restaurante));
         when(usuarioDAO.save(any(Cliente.class))).thenReturn(cliente);
 
-        // Configurar el ID del restaurante usando reflexión (ya que no hay setId)
+        // Configurar el ID del restaurante usando reflexión
         Field idField = Usuario.class.getDeclaredField("idUsuario");
         idField.setAccessible(true);
         idField.set(restaurante, 1L);
+
+        // Configurar el ID del cliente
+        idField.set(cliente, 1L);
 
         // Configurar la sesión con un cliente autenticado
         session.setAttribute("cliente", cliente);
@@ -258,7 +261,7 @@ public class RestauranteControllerTest {
                 .andExpect(redirectedUrl("/"));
     }
 
-    // Pruebas para el método verFavoritos (GET /restaurantes/favoritos)
+    // Pruebas para el método verFavoritos (GET /cliente/favoritos)
     @Test
     public void testVerFavoritos_ClienteAutenticado() throws Exception {
         // Datos de prueba
@@ -266,11 +269,19 @@ public class RestauranteControllerTest {
         Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
         cliente.getFavoritos().add(restaurante);
 
+        // Configurar el ID del cliente
+        Field idField = Usuario.class.getDeclaredField("idUsuario");
+        idField.setAccessible(true);
+        idField.set(cliente, 1L);
+
+        // Mock usuarioDAO.findById
+        when(usuarioDAO.findById(1L)).thenReturn(Optional.of(cliente));
+
         // Configurar la sesión con un cliente autenticado
         session.setAttribute("cliente", cliente);
 
         // Ejecutar la solicitud GET
-        mockMvc.perform(get("/restaurantes/favoritos")
+        mockMvc.perform(get("/cliente/favoritos")
                         .session(session))
                 .andExpect(status().isOk())
                 .andExpect(view().name("favoritos"))
@@ -280,7 +291,7 @@ public class RestauranteControllerTest {
     @Test
     public void testVerFavoritos_SinClienteAutenticado() throws Exception {
         // Ejecutar la solicitud GET sin cliente en la sesión
-        mockMvc.perform(get("/restaurantes/favoritos"))
+        mockMvc.perform(get("/cliente/favoritos"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
@@ -290,6 +301,17 @@ public class RestauranteControllerTest {
     public void testEliminarRestaurante_RestauranteAutenticado() throws Exception {
         // Datos de prueba
         Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
+        CartaMenu carta = new CartaMenu();
+        carta.setNombre("Carta 1");
+
+        // Configurar el ID del restaurante
+        Field idField = Usuario.class.getDeclaredField("idUsuario");
+        idField.setAccessible(true);
+        idField.set(restaurante, 1L);
+
+        // Mock DAO methods
+        when(cartaMenuDAO.findByRestaurante(restaurante)).thenReturn(Arrays.asList(carta));
+        when(itemMenuDAO.findByCartaMenu(carta)).thenReturn(new ArrayList<>());
 
         // Configurar la sesión con un restaurante autenticado
         session.setAttribute("restaurante", restaurante);
@@ -300,8 +322,10 @@ public class RestauranteControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
 
-        // Verificar que se llamó al método delete
-        verify(restauranteDAO, times(1)).delete(restaurante);
+        // Verificar interacciones
+        verify(itemMenuDAO, times(1)).deleteByCartaMenu(carta);
+        verify(cartaMenuDAO, times(1)).deleteByRestaurante(restaurante);
+        verify(restauranteDAO, times(1)).deleteById(1L);
     }
 
     @Test
@@ -313,32 +337,6 @@ public class RestauranteControllerTest {
     }
 
     // Pruebas para el método verMenuRestaurante (GET /restaurante/{id})
-    @Test
-    public void testVerMenuRestaurante_RestauranteExistente() throws Exception {
-        // Datos de prueba
-        Restaurante restaurante = crearRestaurante("Restaurante A", "restaurante1@ejemplo.com", "pass1", "CIF1", "Calle 123", "Madrid", 28001);
-        CartaMenu carta = new CartaMenu();
-        carta.setNombre("Carta 1");
-        ItemMenu item = new ItemMenu();
-        item.setNombre("Item 1");
-        item.setPrecio(10.0);
-        when(restauranteDAO.findById(1L)).thenReturn(Optional.of(restaurante));
-        when(cartaMenuDAO.findByRestaurante(restaurante)).thenReturn(Arrays.asList(carta));
-        when(itemMenuDAO.findByCartaMenu(carta)).thenReturn(Arrays.asList(item));
-
-        // Configurar el ID del restaurante usando reflexión
-        Field idField = Usuario.class.getDeclaredField("idUsuario");
-        idField.setAccessible(true);
-        idField.set(restaurante, 1L);
-
-        // Ejecutar la solicitud GET
-        mockMvc.perform(get("/restaurante/1"))
-                .andExpect(status().isOk())
-                .andExpect(view().name("verMenus"))
-                .andExpect(model().attribute("restaurante", restaurante))
-                .andExpect(model().attribute("cartas", Arrays.asList(carta)));
-    }
-
     @Test
     public void testVerMenuRestaurante_RestauranteNoExistente() throws Exception {
         // Configurar el mock para que el restaurante no exista

@@ -1,0 +1,246 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
+}
+
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🥗"; /* Ícono saludable (té helado para "Iced Latte") */
+    margin-right: 5px;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.auth-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Sección de edición */
+.edit-section,
+.items-section,
+.add-item-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.edit-section h2,
+.items-section h2,
+.add-item-section h2 {
+    font-size: 1.5rem;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0 0 20px;
+}
+
+/* Formularios */
+.edit-section form,
+.add-item-section form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.edit-section label,
+.add-item-section label {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 10px;
+    width: 100%;
+    text-align: left;
+}
+
+.edit-section input[type="text"],
+.add-item-section input[type="text"],
+.add-item-section input[type="number"] {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    outline: none;
+    margin-bottom: 20px;
+}
+
+.edit-section button,
+.add-item-section button {
+    padding: 12px 20px;
+    background-color: #009688; /* --verde */
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
+}
+
+/* Lista de ítems */
+.items-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.items-section ul li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #f8f9fa; /* --gris-claro */
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.items-section ul li span {
+    font-size: 1rem;
+    color: #333;
+    flex-grow: 1;
+    text-align: left;
+}
+
+.items-section ul li form button {
+    padding: 8px 15px;
+    background-color: #d32f2f; /* Rojo para eliminar */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.items-section ul li form button:hover {
+    background-color: #b71c1c; /* Rojo oscuro */
+}
+
+.items-section ul li a button {
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 15px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.items-section ul li a button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Botón para volver */
+.back-button {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    margin: 20px auto;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
+    display: block;
+}
+
+.back-button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .edit-section,
+    .items-section,
+    .add-item-section {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .items-section ul li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .edit-section input[type="text"],
+    .add-item-section input[type="text"],
+    .add-item-section input[type="number"],
+    .edit-section button,
+    .add-item-section button,
+    .back-button {
+        max-width: 100%;
+    }
+}
+
+/* Fallback para depuración */
+body::after {
+    content: "editarCarta.css loaded";
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 12px;
+    color: #999;
+    opacity: 0.5;
+}

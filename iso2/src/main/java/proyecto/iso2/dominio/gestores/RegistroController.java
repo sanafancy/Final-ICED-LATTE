@@ -15,10 +15,8 @@ public class RegistroController {
 
     @Autowired
     private ClienteDAO clienteDAO;
-
     @Autowired
     private RestauranteDAO restauranteDAO;
-
     @Autowired
     private RepartidorDAO repartidorDAO;
 

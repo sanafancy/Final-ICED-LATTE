@@ -1,11 +1,13 @@
 package proyecto.iso2.dominio.entidades;
 
 import jakarta.persistence.*;
-
+import java.io.Serializable;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-public abstract class Usuario {
+public abstract class Usuario implements Serializable{
+
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idUsuario;

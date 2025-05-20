@@ -2,14 +2,12 @@ package proyecto.iso2.dominio.gestores;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 import proyecto.iso2.dominio.entidades.*;
 import proyecto.iso2.persistencia.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/cartas")
@@ -27,11 +25,9 @@ public class CartaMenuController {
     @PostMapping("/crear")
     public String crearCarta(@ModelAttribute CartaMenu carta, HttpSession session) {
         Restaurante restaurante = (Restaurante) session.getAttribute("restaurante");
-
         if (restaurante == null) {
             return "redirect:/login";
         }
-        //carta.setId(null);
         carta.setRestaurante(restaurante);
         cartaMenuDAO.save(carta);
         return "redirect:/inicioRestaurante";
@@ -43,7 +39,6 @@ public class CartaMenuController {
         if (carta == null) {
             return "redirect:/cartas";
         }
-
         model.addAttribute("carta", carta);
         model.addAttribute("items", carta.getItems());
         model.addAttribute("itemNuevo", new ItemMenu());
@@ -55,7 +50,6 @@ public class CartaMenuController {
         if (carta == null) {
             return "redirect:/inicioRestaurante";
         }
-
         carta.setNombre(cartaActualizada.getNombre());
         cartaMenuDAO.save(carta);
         return "redirect:/cartas/editar/" + id;
@@ -73,15 +67,42 @@ public class CartaMenuController {
         if (carta == null) {
             return "redirect:/inicioRestaurante";
         }
-
         item.setCartaMenu(carta);
         itemMenuDAO.save(item);
         return "redirect:/cartas/editar/" + cartaId;
     }
 
     @PostMapping("/editar/{cartaId}/eliminarItem/{itemId}")
+    @Transactional
     public String eliminarItem(@PathVariable Long cartaId, @PathVariable Long itemId) {
         itemMenuDAO.deleteById(itemId);
+        return "redirect:/cartas/editar/" + cartaId;
+    }
+
+    @GetMapping("/editar/{cartaId}/editarItem/{itemId}")
+    public String mostrarFormularioEditarItem(@PathVariable Long cartaId, @PathVariable Long itemId, Model model) {
+        CartaMenu carta = cartaMenuDAO.findById(cartaId).orElse(null);
+        ItemMenu item = itemMenuDAO.findById(itemId).orElse(null);
+        if (carta == null || item == null) {
+            return "redirect:/inicioRestaurante";
+        }
+        model.addAttribute("carta", carta);
+        model.addAttribute("item", item);
+        return "editarItem";
+    }
+
+    @PostMapping("/editar/{cartaId}/editarItem/{itemId}")
+    @Transactional
+    public String guardarItemEditado(@PathVariable Long cartaId, @PathVariable Long itemId, @ModelAttribute ItemMenu itemActualizado) {
+        CartaMenu carta = cartaMenuDAO.findById(cartaId).orElse(null);
+        ItemMenu item = itemMenuDAO.findById(itemId).orElse(null);
+        if (carta == null || item == null) {
+            return "redirect:/inicioRestaurante";
+        }
+        item.setNombre(itemActualizado.getNombre());
+        item.setPrecio(itemActualizado.getPrecio());
+        item.setTipo(itemActualizado.getTipo());
+        itemMenuDAO.save(item);
         return "redirect:/cartas/editar/" + cartaId;
     }
 }

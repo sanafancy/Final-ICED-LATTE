@@ -12,4 +12,5 @@ public interface RestauranteDAO extends JpaRepository <Restaurante, Long> {
     List<Restaurante> findByDireccion_CalleContainingIgnoreCase(String calle);
     List<Restaurante> findByDireccion_MunicipioContainingIgnoreCase(String municipio);
     List<Restaurante> findByDireccion_CodigoPostal(int codigoPostal);
+
 }

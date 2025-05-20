@@ -2,12 +2,24 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro • Iced Latte</title>
+  <link rel="stylesheet" href="/css/registro.css">
 </head>
 <body>
-<h1>Registrarse</h1>
-<button onclick="location.href='/registro/cliente'">Registrarse como Cliente</button>
-<button onclick="location.href='/registro/restaurante'">Registrarse como Restaurante</button>
-<button onclick="location.href='/registro/repartidor'">Registrarse como Repartidor</button>
+<header>
+  <h1>Iced Latte</h1>
+  <div class="auth-buttons">
+    <button onclick="history.back()">Volver</button>
+  </div>
+</header>
+<div class="register-section">
+  <h2>Registrarse</h2>
+  <div class="register-buttons">
+    <button onclick="location.href='/registro/cliente'">Registrarse como Cliente</button>
+    <button onclick="location.href='/registro/restaurante'">Registrarse como Restaurante</button>
+    <button onclick="location.href='/registro/repartidor'">Registrarse como Repartidor</button>
+  </div>
+</div>
 </body>
 </html>

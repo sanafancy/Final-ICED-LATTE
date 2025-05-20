@@ -1,0 +1,238 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
+}
+
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🍵"; /* Ícono saludable (té helado para "Iced Latte") */
+    margin-right: 5px;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-buttons .logout-button {
+    margin-left: auto; /* Empuja el botón de cerrar sesión al extremo derecho */
+}
+
+.auth-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.auth-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+.auth-buttons p {
+    margin: 0;
+    font-weight: 500;
+    color: #333; /* --texto */
+}
+
+/* Sección de búsqueda */
+.search-section {
+    background: linear-gradient(rgba(0, 150, 136, 0.7), rgba(0, 150, 136, 0.7)), /* --verde con transparencia */
+    url('https://images.unsplash.com/photo-1540189549336-e6e99c3679fe') center/cover no-repeat;
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    position: relative;
+}
+
+.search-section h2 {
+    font-size: 2rem;
+    margin: 0 0 10px;
+    z-index: 1;
+}
+
+.search-section p {
+    font-size: 1.5rem;
+    margin: 0 0 20px;
+    z-index: 1;
+}
+
+.search-section form {
+    display: flex;
+    width: 60%;
+    max-width: 600px;
+    z-index: 1;
+}
+
+.search-section input[type="text"] {
+    flex: 1;
+    padding: 12px 15px;
+    border: none;
+    border-radius: 25px 0 0 25px;
+    font-size: 1rem;
+    outline: none;
+}
+
+.search-section button {
+    padding: 12px 20px;
+    background-color: #009688; /* --verde */
+    color: white;
+    border: none;
+    border-radius: 0 25px 25px 0;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.search-section button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Lista de restaurantes */
+.restaurant-list {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: white;
+    margin-top: 20px;
+    border-radius: 10px;
+}
+
+.restaurant-list h2 {
+    text-align: center;
+    color: #00796b; /* --verde-oscuro */
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.restaurant-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.restaurant-list li {
+    background: #f8f9fa; /* --gris-claro */
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.restaurant-list li div ul {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.restaurant-list li div ul li {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.restaurant-list li a {
+    text-decoration: none;
+    color: #009688; /* --verde */
+    font-weight: bold;
+}
+
+.restaurant-list li a:hover {
+    color: #00796b; /* --verde-oscuro */
+}
+
+.restaurant-list li button {
+    padding: 8px 15px;
+    background-color: #009688; /* --verde */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.restaurant-list li button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .auth-buttons .logout-button {
+        margin-left: 0; /* Evitar margen en disposición vertical */
+    }
+
+    .search-section form {
+        flex-direction: column;
+        width: 80%;
+    }
+
+    .search-section input[type="text"] {
+        border-radius: 25px;
+        margin-bottom: 10px;
+    }
+
+    .search-section button {
+        border-radius: 25px;
+    }
+}
+
+/* Footer */
+footer {
+    background-color: #000;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+}
+
+footer p {
+    margin: 5px 0;
+}

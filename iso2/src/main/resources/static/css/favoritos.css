@@ -1,0 +1,161 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
+}
+
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🍵"; /* Ícono saludable (té helado para "Iced Latte") */
+    margin-right: 5px;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.auth-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Sección de favoritos */
+.favorites-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: left; /* Alineación izquierda por defecto */
+}
+
+.favorites-section h2 {
+    font-size: 1.5rem;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0 0 20px;
+    text-align: center; /* Solo el título centrado */
+}
+
+/* Lista de favoritos */
+.favorites-section .favorites-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.favorites-section .favorites-list li.favorite-entry {
+    background: #f8f9fa; /* --gris-claro */
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column; /* Apilado vertical */
+    align-items: flex-start; /* Alineación izquierda */
+    justify-content: flex-start; /* Alineación izquierda */
+    text-align: left;
+}
+
+.favorites-section .favorites-list li.favorite-entry .favorite-item {
+    display: flex;
+    flex-direction: column; /* Asegura apilado vertical */
+    align-items: flex-start; /* Alineación izquierda */
+    width: 100%;
+}
+
+.favorites-section .favorites-list li.favorite-entry .restaurant-name {
+    text-decoration: none;
+    color: #009688; /* --verde */
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0;
+    padding: 0;
+    margin-bottom: 8px; /* Espacio entre nombre y dirección */
+}
+
+.favorites-section .favorites-list li.favorite-entry .restaurant-name:hover {
+    color: #00796b; /* --verde-oscuro */
+}
+
+.favorites-section .favorites-list li.favorite-entry .restaurant-address {
+    font-size: 0.9rem;
+    color: #666; /* Gris para detalles secundarios */
+    margin: 0;
+    padding: 0;
+}
+
+/* Mensaje cuando no hay favoritos */
+.no-favorites p {
+    font-size: 1rem;
+    color: #d32f2f; /* Rojo para advertencia */
+    margin: 0 0 20px;
+    text-align: center; /* Centrado solo para este mensaje */
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .favorites-section {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .favorites-section .favorites-list li.favorite-entry {
+        flex-direction: column; /* Mantener apilado vertical */
+        align-items: flex-start;
+    }
+
+    .favorites-section .favorites-list li.favorite-entry .favorite-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .favorites-section .favorites-list li.favorite-entry .restaurant-name {
+        margin-bottom: 8px; /* Espacio entre nombre y dirección en móviles */
+    }
+}

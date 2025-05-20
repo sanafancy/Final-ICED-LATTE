@@ -14,6 +14,9 @@ import proyecto.iso2.dominio.entidades.Repartidor;
 import proyecto.iso2.dominio.entidades.Restaurante;
 import proyecto.iso2.persistencia.UsuarioDAO;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -85,8 +88,8 @@ public class LoginControllerIntegrationTest {
 
         // Verificar que el restaurante está en la sesión
         Restaurante restauranteEnSesion = (Restaurante) session.getAttribute("restaurante");
-        assert restauranteEnSesion != null;
-        assert restauranteEnSesion.getEmail().equals("restaurante@ejemplo.com");
+        assertNotNull(restauranteEnSesion);
+        assertEquals("restaurante@ejemplo.com", restauranteEnSesion.getEmail());
     }
 
     @Test
@@ -101,8 +104,8 @@ public class LoginControllerIntegrationTest {
 
         // Verificar que el cliente está en la sesión
         Cliente clienteEnSesion = (Cliente) session.getAttribute("cliente");
-        assert clienteEnSesion != null;
-        assert clienteEnSesion.getEmail().equals("cliente@ejemplo.com");
+        assertNotNull(clienteEnSesion);
+        assertEquals("cliente@ejemplo.com", clienteEnSesion.getEmail());
     }
 
     @Test
@@ -112,13 +115,13 @@ public class LoginControllerIntegrationTest {
                         .param("pass", "pass123")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("InicioRepartidor"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/repartidor/InicioRepartidor"));
 
         // Verificar que el repartidor está en la sesión
         Repartidor repartidorEnSesion = (Repartidor) session.getAttribute("repartidor");
-        assert repartidorEnSesion != null;
-        assert repartidorEnSesion.getEmail().equals("repartidor@ejemplo.com");
+        assertNotNull(repartidorEnSesion);
+        assertEquals("repartidor@ejemplo.com", repartidorEnSesion.getEmail());
     }
 
     @Test
@@ -132,10 +135,10 @@ public class LoginControllerIntegrationTest {
                 .andExpect(redirectedUrl("/login?error=true"));
 
         // Verificar que no hay usuario en la sesión
-        assert session.getAttribute("usuario") == null;
-        assert session.getAttribute("cliente") == null;
-        assert session.getAttribute("restaurante") == null;
-        assert session.getAttribute("repartidor") == null;
+        assertNull(session.getAttribute("usuario"));
+        assertNull(session.getAttribute("cliente"));
+        assertNull(session.getAttribute("restaurante"));
+        assertNull(session.getAttribute("repartidor"));
     }
 
     @Test
@@ -145,8 +148,8 @@ public class LoginControllerIntegrationTest {
         session.setAttribute("usuario", restaurante);
 
         // Verificar que los atributos están en la sesión antes del logout
-        assert session.getAttribute("restaurante") != null;
-        assert session.getAttribute("usuario") != null;
+        assertNotNull(session.getAttribute("restaurante"));
+        assertNotNull(session.getAttribute("usuario"));
 
         // Llamar a logout y verificar la redirección
         mockMvc.perform(get("/logout")

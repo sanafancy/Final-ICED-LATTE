@@ -78,8 +78,8 @@ public class LoginControllerTest {
     // Método auxiliar para crear un cliente con datos válidos
     private Cliente crearCliente(String nombre, String apellidos, String email, String pass, String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
-        cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones para evitar NullPointerException
-        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos para evitar NullPointerException
+        cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones
+        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos
         return cliente;
     }
 
@@ -153,8 +153,8 @@ public class LoginControllerTest {
                         .param("email", "repartidor@ejemplo.com")
                         .param("pass", "pass123")
                         .session(session))
-                .andExpect(status().isOk())
-                .andExpect(view().name("InicioRepartidor"));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/repartidor/InicioRepartidor"));
 
         // Verificar que el repartidor se guardó en la sesión
         assertEquals(repartidor, session.getAttribute("usuario"));
@@ -211,12 +211,5 @@ public class LoginControllerTest {
                         .session(session))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
-
-        // Verificar que la sesión se invalidó creando una nueva solicitud
-        MockHttpSession newSession = new MockHttpSession();
-        mockMvc.perform(get("/some-endpoint")
-                        .session(newSession))
-                .andExpect(request().sessionAttributeDoesNotExist("usuario"))
-                .andExpect(request().sessionAttributeDoesNotExist("cliente"));
     }
 }

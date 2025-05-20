@@ -2,17 +2,42 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Registro Cliente</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registro Cliente • Iced Latte</title>
+  <link rel="stylesheet" href="/css/registroCliente.css">
 </head>
 <body>
-<h1>Registro Cliente</h1>
-<form action="/registro/cliente" method="post">
-  <input type="email" name="email" placeholder="Email" required>
-  <input type="password" name="pass" placeholder="Contraseña" required>
-  <input type="text" name="nombre" placeholder="Nombre" required>
-  <input type="text" name="apellidos" placeholder="Apellidos" required>
-  <input type="text" name="dni" placeholder="DNI" required>
-  <button type="submit">Registrarse</button>
-</form>
+<header>
+  <h1>Iced Latte</h1>
+  <div class="auth-buttons">
+    <button onclick="history.back()">Volver</button>
+  </div>
+</header>
+<div class="register-section">
+  <h2>Registro como Cliente</h2>
+  <form action="/registro/cliente" method="POST">
+    <div class="form-group">
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" required>
+    </div>
+    <div class="form-group">
+      <label for="pass">Contraseña:</label>
+      <input type="password" id="pass" name="pass" required>
+    </div>
+    <div class="form-group">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required>
+    </div>
+    <div class="form-group">
+      <label for="apellidos">Apellidos:</label>
+      <input type="text" id="apellidos" name="apellidos" required>
+    </div>
+    <div class="form-group">
+      <label for="dni">DNI:</label>
+      <input type="text" id="dni" name="dni" required>
+    </div>
+    <button type="submit">Registrar</button>
+  </form>
+</div>
 </body>
 </html>

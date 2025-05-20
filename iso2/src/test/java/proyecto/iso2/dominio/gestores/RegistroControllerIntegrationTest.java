@@ -166,6 +166,5 @@ public class RegistroControllerIntegrationTest {
         assertThat(repartidores.get(0).getNombre(), is("Repartidor A"));
         assertThat(repartidores.get(0).getApellidos(), is("Apellido A"));
         assertThat(repartidores.get(0).getNif(), is("NIF123"));
-
     }
 }

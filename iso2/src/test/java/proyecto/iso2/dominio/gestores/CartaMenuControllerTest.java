@@ -13,7 +13,6 @@ import org.thymeleaf.spring6.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -21,6 +20,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.is;
 
 public class CartaMenuControllerTest {
 
@@ -80,7 +80,6 @@ public class CartaMenuControllerTest {
     // Métodos auxiliares para crear entidades
     private Restaurante crearRestaurante(String nombre, String email, String pass, String cif, Direccion direccion) {
         Restaurante restaurante = new Restaurante(email, pass, nombre, cif, direccion);
-        // Usar reflexión para establecer el ID, ya que no hay setIdUsuario
         try {
             // Buscar el campo "idUsuario" en la clase base (Usuario)
             Field idField = restaurante.getClass().getSuperclass().getDeclaredField("idUsuario");
@@ -93,12 +92,11 @@ public class CartaMenuControllerTest {
     }
 
     private Direccion crearDireccion() {
-        return new Direccion("Calle Falsa", 123, "", 28001, "Madrid");
+        return new Direccion("Callee Falsa", 123, "", 28001, "Madrid");
     }
 
     private CartaMenu crearCartaMenu(Long id, String nombre, Restaurante restaurante) {
         CartaMenu carta = new CartaMenu(nombre, restaurante);
-        // Usar reflexión para establecer el ID, ya que no hay setId
         try {
             Field idField = CartaMenu.class.getDeclaredField("id");
             idField.setAccessible(true);
@@ -114,7 +112,6 @@ public class CartaMenuControllerTest {
         item.setNombre(nombre);
         item.setPrecio(precio);
         item.setCartaMenu(cartaMenu);
-        // Usar reflexión para establecer el ID, ya que no hay setId
         try {
             Field idField = ItemMenu.class.getDeclaredField("id");
             idField.setAccessible(true);
@@ -200,7 +197,7 @@ public class CartaMenuControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("editarCarta"))
                 .andExpect(model().attribute("carta", carta))
-                .andExpect(model().attribute("items", items))
+                .andExpect(model().attribute("items", is(items)))
                 .andExpect(model().attributeExists("itemNuevo"));
     }
 
@@ -257,7 +254,7 @@ public class CartaMenuControllerTest {
         verify(cartaMenuDAO, times(1)).deleteById(cartaId);
     }
 
-    // Pruebas para el método agregarItem (POST /cartas/editar/{cartaId}/agregarItem)
+    // Pruebas para Ascendente para el método agregarItem (POST /cartas/editar/{cartaId}/agregarItem)
     @Test
     public void testAgregarItem_CartaNoExistente() throws Exception {
         // Datos de prueba

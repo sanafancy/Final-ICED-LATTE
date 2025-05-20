@@ -1,0 +1,179 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa; /* --gris-claro */
+    color: #333; /* --texto */
+}
+
+/* Header */
+header {
+    background-color: white;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+header h1 {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0;
+}
+
+header h1::before {
+    content: "🍵"; /* Ícono saludable (té helado para "Iced Latte") */
+    margin-right: 5px;
+}
+
+.auth-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+}
+
+.auth-buttons button {
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.auth-buttons button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+/* Sección de direcciones */
+.address-section {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.address-section h2 {
+    font-size: 1.5rem;
+    color: #00796b; /* --verde-oscuro */
+    margin: 0 0 20px;
+}
+
+.address-list ul {
+    list-style: none;
+    padding: 0;
+}
+
+.address-list li {
+    background: #f8f9fa; /* --gris-claro */
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.address-list li div ul {
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+}
+
+.address-list li div ul li {
+    box-shadow: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+    color: #666;
+}
+
+.address-list li span:nth-child(2) {
+    color: #666; /* Gris más claro para el complemento */
+    font-size: 0.9rem;
+}
+
+.no-addresses p {
+    font-size: 1rem;
+    color: #d32f2f; /* Rojo para mensajes de advertencia */
+    margin: 0 0 20px;
+}
+
+.add-button {
+    padding: 12px 20px;
+    background-color: #009688; /* --verde */
+    color: white;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
+    margin: 10px auto;
+    display: block;
+}
+
+.add-button:hover {
+    background-color: #00796b; /* --verde-oscuro */
+}
+
+.back-button {
+    display: inline-block;
+    padding: 8px 15px;
+    background-color: #3B5998; /* --azul oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    margin: 10px auto;
+    transition: background-color 0.2s;
+    width: 100%;
+    max-width: 250px;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .auth-buttons {
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 10px;
+    }
+
+    .address-section {
+        margin: 20px;
+        padding: 20px;
+    }
+
+    .address-list li {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .add-button,
+    .back-button {
+        max-width: 100%;
+    }
+}

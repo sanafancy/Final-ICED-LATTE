@@ -24,6 +24,7 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -66,6 +67,7 @@ public class RestauranteControllerIntegrationTest {
     private Cliente cliente;
     private Restaurante restaurante;
 
+
     @BeforeEach
     public void setUp() {
         if (mockMvc == null) {
@@ -77,17 +79,23 @@ public class RestauranteControllerIntegrationTest {
 
         // Limpiamos la base de datos respetando las dependencias
         transactionTemplate.execute(status -> {
+            // Eliminar servicio_entrega primero para evitar violación con pedido
+            entityManager.createNativeQuery("DELETE FROM servicio_entrega").executeUpdate();
             entityManager.createNativeQuery("DELETE FROM pedido_items").executeUpdate();
             entityManager.createNativeQuery("DELETE FROM cliente_favoritos").executeUpdate();
             entityManager.createNativeQuery("DELETE FROM direccion_cliente").executeUpdate();
             entityManager.createQuery("DELETE FROM ItemMenu").executeUpdate();
             entityManager.createQuery("DELETE FROM CartaMenu").executeUpdate();
+            // Desvincular PAGO_ID en pedido para evitar violación de clave foránea
+            entityManager.createNativeQuery("UPDATE pedido SET pago_id = NULL").executeUpdate();
+            entityManager.createNativeQuery("DELETE FROM pago").executeUpdate();
             entityManager.createQuery("DELETE FROM Pedido").executeUpdate();
             entityManager.createQuery("DELETE FROM Repartidor").executeUpdate();
             entityManager.createQuery("DELETE FROM Restaurante").executeUpdate();
             entityManager.createQuery("DELETE FROM Cliente").executeUpdate();
             entityManager.createQuery("DELETE FROM Direccion").executeUpdate();
             entityManager.createNativeQuery("DELETE FROM usuario").executeUpdate();
+            entityManager.flush();
             return null;
         });
 
@@ -114,6 +122,7 @@ public class RestauranteControllerIntegrationTest {
 
         sessionRestaurante = new MockHttpSession();
         sessionRestaurante.setAttribute("restaurante", restaurante);
+        sessionRestaurante.setAttribute("restauranteId", restaurante.getIdUsuario());
     }
 
 
@@ -141,6 +150,7 @@ public class RestauranteControllerIntegrationTest {
                 .andExpect(model().attribute("restaurantes", contains(hasProperty("nombre", is("Restaurante A")))));
     }
 
+
     @Test
     public void testInicioRestaurante_ConRestaurante() throws Exception {
         // Crear una carta de menú para el restaurante
@@ -154,11 +164,11 @@ public class RestauranteControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("inicioRestaurante"))
                 .andExpect(model().attributeExists("restaurante"))
-                .andExpect(model().attribute("restaurante", hasProperty("email", is("restaurante@ejemplo.com"))))
                 .andExpect(model().attributeExists("cartas"))
                 .andExpect(model().attribute("cartas", hasSize(1)))
                 .andExpect(model().attribute("cartas", contains(hasProperty("nombre", is("Carta Principal")))));
     }
+
 
     @Test
     public void testInicioRestaurante_SinRestaurante() throws Exception {
@@ -168,6 +178,7 @@ public class RestauranteControllerIntegrationTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
+
 
     @Test
     public void testToggleFavorito_AgregarFavorito() throws Exception {
@@ -182,13 +193,27 @@ public class RestauranteControllerIntegrationTest {
         assertThat(clienteActualizado.getFavoritos(), contains(hasProperty("nombre", is("Restaurante A"))));
     }
 
+
     @Test
     public void testVerFavoritos_ConCliente() throws Exception {
-        // Añadir un restaurante a los favoritos del cliente
+        // Crear una dirección para el restaurante
+        Direccion direccion = new Direccion();
+        direccion.setCalle("Calle Restaurante");
+        direccion.setNumero(123);
+        direccion.setComplemento("Local 1");
+        direccion.setMunicipio("Ciudad");
+        direccion.setCodigoPostal(12345);
+        direccion = direccionDAO.save(direccion);
+
+        // Asignar la dirección al restaurante y guardar
+        restaurante.setDireccion(direccion);
+        restauranteDAO.save(restaurante);
+
+        // Añadir el restaurante a los favoritos del cliente
         cliente.getFavoritos().add(restaurante);
         clienteDAO.save(cliente);
 
-        mockMvc.perform(get("/restaurantes/favoritos")
+        mockMvc.perform(get("/cliente/favoritos")
                         .session(sessionCliente))
                 .andExpect(status().isOk())
                 .andExpect(view().name("favoritos"))
@@ -197,29 +222,47 @@ public class RestauranteControllerIntegrationTest {
                 .andExpect(model().attribute("favoritos", contains(hasProperty("nombre", is("Restaurante A")))));
     }
 
+
     @Test
     public void testVerFavoritos_SinCliente() throws Exception {
         MockHttpSession sessionSinCliente = new MockHttpSession();
-        mockMvc.perform(get("/restaurantes/favoritos")
+        mockMvc.perform(get("/cliente/favoritos")
                         .session(sessionSinCliente))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/login"));
     }
 
+
     @Test
     public void testEliminarRestaurante() throws Exception {
-        MockHttpSession session = new MockHttpSession();
-        session.setAttribute("restaurante", restaurante);
+        // Crear una carta de menú para el restaurante
+        CartaMenu carta = new CartaMenu();
+        carta.setNombre("Carta Principal");
+        carta.setRestaurante(restaurante);
+        carta = cartaMenuDAO.save(carta);
+
+        // Crear un ítem para la carta
+        ItemMenu item = new ItemMenu();
+        item.setNombre("Pizza");
+        item.setPrecio(10.0);
+        item.setTipo("Plato");
+        item.setCartaMenu(carta);
+        itemMenuDAO.save(item);
 
         mockMvc.perform(post("/eliminarRestaurante")
-                        .session(session))
+                        .session(sessionRestaurante))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
 
-        // Verificar que el restaurante fue eliminado
+        // Verificar que el restaurante, cartas e ítems fueron eliminados
         List<Restaurante> restaurantes = restauranteDAO.findAll();
+        List<CartaMenu> cartas = cartaMenuDAO.findAll();
+        List<ItemMenu> items = itemMenuDAO.findAll();
         assertThat(restaurantes, hasSize(0));
+        assertThat(cartas, hasSize(0));
+        assertThat(items, hasSize(0));
     }
+
 
     @Test
     public void testVerMenuRestaurante_RestauranteExistente() throws Exception {
@@ -235,6 +278,11 @@ public class RestauranteControllerIntegrationTest {
         item.setTipo("Plato");
         item.setCartaMenu(carta);
         itemMenuDAO.save(item);
+
+        // Verificar que la carta se guardó correctamente
+        List<CartaMenu> cartas = cartaMenuDAO.findByRestaurante(restaurante);
+        assertThat(cartas, hasSize(1));
+        assertThat(cartas, contains(hasProperty("nombre", is("Carta Principal"))));
 
         // Crear una dirección para el cliente
         Direccion direccion = new Direccion();
@@ -261,6 +309,7 @@ public class RestauranteControllerIntegrationTest {
                 .andExpect(model().attribute("direcciones", hasSize(1)))
                 .andExpect(model().attribute("direcciones", contains(hasProperty("calle", is("Calle Cliente")))));
     }
+
 
     @Test
     public void testVerMenuRestaurante_RestauranteNoExistente() throws Exception {

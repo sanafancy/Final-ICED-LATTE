@@ -1,18 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Crear carta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Carta • Iced Latte</title>
+    <link rel="stylesheet" href="/css/crearCarta.css">
 </head>
 <body>
-    <h1>Crear Nueva Carta</h1>
-
+<header>
+    <h1>Iced Latte</h1>
+    <div class="auth-buttons">
+        <button onclick="history.back()">Volver</button>
+    </div>
+</header>
+<div class="form-section">
+    <h2>Crear Nueva Carta</h2>
     <form action="/cartas/crear" method="post">
-        <label>Nombre de la Carta:</label>
-        <input type="text" name="nombre" required>
+        <label for="nombre">Nombre de la Carta:</label>
+        <input type="text" id="nombre" name="nombre" required>
         <button type="submit">Crear</button>
     </form>
-
-    <a href="/inicioRestaurante">Volver</a>
+</div>
 </body>
 </html>

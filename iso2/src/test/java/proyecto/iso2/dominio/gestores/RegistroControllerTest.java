@@ -80,8 +80,8 @@ public class RegistroControllerTest {
     // Método auxiliar para crear un cliente con datos válidos
     private Cliente crearCliente(String nombre, String apellidos, String email, String pass, String dni) {
         Cliente cliente = new Cliente(email, pass, nombre, apellidos, dni);
-        cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones para evitar NullPointerException
-        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos para evitar NullPointerException
+        cliente.setDirecciones(new ArrayList<>()); // Inicializar direcciones
+        cliente.setFavoritos(new ArrayList<>()); // Inicializar favoritos
         return cliente;
     }
 
@@ -195,7 +195,7 @@ public class RegistroControllerTest {
         String nombre = "Repartidor";
         String apellidos = "Uno";
         String nif = "12345678B";
-        int eficiencia = 5;
+        int eficiencia = 0;
 
         // Configurar el mock para el método save
         Repartidor repartidor = crearRepartidor(nombre, apellidos, email, pass, nif, eficiencia);
@@ -207,8 +207,7 @@ public class RegistroControllerTest {
                         .param("pass", pass)
                         .param("nombre", nombre)
                         .param("apellidos", apellidos)
-                        .param("nif", nif)
-                        .param("eficiencia", String.valueOf(eficiencia)))
+                        .param("nif", nif))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/"));
 
