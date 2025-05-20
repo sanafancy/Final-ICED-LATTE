@@ -28,7 +28,7 @@ Usamos Notion para la gestión del flujo de trabajo en el tablero Kanban con las
 - **En desarrollo**: Tareas en curso.
 - **En pruebas**: Funcionalidades en validación.
 - **Revisando**: Código en revisión antes de la integración.
-- **Hecho**: Funcionalidades completadas y aprobadas.
+- **Hecho**: Funcionalidades aprobadas y completadas.
 
 ## 📌 Contacto
 📧 Correos:
